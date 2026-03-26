@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AttendX / HOD Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <div class="header-actions">
+            <h1>AttendX / HOD Dashboard</h1>
+
+            <div>
+                <button onclick="logout()">Logout</button>
+            </div>
+
+        </div>
+
+        <!-- Welcome Panel -->
+
+        <div class="faculty-panel">
+
+            <h2 id="hodName"></h2>
+            <p id="hodDept"></p>
+
+            <div class="faculty-stats">
+                <p><strong>Total Courses:</strong> <span id="totalCourses"></span></p>
+                <p><strong>Total Sections:</strong> <span id="totalSections"></span></p>
+                <p><strong>Total Students:</strong> <span id="totalStudents"></span></p>
+                <p><strong>Faculty Members:</strong> <span id="totalFaculty"></span></p>
+            </div>
+        </div>
+
+        <!-- Class Cards -->
+        <div class="cards" id="courseCards"></div>
+
+    </div>
+
+    <script src="mockData.js"></script>
+    <script src="hodData.js"></script>
+    <script src="hod.js"></script>
+    <script src="utils.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Attendance</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <h1>AttendX / Faculty Dashboard / Edit Attendance</h1>
+
+        <div class="card">
+
+            <p><strong>Course:</strong> <span id="subject"></span></p>
+
+            <p><strong>Department:</strong> <span id="department"></span></p>
+            <p><strong>Program:</strong> <span id="program"></span></p>
+
+            <p><strong>Semester:</strong> <span id="sem"></span></p>
+            <p><strong>Section:</strong> <span id="section"></span></p>
+
+            <p><strong>Class Timing:</strong> <span id="classTime"></span></p>
+
+        </div>
+
+        <div id="messageBox" class="message-box"></div>
+
+        <div class="attendance-controls">
+
+            <label for="attendanceDate">Select Attendance Date:</label>
+
+            <select id="attendanceDate"></select>
+
+            <button onclick="loadAttendance()">Load Attendance</button>
+
+        </div>
+
+        <table id="attendanceTable">
+
+            <thead>
+
+                <tr>
+                    <th>USN</th>
+                    <th>Name</th>
+                    <th>Attendance %</th>
+                    <th>Status</th>
+                    <th>Edit Reason</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="studentRows"></tbody>
+
+        </table>
+
+        <div class="update-btn-container">
+
+            <button id="updateBtn" class="update-btn" onclick="updateAttendance()">Update Attendance</button>
+
+        </div>
+
+    </div>
+
+    <script src="mockData.js"></script>
+    <script src="utils.js"></script>
+    <script src="edit.js"></script>
+
+</body>
+
+</html>

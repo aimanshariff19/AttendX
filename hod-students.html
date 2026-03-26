@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AttendX / HOD / Students</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <h1>AttendX / HOD Dashboard / Students Details</h1>
+
+        <button class="back-btn" onclick="goBack()">← Go Back</button>
+
+        <div class="card">
+
+            <p><strong>Department:</strong> <span id="department"></span></p>
+            <p><strong>Program:</strong> <span id="program"></span></p>
+            <p><strong>Semester:</strong> <span id="sem"></span></p>
+            <p><strong>Section:</strong> <span id="section"></span></p>
+
+        </div>
+
+        <button onclick="exportClassReport()">Export Class Report</button>
+
+        <table>
+            <thead>
+                <tr id="tableHead">
+                    <th>USN</th>
+                    <th>Name</th>
+                    <th>Parent Phone</th>
+
+                    <!-- Subject columns will be added dynamically -->
+                </tr>
+            </thead>
+            <tbody id="studentRows"></tbody>
+        </table>
+
+    </div>
+
+    <script src="mockData.js"></script>
+
+    <script src="hod-students.js"></script>
+
+</body>
+
+</html>

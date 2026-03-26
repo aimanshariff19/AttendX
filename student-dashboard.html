@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <div class="header-actions">
+            <h1>AttendX / Student Dashboard</h1>
+
+            <p id="sessionError" class="error-message"></p>
+
+            <div>
+                <button onclick="openChangePassword()">Change Password</button>
+            </div>
+
+        </div>
+
+
+        <!-- Student Info -->
+
+        <div class="card">
+
+            <p><strong>USN:</strong> <span id="studentUSN"></span></p>
+            <p><strong>Department:</strong> <span id="department"></span></p>
+            <p><strong>Program:</strong> <span id="program"></span></p>
+            <p><strong>Semester:</strong> <span id="sem"></span></p>
+            <p><strong>Section:</strong> <span id="section"></span></p>
+
+        </div>
+
+        <br>
+
+        <!-- Attendance Table -->
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Subject Name</th>
+                    <th>Subject Code</th>
+                    <th>Classes Conducted</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                    <th>Attendance %</th>
+                </tr>
+            </thead>
+
+            <tbody id="subjectRows"></tbody>
+
+        </table>
+        <button onclick="studentLogout()">Logout</button>
+        <br>
+    </div>
+
+    <script src="mockData.js"></script>
+    <script src="student-dashboard.js"></script>
+    <script src="utils.js"></script>
+
+</body>
+
+</html>
