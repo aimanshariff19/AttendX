@@ -124,3 +124,33 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 })
+
+// 💧 Ripple
+        document.addEventListener("click", function (e) {
+            const btn = e.target.closest("button")
+            if (!btn) return
+
+            const circle = document.createElement("span")
+            circle.classList.add("ripple")
+
+            const rect = btn.getBoundingClientRect()
+            circle.style.left = (e.clientX - rect.left) + "px"
+            circle.style.top = (e.clientY - rect.top) + "px"
+
+            btn.appendChild(circle)
+            setTimeout(() => circle.remove(), 600)
+        })
+
+        // 👁 Toggle password
+        document.getElementById("eyeIcon").addEventListener("click", () => {
+            const pass = document.getElementById("password")
+            const icon = document.getElementById("eyeIcon")
+
+            if (pass.type === "password") {
+                pass.type = "text"
+                icon.classList.replace("fa-eye", "fa-eye-slash")
+            } else {
+                pass.type = "password"
+                icon.classList.replace("fa-eye-slash", "fa-eye")
+            }
+        })
