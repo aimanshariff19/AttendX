@@ -277,19 +277,19 @@
     <div class="dashboard">
 
         <div class="header-actions">
-            <h1>📊 AttendX / Faculty Dashboard / Take Attendance</h1>
-            <button onclick="viewAttendance()">📂 Edit Attendance</button>
+            <h1>AttendX / Faculty Dashboard / Take Attendance</h1>
+            <button onclick="viewAttendance()"> Edit Attendance</button>
         </div>
 
         <button class="back-btn" onclick="goBack()">← Go Back</button>
 
         <!-- 🔥 COURSE INFO -->
         <div class="card">
-            <p>📘 <strong>Course:</strong> <span id="subject"></span></p>
-            <p>🏢 <strong>Department:</strong> <span id="department"></span></p>
-            <p>🎓 <strong>Program:</strong> <span id="program"></span></p>
-            <p>📚 <strong>Semester:</strong> <span id="sem"></span></p>
-            <p>👥 <strong>Section:</strong> <span id="section"></span></p>
+            <p> <strong>Course:</strong> <span id="subject"></span></p>
+            <p> <strong>Department:</strong> <span id="department"></span></p>
+            <p> <strong>Program:</strong> <span id="program"></span></p>
+            <p> <strong>Semester:</strong> <span id="sem"></span></p>
+            <p> <strong>Section:</strong> <span id="section"></span></p>
         </div>
 
         <!-- 🔥 CONTROLS -->
@@ -306,12 +306,12 @@
                 </div>
 
                 <div class="control-item">
-                    <label>⏰ Start Time</label>
+                    <label> Start Time</label>
                     <input type="time" id="classTime">
                 </div>
 
                 <div class="control-item">
-                    <label>🔢 No. of Classes</label>
+                    <label> No. of Classes</label>
                     <input type="number" id="numClasses" min="1" value="1">
                 </div>
             </div>
@@ -321,15 +321,15 @@
 
         <!-- 🔥 ANALYTICS -->
         <div class="analytics">
-            <div class="analytic-card">👥 Total <span id="totalCount">0</span></div>
-            <div class="analytic-card">✅ Present <span id="presentCount">0</span></div>
-            <div class="analytic-card">❌ Absent <span id="absentCount">0</span></div>
+            <div class="analytic-card"> Total <span id="totalCount">0</span></div>
+            <div class="analytic-card"> Present <span id="presentCount">0</span></div>
+            <div class="analytic-card"> Absent <span id="absentCount">0</span></div>
         </div>
 
         <!-- 🔥 BULK -->
         <div class="bulk-actions">
-            <button onclick="markAll('Present')">✅ All Present</button>
-            <button onclick="markAll('Absent')">❌ All Absent</button>
+            <button onclick="markAll('Present')">All Present</button>
+            <button onclick="markAll('Absent')">All Absent</button>
         </div>
 
         <!-- 🔥 TABLE -->
@@ -345,7 +345,7 @@
             <tbody id="studentRows"></tbody>
         </table>
 
-        <button id="submitBtn" onclick="submitAttendance()">🚀 Submit Attendance</button>
+        <button id="submitBtn" onclick="submitAttendance()">Submit Attendance</button>
 
     </div>
 
