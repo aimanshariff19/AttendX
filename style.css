@@ -7,129 +7,147 @@ body {
     padding: 0;
 }
 
-/* -------- LOGIN UI (NEXT LEVEL) -------- */
+/* ================= LOGIN PAGE (UPGRADED ONLY) ================= */
 
-.login-container {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+body.login-page {
     background: linear-gradient(135deg, #4f46e5, #9333ea);
-    position: relative;
-    overflow: hidden;
 }
 
-/* Background Glow Effect */
-.login-container::before {
-    content: "";
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.15), transparent);
-    top: -100px;
-    left: -100px;
-    filter: blur(80px);
-}
+/* CONTAINER */
 
-.login-container::after {
-    content: "";
-    position: absolute;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
-    bottom: -100px;
-    right: -100px;
-    filter: blur(80px);
-}
-
-/* Glass Card */
-.login-box {
-    position: relative;
-    z-index: 2;
-    width: 360px;
-    padding: 40px 30px;
-    border-radius: 20px;
-    backdrop-filter: blur(20px);
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+body.login-page .login-container {
+    width: 320px;
+    margin: 80px auto;
+    padding: 30px 22px;
+    border-radius: 18px;
     text-align: center;
+
+    /* Glassmorphism */
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
     animation: fadeIn 0.8s ease;
 }
 
-/* Heading */
-.login-box h2 {
-    color: #fff;
-    margin-bottom: 25px;
-    font-weight: 600;
-    letter-spacing: 1px;
+/* LOGO */
+
+body.login-page .college-logo {
+    width: 65px;
+    margin-bottom: 10px;
 }
 
-/* Inputs */
-.login-box input {
-    width: 100%;
-    padding: 12px;
+/* TEXT */
+
+body.login-page .college-name {
+    margin: 5px 0;
+    font-size: 17px;
+    font-weight: 600;
+    color: white;
+}
+
+body.login-page .college-location,
+body.login-page .college-status {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+body.login-page .system-title {
     margin: 12px 0;
-    border: none;
+    font-size: 15px;
+    color: #c7d2fe;
+}
+
+/* INPUTS */
+
+body.login-page input {
+    width: 100%;
+    padding: 11px;
+    margin: 8px 0;
     border-radius: 10px;
-    outline: none;
-    font-size: 14px;
+    border: none;
+    font-size: 13px;
+
     background: rgba(255, 255, 255, 0.15);
-    color: #fff;
+    color: white;
     backdrop-filter: blur(10px);
+
     transition: 0.3s;
 }
 
-.login-box input::placeholder {
+body.login-page input::placeholder {
     color: rgba(255, 255, 255, 0.7);
 }
 
-.login-box input:focus {
+body.login-page input:focus {
     background: rgba(255, 255, 255, 0.25);
     transform: scale(1.02);
+    outline: none;
 }
 
-/* Button */
-.login-box button {
+/* PASSWORD FIELD */
+
+body.login-page .password-field {
+    position: relative;
+}
+
+body.login-page .eye {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+}
+
+/* BUTTON */
+
+body.login-page button {
     width: 100%;
-    padding: 12px;
-    margin-top: 15px;
+    padding: 11px;
+    margin-top: 12px;
     border: none;
     border-radius: 10px;
+
     background: linear-gradient(135deg, #6366f1, #a855f7);
     color: white;
-    font-size: 15px;
+
+    font-size: 14px;
     font-weight: 500;
     cursor: pointer;
+
     transition: 0.3s ease;
 }
 
-.login-box button:hover {
+body.login-page button:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Links */
-.login-box .extra-links {
-    margin-top: 15px;
-    font-size: 13px;
+/* EXTRA LINKS (optional if you add later) */
+
+body.login-page .extra-links {
+    margin-top: 12px;
+    font-size: 12px;
 }
 
-.login-box .extra-links a {
-    color: #ddd;
+body.login-page .extra-links a {
+    color: rgba(255, 255, 255, 0.75);
     text-decoration: none;
-    transition: 0.3s;
 }
 
-.login-box .extra-links a:hover {
-    color: #fff;
+body.login-page .extra-links a:hover {
+    color: white;
 }
 
-/* Animation */
+/* ANIMATION */
+
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(25px);
     }
 
     to {
@@ -139,6 +157,8 @@ body {
 }
 
 /* ================= DASHBOARD (UNCHANGED) ================= */
+
+/* KEEP EVERYTHING BELOW EXACTLY SAME */
 
 .dashboard {
     max-width: 1200px;
