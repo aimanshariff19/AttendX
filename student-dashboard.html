@@ -16,6 +16,7 @@
             max-width: 1100px;
             margin: 30px auto;
             padding: 20px;
+            animation: fadeUp 0.6s ease;
         }
 
         /* HEADER */
@@ -39,11 +40,11 @@
             font-weight: 500;
         }
 
-        /* BUTTONS */
+        /* 🔥 BUTTON */
 
         button {
             padding: 10px 16px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: none;
             background: linear-gradient(135deg, #6366f1, #4f46e5);
             color: white;
@@ -51,21 +52,68 @@
             cursor: pointer;
             transition: 0.25s;
             font-weight: 500;
+            position: relative;
+            overflow: hidden;
         }
 
         button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        /* 💧 RIPPLE */
+
+        button span.ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: rippleAnim 0.6s linear;
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        @keyframes rippleAnim {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* 🌀 LOADING */
+
+        button.loading {
+            pointer-events: none;
+            opacity: 0.85;
+        }
+
+        button.loading::after {
+            content: "";
+            width: 16px;
+            height: 16px;
+            border: 3px solid white;
+            border-top: 3px solid transparent;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
         }
 
         /* CARD */
 
         .card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
             padding: 20px;
-            border-radius: 14px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            animation: fadeUp 0.7s ease;
         }
 
         .card p {
@@ -80,10 +128,11 @@
             width: 100%;
             margin-top: 20px;
             border-collapse: collapse;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 14px;
             overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            animation: fadeUp 0.8s ease;
         }
 
         th {
@@ -99,15 +148,20 @@
             font-size: 14px;
         }
 
+        tbody tr {
+            transition: 0.2s;
+        }
+
         tbody tr:nth-child(even) {
             background: #f9fafb;
         }
 
         tbody tr:hover {
             background: #eef2ff;
+            transform: scale(1.01);
         }
 
-        /* LOGOUT BUTTON */
+        /* LOGOUT */
 
         .logout-btn {
             margin-top: 20px;
@@ -115,7 +169,34 @@
         }
 
         .logout-btn:hover {
-            box-shadow: 0 6px 15px rgba(239, 68, 68, 0.4);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        /* 🚀 PAGE EXIT */
+
+        .page-exit {
+            animation: pageOut 0.5s ease forwards;
+        }
+
+        @keyframes pageOut {
+            to {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+        }
+
+        /* ✨ ENTRY */
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 
@@ -135,8 +216,6 @@
             </div>
         </div>
 
-        <!-- Student Info -->
-
         <div class="card">
             <p><strong>USN:</strong> <span id="studentUSN"></span></p>
             <p><strong>Department:</strong> <span id="department"></span></p>
@@ -146,8 +225,6 @@
         </div>
 
         <br>
-
-        <!-- Attendance Table -->
 
         <table>
             <thead>
@@ -165,13 +242,30 @@
         </table>
 
         <button class="logout-btn" onclick="studentLogout()">Logout</button>
-        <br>
 
     </div>
 
     <script src="mockData.js"></script>
     <script src="student-dashboard.js"></script>
     <script src="utils.js"></script>
+
+    <script>
+        // 💧 Ripple
+        document.addEventListener("click", function (e) {
+            const btn = e.target.closest("button")
+            if (!btn) return
+
+            const circle = document.createElement("span")
+            circle.classList.add("ripple")
+
+            const rect = btn.getBoundingClientRect()
+            circle.style.left = (e.clientX - rect.left) + "px"
+            circle.style.top = (e.clientY - rect.top) + "px"
+
+            btn.appendChild(circle)
+            setTimeout(() => circle.remove(), 600)
+        })
+    </script>
 
 </body>
 
