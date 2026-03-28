@@ -135,10 +135,14 @@ function loadStudents() {
         </td>
         `
 
+        // 🔥 LOW ATTENDANCE HIGHLIGHT
+        if (percent < 75) {
+            row.style.borderLeft = "5px solid red"
+        }
+
         table.appendChild(row)
     })
 
-    // 🔥 ADD EVENT LISTENER HERE (important fix)
     document.querySelectorAll(".toggle-switch input").forEach(input => {
         input.addEventListener("change", () => {
             updateStats()
@@ -187,6 +191,12 @@ function updateStats() {
 
 function submitAttendance() {
 
+    if (!confirm("Are you sure you want to submit attendance?")) return
+
+    const btn = document.getElementById("submitBtn")
+    btn.innerText = "Submitting..."
+    btn.disabled = true
+
     const date = document.getElementById("date").value
     const time = document.getElementById("classTime").value
     const numClasses = document.getElementById("numClasses").value
@@ -194,6 +204,8 @@ function submitAttendance() {
 
     if (!date || !time || !timeData) {
         showMessage("Select date & time properly", "error")
+        btn.innerText = "Submit Attendance"
+        btn.disabled = false
         return
     }
 
@@ -201,6 +213,8 @@ function submitAttendance() {
 
     if (localStorage.getItem(key)) {
         showMessage("Already submitted", "error")
+        btn.innerText = "Submit Attendance"
+        btn.disabled = false
         return
     }
 
@@ -220,8 +234,9 @@ function submitAttendance() {
         data: attendanceData
     }))
 
-    showMessage("Attendance submitted ✅", "success")
-    document.getElementById("submitBtn").disabled = true
+    btn.innerText = "Submitted ✅"
+
+    showMessage("Attendance submitted successfully 🎉", "success")
 }
 
 /* -------- INIT -------- */
@@ -229,6 +244,8 @@ function submitAttendance() {
 window.onload = function () {
 
     loadStudents()
+
+    document.getElementById("submitBtn").disabled = false // 🔥 FIX
 
     document.getElementById("date").value =
         new Date().toISOString().split("T")[0]
@@ -244,6 +261,8 @@ window.onload = function () {
     updateTimeRange()
 }
 
+/* -------- NAV -------- */
+
 function viewAttendance() {
-    window.location.href = "edit-attendance.html";
+    window.location.href = "edit-attendance.html"
 }
