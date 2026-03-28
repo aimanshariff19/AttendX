@@ -351,3 +351,18 @@ window.onload = function () {
 
     document.getElementById("numClasses")?.addEventListener("input", updateTimeRange)
 }
+
+/* -------- DISPLAY 12HR TIME -------- */
+
+function updateDisplayTime() {
+
+    const time = document.getElementById("classTime")?.value
+
+    if (!time) {
+        document.getElementById("displayTime").innerText = "--"
+        return
+    }
+
+    const formatted = formatTo12Hour(time)
+    document.getElementById("displayTime").innerText = formatted
+}
