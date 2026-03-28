@@ -243,3 +243,7 @@ window.onload = function () {
 
     updateTimeRange()
 }
+
+function viewAttendance() {
+    window.location.href = "edit-attendance.html";
+}
