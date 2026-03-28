@@ -21,7 +21,7 @@ setText("program", program)
 setText("sem", sem)
 setText("section", section)
 
-/* -------- BASE KEY (FIXED) -------- */
+/* -------- BASE KEY -------- */
 function getBaseKey() {
     return `${normalize(subject)}_${normalize(department)}_${normalize(program)}_${sem}_${normalize(section)}`
 }
@@ -37,7 +37,7 @@ const classKey = `${department}_${program}_${sem}_${section}`
 const studentList = students[classKey] || []
 const table = document.getElementById("studentRows")
 
-/* -------- CALCULATE % (FIXED) -------- */
+/* -------- CALCULATE % -------- */
 function calculatePercentage(usn, currentStatus = null) {
 
     let present = 0
@@ -83,16 +83,16 @@ function loadStudents() {
         let row = document.createElement("tr")
 
         row.innerHTML = `
-            <td>${student.usn}</td>
-            <td>${student.name}</td>
-            <td class="percent">${percent}%</td>
-            <td>
-                <label class="toggle-switch">
-                    <input type="checkbox" data-usn="${student.usn}" checked>
-                    <span class="slider"></span>
-                </label>
-            </td>
-        `
+<td>${student.usn}</td>
+<td>${student.name}</td>
+<td class="percent">${percent}%</td>
+<td>
+<label class="toggle-switch">
+<input type="checkbox" data-usn="${student.usn}" checked>
+<span class="slider"></span>
+</label>
+</td>
+`
 
         row.style.animation = `fadeUp ${0.4 + index * 0.05}s ease`
 
@@ -100,9 +100,8 @@ function loadStudents() {
         table.appendChild(row)
     })
 
-    document.querySelectorAll(".toggle-switch input").forEach(input => {
-        input.addEventListener("change", updateLivePercentage)
-    })
+    document.querySelectorAll(".toggle-switch input")
+        .forEach(input => input.addEventListener("change", updateLivePercentage))
 
     updateStats()
 }
@@ -165,7 +164,64 @@ document.addEventListener("click", function (e) {
     setTimeout(() => circle.remove(), 600)
 })
 
-/* -------- 🚀 SUBMIT ATTENDANCE (FIXED) -------- */
+/* -------- 🕒 CURRENT TIME -------- */
+function updateCurrentTime() {
+
+    const now = new Date()
+
+    let hours = now.getHours()
+    let minutes = now.getMinutes()
+
+    let ampm = hours >= 12 ? "PM" : "AM"
+    hours = hours % 12 || 12
+
+    const timeString = `${hours}:${String(minutes).padStart(2, "0")} ${ampm}`
+
+    const el = document.getElementById("currentTime")
+    if (el) el.innerText = timeString
+}
+
+/* -------- 🕒 DISPLAY TIME -------- */
+function updateDisplayTime() {
+
+    const time = document.getElementById("classTime")?.value
+    if (!time) return
+
+    let [hour, minute] = time.split(":").map(Number)
+
+    let ampm = hour >= 12 ? "PM" : "AM"
+    hour = hour % 12 || 12
+
+    const formatted = `${hour}:${String(minute).padStart(2, "0")} ${ampm}`
+
+    const el = document.getElementById("displayTime")
+    if (el) el.innerText = formatted
+}
+
+/* -------- ⏱ TIME RANGE -------- */
+function updateTimeRange() {
+
+    const startTime = document.getElementById("classTime")?.value
+    const numClasses = parseInt(document.getElementById("numClasses")?.value)
+
+    if (!startTime || !numClasses) return
+
+    let [hour, minute] = startTime.split(":").map(Number)
+    let endHour = hour + numClasses
+
+    function format(h, m) {
+        let ampm = h >= 12 ? "PM" : "AM"
+        h = h % 12 || 12
+        return `${h}:${String(m).padStart(2, "0")} ${ampm}`
+    }
+
+    const range = `${format(hour, minute)} - ${format(endHour, minute)}`
+
+    const el = document.getElementById("timeRange")
+    if (el) el.innerText = range
+}
+
+/* -------- 🚀 SUBMIT ATTENDANCE -------- */
 function submitAttendance() {
 
     const btn = document.getElementById("submitBtn")
@@ -239,4 +295,11 @@ window.onload = function () {
 
     updateCurrentTime()
     setInterval(updateCurrentTime, 1000)
+
+    document.getElementById("classTime")?.addEventListener("change", () => {
+        updateDisplayTime()
+        updateTimeRange()
+    })
+
+    document.getElementById("numClasses")?.addEventListener("input", updateTimeRange)
 }
