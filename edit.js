@@ -337,5 +337,5 @@ dateDropdown.addEventListener("change", loadTimesForDate)
 /* -------- BACK -------- */
 
 function goBack() {
-    window.history.back()
+    window.location.href = "attendance.html"
 }
