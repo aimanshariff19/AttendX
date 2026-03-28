@@ -115,7 +115,7 @@ function loadCourseCards() {
             <p><strong>Section:</strong> ${course.section}</p>
 
             <button onclick="openCourse('${course.subject}','${course.program}','${course.sem}','${course.section}')">
-                View
+                Take Attendance
             </button>
         `
 
