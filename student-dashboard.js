@@ -1,4 +1,4 @@
-/* -------- 💧 RIPPLE -------- */
+/* -------- 💧 RIPPLE (FIXED - SINGLE) -------- */
 
 document.addEventListener("click", function (e) {
     const btn = e.target.closest("button")
@@ -40,19 +40,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const table = document.getElementById("subjectRows")
     if (!table || typeof courses === "undefined") return
 
-    /* -------- 🔥 FIXED SUBJECT FETCH -------- */
+    /* -------- 🔥 FETCH SUBJECTS -------- */
 
-    const classSubjectsRaw = courses.filter(c =>
+    const rawSubjects = courses.filter(c =>
         c.department === department &&
         c.sem.toString() === sem &&
         c.section === section
     )
 
-    /* -------- REMOVE DUPLICATES -------- */
-
     const classSubjects = []
-
-    classSubjectsRaw.forEach(c => {
+    rawSubjects.forEach(c => {
         if (!classSubjects.find(s => s.subject === c.subject)) {
             classSubjects.push(c)
         }
@@ -102,6 +99,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     table.innerHTML = ""
 
+    let totalPercent = 0
+
     if (classSubjects.length === 0) {
         table.innerHTML = `<tr><td colspan="6">No subjects found ⚠️</td></tr>`
         return
@@ -110,6 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
     classSubjects.forEach((sub, index) => {
 
         const stats = calculateAttendance(sub.subject)
+        totalPercent += stats.percent
 
         const row = document.createElement("tr")
 
@@ -128,6 +128,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
         table.appendChild(row)
     })
+
+    /* -------- 🔥 OVERALL ATTENDANCE -------- */
+
+    const overall = Math.round(totalPercent / classSubjects.length)
+
+    const overallBox = document.createElement("div")
+    overallBox.className = "card"
+    overallBox.style.marginBottom = "15px"
+
+    overallBox.innerHTML = `
+<p><strong>Overall Attendance:</strong> 
+<span style="color:${getColor(overall)}">${overall}%</span></p>
+<p id="warningText" style="font-weight:600;"></p>
+`
+
+    document.querySelector(".dashboard").insertBefore(
+        overallBox,
+        document.querySelector("table")
+    )
+
+    /* -------- ⚠ WARNING -------- */
+
+    const warning = overallBox.querySelector("#warningText")
+
+    if (overall < 75) {
+        warning.innerText = "⚠ Low Attendance! Improve immediately"
+        warning.style.color = "#dc2626"
+    } else if (overall < 85) {
+        warning.innerText = "⚠ Average Attendance"
+        warning.style.color = "#f59e0b"
+    } else {
+        warning.innerText = "✅ Good Attendance"
+        warning.style.color = "#16a34a"
+    }
 
 })
 
@@ -167,19 +201,3 @@ function openChangePassword() {
         window.location.href = "change-password.html"
     }, 400)
 }
-
-// 💧 Ripple
-        document.addEventListener("click", function (e) {
-            const btn = e.target.closest("button")
-            if (!btn) return
-
-            const circle = document.createElement("span")
-            circle.classList.add("ripple")
-
-            const rect = btn.getBoundingClientRect()
-            circle.style.left = (e.clientX - rect.left) + "px"
-            circle.style.top = (e.clientY - rect.top) + "px"
-
-            btn.appendChild(circle)
-            setTimeout(() => circle.remove(), 600)
-        })
