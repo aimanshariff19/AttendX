@@ -15,10 +15,10 @@ document.getElementById("section").innerText = section || "-"
 
 /* -------- Students -------- */
 
-// ❗ Make sure students object exists
+// ❗ FIXED: template string backticks
 const classKey = `${department}_${program}_${sem}_${section}`
-const studentList = (typeof students !== "undefined" && students[classKey]) ? students[classKey] : []
 
+const studentList = students[classKey] || []
 const table = document.getElementById("studentRows")
 
 
@@ -33,8 +33,7 @@ function calculatePercentage(usn, currentStatus = null) {
 
         let key = localStorage.key(i)
 
-        // 🔥 Only match this class + subject (IMPORTANT FIX)
-        if (key && key.startsWith(`${subject}_${department}_${program}_${sem}_${section}`)) {
+        if (key && key.includes(subject)) {
 
             let stored = JSON.parse(localStorage.getItem(key) || "{}")
             let records = stored.data || stored
@@ -62,8 +61,6 @@ function calculatePercentage(usn, currentStatus = null) {
 
 function loadStudents() {
 
-    if (!table) return
-
     table.innerHTML = ""
 
     studentList.forEach(student => {
@@ -72,6 +69,7 @@ function loadStudents() {
 
         let row = document.createElement("tr")
 
+        // ❗ FIXED: template string with backticks
         row.innerHTML = `
             <td>${student.usn}</td>
             <td>${student.name}</td>
@@ -89,7 +87,7 @@ function loadStudents() {
         table.appendChild(row)
     })
 
-    // 🔥 attach listeners AFTER rendering
+    /* 🔥 Live update */
     document.querySelectorAll(".toggle-switch input").forEach(input => {
         input.addEventListener("change", updateLivePercentage)
     })
@@ -100,10 +98,12 @@ function loadStudents() {
 
 function updateRowStyle(row, percent, isPresent) {
 
-    // low attendance warning
-    row.style.borderLeft = percent < 75 ? "5px solid red" : "none"
+    if (percent < 75) {
+        row.style.borderLeft = "5px solid red"
+    } else {
+        row.style.borderLeft = "none"
+    }
 
-    // present/absent color
     row.style.background = isPresent ? "#dcfce7" : "#fee2e2"
 }
 
@@ -137,9 +137,10 @@ function submitAttendance() {
 
     const date = new Date().toISOString().split("T")[0]
 
+    // ❗ FIXED: template string
     const key = `${subject}_${department}_${program}_${sem}_${section}_${date}`
 
-    // 🔥 prevent duplicate submit
+    /* 🔥 Prevent duplicate */
     if (localStorage.getItem(key)) {
         showMessage("Already submitted for today ❌", "error")
         return
@@ -157,7 +158,7 @@ function submitAttendance() {
 
     localStorage.setItem(key, JSON.stringify({ data }))
 
-    // 🔥 disable button after submit
+    /* 🔥 Disable button after submit */
     if (btn) {
         btn.innerText = "Submitted ✅"
         btn.disabled = true
@@ -198,17 +199,5 @@ function showMessage(text, type) {
 /* -------- INIT -------- */
 
 window.onload = function () {
-
-    // 🔥 check if already submitted today → disable button
-    const date = new Date().toISOString().split("T")[0]
-    const key = `${subject}_${department}_${program}_${sem}_${section}_${date}`
-
-    const btn = document.getElementById("submitBtn")
-
-    if (localStorage.getItem(key) && btn) {
-        btn.innerText = "Already Submitted ✅"
-        btn.disabled = true
-    }
-
     loadStudents()
 }
