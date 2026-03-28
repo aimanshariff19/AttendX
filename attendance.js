@@ -6,11 +6,29 @@ const program = localStorage.getItem("program")
 const sem = localStorage.getItem("sem")
 const section = localStorage.getItem("section")
 
-document.getElementById("subject").innerText = subject || "-"
-document.getElementById("department").innerText = department || "-"
-document.getElementById("program").innerText = program || "-"
-document.getElementById("sem").innerText = sem || "-"
-document.getElementById("section").innerText = section || "-"
+function setText(id, value) {
+    const el = document.getElementById(id)
+    if (el) el.innerText = value || "-"
+}
+
+setText("subject", subject)
+setText("department", department)
+setText("program", program)
+setText("sem", sem)
+setText("section", section)
+
+
+/* -------- NAVIGATION FIX (🔥 ADDED) -------- */
+
+function viewAttendance() {
+    // 👉 change file name if different
+    window.location.href = "./edit.html"
+}
+
+function goBack() {
+    window.location.href = "./dashboard.html"
+}
+
 
 /* -------- Students -------- */
 
@@ -18,11 +36,13 @@ const classKey = `${department}_${program}_${sem}_${section}`
 const studentList = students[classKey] || []
 const table = document.getElementById("studentRows")
 
+
 /* -------- Base Key -------- */
 
 function getBaseKey() {
     return `${subject}_${department}_${program}_${sem}_${section}`
 }
+
 
 /* -------- 12hr Format -------- */
 
@@ -36,6 +56,7 @@ function formatTo12Hour(time24) {
 
     return `${hour}:${String(minute).padStart(2, "0")} ${ampm}`
 }
+
 
 /* -------- Time Range -------- */
 
@@ -58,6 +79,7 @@ function updateTimeRange() {
         `${startFormatted} - ${endFormatted}`
 }
 
+
 /* -------- Current Time -------- */
 
 function updateCurrentTime() {
@@ -74,6 +96,7 @@ function updateCurrentTime() {
 
     document.getElementById("currentTime").innerText = timeString
 }
+
 
 /* -------- Calculate % -------- */
 
@@ -108,9 +131,12 @@ function calculatePercentage(usn, currentStatus = null) {
     return total === 0 ? 0 : Math.round((present / total) * 100)
 }
 
+
 /* -------- Load Students -------- */
 
 function loadStudents() {
+
+    if (!table) return
 
     table.innerHTML = ""
 
@@ -143,6 +169,7 @@ function loadStudents() {
     updateStats()
 }
 
+
 /* -------- Row Styling -------- */
 
 function updateRowStyle(row, percent, isPresent) {
@@ -150,6 +177,7 @@ function updateRowStyle(row, percent, isPresent) {
     row.style.borderLeft = percent < 75 ? "5px solid red" : "none"
     row.style.background = isPresent ? "#dcfce7" : "#fee2e2"
 }
+
 
 /* -------- Live Update -------- */
 
@@ -172,6 +200,7 @@ function updateLivePercentage() {
     updateStats()
 }
 
+
 /* -------- Stats -------- */
 
 function updateStats() {
@@ -184,10 +213,11 @@ function updateStats() {
         if (input.checked) present++
     })
 
-    document.getElementById("totalCount").innerText = total
-    document.getElementById("presentCount").innerText = present
-    document.getElementById("absentCount").innerText = total - present
+    setText("totalCount", total)
+    setText("presentCount", present)
+    setText("absentCount", total - present)
 }
+
 
 /* -------- Submit Attendance -------- */
 
@@ -241,6 +271,7 @@ function submitAttendance() {
     }
 }
 
+
 /* -------- Message -------- */
 
 function showMessage(text, type) {
@@ -262,40 +293,6 @@ function showMessage(text, type) {
     }, 2500)
 }
 
-/* -------- Button State Check -------- */
-
-function checkSubmissionStatus() {
-
-    const btn = document.getElementById("submitBtn")
-
-    const date = document.getElementById("date").value
-    const startTime = document.getElementById("classTime").value
-
-    if (!date || !startTime) return
-
-    const key = `${getBaseKey()}_${date}_${startTime}`
-
-    if (localStorage.getItem(key)) {
-        btn.innerText = "Already Submitted ✅"
-        btn.disabled = true
-    } else {
-        btn.innerText = "Submit Attendance"
-        btn.disabled = false
-    }
-}
-
-/* -------- Bulk Actions -------- */
-
-function markAll(status) {
-
-    const isPresent = status === "Present"
-
-    document.querySelectorAll(".toggle-switch input").forEach(input => {
-        input.checked = isPresent
-    })
-
-    updateLivePercentage()
-}
 
 /* -------- INIT -------- */
 
@@ -306,12 +303,12 @@ window.onload = function () {
     updateCurrentTime()
     setInterval(updateCurrentTime, 1000)
 
-    document.getElementById("date").addEventListener("change", checkSubmissionStatus)
+    document.getElementById("date")?.addEventListener("change", checkSubmissionStatus)
 
-    document.getElementById("classTime").addEventListener("change", () => {
+    document.getElementById("classTime")?.addEventListener("change", () => {
         checkSubmissionStatus()
         updateTimeRange()
     })
 
-    document.getElementById("numClasses").addEventListener("input", updateTimeRange)
+    document.getElementById("numClasses")?.addEventListener("input", updateTimeRange)
 }
