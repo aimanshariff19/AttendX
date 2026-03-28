@@ -1,11 +1,119 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
     <meta charset="UTF-8">
     <title>Student Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', Arial, sans-serif;
+            background: #f3f4f6;
+        }
+
+        .dashboard {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        /* HEADER */
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 22px;
+            color: #111827;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 14px;
+        }
+
+        /* BUTTONS */
+
+        button {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: none;
+            background: #6366f1;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        button:hover {
+            background: #4f46e5;
+        }
+
+        /* CARD */
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+        }
+
+        .card p {
+            margin: 8px 0;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        /* TABLE */
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+        }
+
+        th {
+            background: #6366f1;
+            color: white;
+            font-weight: 500;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        tbody tr:hover {
+            background: #eef2ff;
+        }
+
+        /* LOGOUT BUTTON */
+
+        button:last-of-type {
+            margin-top: 20px;
+            background: #ef4444;
+        }
+
+        button:last-of-type:hover {
+            background: #dc2626;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -20,20 +128,16 @@
             <div>
                 <button onclick="openChangePassword()">Change Password</button>
             </div>
-
         </div>
-
 
         <!-- Student Info -->
 
         <div class="card">
-
             <p><strong>USN:</strong> <span id="studentUSN"></span></p>
             <p><strong>Department:</strong> <span id="department"></span></p>
             <p><strong>Program:</strong> <span id="program"></span></p>
             <p><strong>Semester:</strong> <span id="sem"></span></p>
             <p><strong>Section:</strong> <span id="section"></span></p>
-
         </div>
 
         <br>
@@ -41,7 +145,6 @@
         <!-- Attendance Table -->
 
         <table>
-
             <thead>
                 <tr>
                     <th>Subject Name</th>
@@ -54,10 +157,11 @@
             </thead>
 
             <tbody id="subjectRows"></tbody>
-
         </table>
+
         <button onclick="studentLogout()">Logout</button>
         <br>
+
     </div>
 
     <script src="mockData.js"></script>
