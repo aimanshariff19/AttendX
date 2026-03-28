@@ -51,10 +51,34 @@ document.getElementById("sem").innerText = sem
 document.getElementById("section").innerText = section
 
 
-/* -------- STUDENTS -------- */
+/* -------- 🔥 FIXED STUDENT MATCHING -------- */
 
-const classKey = `${department}_${program}_${sem}_${section}`
-const studentList = students[classKey] || []
+let studentList = []
+
+for (let key in students) {
+
+    const parts = key.split("_")
+    if (parts.length !== 4) continue
+
+    const [d, p, s, sec] = parts
+
+    // normalize
+    const cleanP1 = p.replace(".", "").toLowerCase()
+    const cleanP2 = program.replace(".", "").toLowerCase()
+
+    if (
+        d === department &&
+        cleanP1 === cleanP2 &&
+        s.toString() === sem.toString() &&
+        sec === section
+    ) {
+        studentList = students[key]
+        break
+    }
+}
+
+
+/* -------- TABLE -------- */
 
 const table = document.getElementById("studentRows")
 const tableHead = document.getElementById("tableHead")
@@ -131,6 +155,11 @@ function loadStudents() {
 
     table.innerHTML = ""
 
+    if (studentList.length === 0) {
+        showMessage("No students found ⚠️", "error")
+        return
+    }
+
     studentList.forEach((student, index) => {
 
         let row = `
@@ -183,7 +212,7 @@ function goBack() {
 }
 
 
-/* -------- EXPORT (UPGRADED) -------- */
+/* -------- EXPORT -------- */
 
 function exportClassReport() {
 
@@ -201,7 +230,6 @@ function exportClassReport() {
             return
         }
 
-        // 🔥 HEADER WITH SUBJECTS
         let csv = "USN,Name,Parent Phone"
 
         classSubjects.forEach(sub => {
@@ -210,7 +238,6 @@ function exportClassReport() {
 
         csv += "\n"
 
-        // 🔥 DATA
         studentList.forEach(student => {
 
             let row = `${student.usn},${student.name},${student.parentPhone || "-"}`
