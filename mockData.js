@@ -1,13 +1,18 @@
-const facultyInfo = {
-    faculty1: {
+const facultyList = [
+
+    {
+        id: "faculty1",
         name: "Dr. Kumar",
         department: "CSE"
     },
-    faculty2: {
+
+    {
+        id: "faculty2",
         name: "Dr. Sharma",
         department: "CSE"
     }
-}
+
+]
 
 /* -------- Courses -------- */
 
