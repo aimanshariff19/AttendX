@@ -40,12 +40,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const table = document.getElementById("subjectRows")
     if (!table || typeof courses === "undefined") return
 
-    const classSubjects = courses.filter(c =>
+    /* -------- 🔥 FIXED SUBJECT FETCH -------- */
+
+    const classSubjectsRaw = courses.filter(c =>
         c.department === department &&
-        c.program === program &&
         c.sem.toString() === sem &&
         c.section === section
     )
+
+    /* -------- REMOVE DUPLICATES -------- */
+
+    const classSubjects = []
+
+    classSubjectsRaw.forEach(c => {
+        if (!classSubjects.find(s => s.subject === c.subject)) {
+            classSubjects.push(c)
+        }
+    })
 
     /* -------- CALCULATE -------- */
 
@@ -79,17 +90,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    /* -------- COLOR LOGIC -------- */
+    /* -------- COLOR -------- */
 
     function getColor(percent) {
-        if (percent >= 85) return "#22c55e"   // green
-        if (percent >= 75) return "#f59e0b"   // orange
-        return "#ef4444"                      // red
+        if (percent >= 85) return "#22c55e"
+        if (percent >= 75) return "#f59e0b"
+        return "#ef4444"
     }
 
     /* -------- LOAD TABLE -------- */
 
     table.innerHTML = ""
+
+    if (classSubjects.length === 0) {
+        table.innerHTML = `<tr><td colspan="6">No subjects found ⚠️</td></tr>`
+        return
+    }
 
     classSubjects.forEach((sub, index) => {
 
@@ -116,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 
-/* -------- 🚪 LOGOUT -------- */
+/* -------- LOGOUT -------- */
 
 function studentLogout() {
 
@@ -141,7 +157,7 @@ function studentLogout() {
 }
 
 
-/* -------- 🔑 CHANGE PASSWORD -------- */
+/* -------- CHANGE PASSWORD -------- */
 
 function openChangePassword() {
 
