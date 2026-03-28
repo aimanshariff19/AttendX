@@ -1,29 +1,47 @@
+/* -------- 💧 RIPPLE -------- */
 
-/* -------- HOD Info -------- */
+document.addEventListener("click", function (e) {
+    const btn = e.target.closest("button")
+    if (!btn) return
+
+    const circle = document.createElement("span")
+    circle.classList.add("ripple")
+
+    const rect = btn.getBoundingClientRect()
+    circle.style.left = (e.clientX - rect.left) + "px"
+    circle.style.top = (e.clientY - rect.top) + "px"
+
+    btn.appendChild(circle)
+    setTimeout(() => circle.remove(), 600)
+})
+
+
+/* -------- HOD INFO -------- */
 
 const hodName = localStorage.getItem("hodName")
 const department = localStorage.getItem("hodDepartment")
 
-document.getElementById("hodName").innerText = "Welcome " + hodName
-document.getElementById("hodDept").innerText = "Department of " + department
+document.getElementById("hodName").innerText = "Welcome " + (hodName || "")
+document.getElementById("hodDept").innerText = "Department of " + (department || "")
 
-/* -------- Container -------- */
+
+/* -------- CONTAINER -------- */
 
 const container = document.getElementById("courseCards")
 
-/* -------- Get department courses -------- */
+
+/* -------- GET COURSES -------- */
 
 const deptCourses = courses.filter(
     course => course.department === department
 )
 
-/* -------- HOD Dashboard Stats -------- */
+
+/* -------- STATS -------- */
 
 if (document.getElementById("totalCourses")) {
 
     document.getElementById("totalCourses").innerText = deptCourses.length
-
-    /* Sections */
 
     const sectionSet = new Set()
 
@@ -33,33 +51,23 @@ if (document.getElementById("totalCourses")) {
 
     document.getElementById("totalSections").innerText = sectionSet.size
 
-    /* Students */
-
     let totalStudents = 0
 
     sectionSet.forEach(sec => {
-
-        if (students[sec]) {
-            totalStudents += students[sec].length
-        }
-
+        if (students[sec]) totalStudents += students[sec].length
     })
 
     document.getElementById("totalStudents").innerText = totalStudents
 
-    /* Faculty */
-
     const facultySet = new Set()
 
-    deptCourses.forEach(c => {
-        facultySet.add(c.faculty)
-    })
+    deptCourses.forEach(c => facultySet.add(c.faculty))
 
     document.getElementById("totalFaculty").innerText = facultySet.size
-
 }
 
-/* -------- Create class cards -------- */
+
+/* -------- CREATE CARDS -------- */
 
 const classMap = new Map()
 
@@ -73,13 +81,17 @@ deptCourses.forEach(course => {
 
 })
 
+let index = 0
+
 classMap.forEach(course => {
 
     let card = document.createElement("div")
     card.className = "card"
 
-    card.innerHTML = `
+    card.style.animation = `fadeUp ${0.3 + index * 0.1}s ease`
+    index++
 
+    card.innerHTML = `
 <p><strong>Dept:</strong> ${course.department}</p>
 <p><strong>Program:</strong> ${course.program}</p>
 <p><strong>Semester:</strong> ${course.sem}</p>
@@ -89,29 +101,69 @@ classMap.forEach(course => {
 '${course.department}',
 '${course.program}',
 '${course.sem}',
-'${course.section}'
+'${course.section}',
+this
 )">View</button>
-
 `
 
     container.appendChild(card)
 
 })
 
-/* -------- Open HOD Students Page -------- */
 
-function viewAttendance(department, program, sem, section) {
+/* -------- VIEW -------- */
 
-    localStorage.setItem("department", department)
-    localStorage.setItem("program", program)
-    localStorage.setItem("sem", sem)
-    localStorage.setItem("section", section)
+function viewAttendance(department, program, sem, section, btn) {
 
-    window.location.href = "hod-students.html"
+    // 🌀 LOADING BUTTON
+    if (btn) {
+        btn.classList.add("loading")
+        btn.innerText = ""
+    }
 
+    setTimeout(() => {
+
+        localStorage.setItem("department", department)
+        localStorage.setItem("program", program)
+        localStorage.setItem("sem", sem)
+        localStorage.setItem("section", section)
+
+        // 🚀 PAGE EXIT
+        document.querySelector(".dashboard").classList.add("page-exit")
+
+        setTimeout(() => {
+            window.location.href = "hod-students.html"
+        }, 400)
+
+    }, 600)
 }
 
-/* -------- Calculate attendance percentage -------- */
+
+/* -------- LOGOUT -------- */
+
+function logout() {
+
+    const btn = event.target
+
+    btn.classList.add("loading")
+    btn.innerText = ""
+
+    setTimeout(() => {
+
+        localStorage.removeItem("hodName")
+        localStorage.removeItem("hodDepartment")
+
+        document.querySelector(".dashboard").classList.add("page-exit")
+
+        setTimeout(() => {
+            window.location.href = "index.html"
+        }, 400)
+
+    }, 700)
+}
+
+
+/* -------- CALCULATE -------- */
 
 function calculateSubjectPercentage(usn, subject, department, program, sem, section) {
 
@@ -129,21 +181,12 @@ function calculateSubjectPercentage(usn, subject, department, program, sem, sect
             let record = data.find(r => r.usn === usn)
 
             if (record) {
-
                 total++
-
-                if (record.status === "Present") {
-                    present++
-                }
-
+                if (record.status === "Present") present++
             }
-
         }
-
     }
 
     if (total === 0) return "0%"
-
     return Math.round((present / total) * 100) + "%"
-
 }
