@@ -296,13 +296,19 @@ window.onload = function () {
     updateCurrentTime()
     setInterval(updateCurrentTime, 1000)
 
+    // 🔥 INITIAL LOAD FIX
     updateDisplayTime()
     updateTimeRange()
 
+    // 🔥 EVENT LISTENERS
     document.getElementById("classTime")?.addEventListener("change", () => {
         updateDisplayTime()
         updateTimeRange()
     })
 
     document.getElementById("numClasses")?.addEventListener("input", updateTimeRange)
+}
+
+function editAttendance() {
+    window.location.href = "edit-attendance.html"
 }
