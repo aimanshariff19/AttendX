@@ -1,14 +1,19 @@
 function studentLogin() {
 
-    const studentId = document.getElementById("studentId").value.trim()
-    const password = document.getElementById("password").value.trim()
+    const idInput = document.getElementById("studentId")
+    const passInput = document.getElementById("password")
     const error = document.getElementById("error")
+    const btn = document.getElementById("loginBtn")
+    const card = document.querySelector(".login-container")
+
+    const studentId = idInput.value.trim()
+    const password = passInput.value.trim()
 
     error.innerText = ""
 
     // 🔹 Validation
     if (!studentId || !password) {
-        error.innerText = "Please fill all fields"
+        showError("Please fill all fields")
         return
     }
 
@@ -28,7 +33,6 @@ function studentLogin() {
             foundStudent = match
             studentClassKey = key
 
-            // OPTIONAL (for other features)
             const [department, program, sem, section] = key.split("_")
 
             localStorage.setItem("branch", program)
@@ -42,22 +46,55 @@ function studentLogin() {
     // 🔥 SUCCESS LOGIN
     if (foundStudent) {
 
-        localStorage.setItem("role", "student")
+        // 🌀 LOADING
+        btn.classList.add("loading")
+        btn.innerText = ""
 
-        // ✅ MATCHING DASHBOARD KEYS
-        localStorage.setItem("studentUSN", foundStudent.usn)
-        localStorage.setItem("studentName", foundStudent.name)
-        localStorage.setItem("studentClass", studentClassKey)
+        setTimeout(() => {
 
-        window.location.href = "student-dashboard.html"
+            localStorage.setItem("role", "student")
+            localStorage.setItem("studentUSN", foundStudent.usn)
+            localStorage.setItem("studentName", foundStudent.name)
+            localStorage.setItem("studentClass", studentClassKey)
+
+            // 🚀 PAGE EXIT
+            document.querySelector(".login-container").classList.add("page-exit")
+
+            setTimeout(() => {
+                window.location.href = "student-dashboard.html"
+            }, 400)
+
+        }, 700)
 
     } else {
-        error.innerText = "Invalid Student ID or Password"
+        showError("Invalid Student ID or Password ❌")
+    }
+
+
+    /* -------- ERROR HANDLER -------- */
+
+    function showError(msg) {
+
+        error.innerText = msg
+
+        card.style.animation = "shake 0.4s"
+
+        idInput.classList.add("input-error")
+        passInput.classList.add("input-error")
+
+        passInput.value = ""
+
+        setTimeout(() => {
+            card.style.animation = ""
+            idInput.classList.remove("input-error")
+            passInput.classList.remove("input-error")
+        }, 500)
     }
 }
 
 
-// 👁️ PASSWORD TOGGLE (SAFE)
+/* -------- PASSWORD TOGGLE -------- */
+
 document.addEventListener("DOMContentLoaded", () => {
 
     const eyeIcon = document.getElementById("eyeIcon")
