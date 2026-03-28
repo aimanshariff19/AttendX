@@ -56,6 +56,18 @@ function formatTo12Hour(time24) {
 }
 
 
+/* -------- 🔥 DISPLAY SELECTED TIME -------- */
+
+function updateDisplayTime() {
+
+    const time = document.getElementById("classTime")?.value
+    if (!time) return
+
+    const formatted = formatTo12Hour(time)
+    setText("displayTime", formatted)
+}
+
+
 /* -------- TIME RANGE -------- */
 
 function updateTimeRange() {
@@ -320,7 +332,7 @@ function checkSubmissionStatus() {
 
 window.onload = function () {
 
-    // 🔥 AUTO DATE (YOUR FEATURE)
+    // 🔥 AUTO DATE
     const today = new Date().toISOString().split("T")[0]
     document.getElementById("date").value = today
 
@@ -334,6 +346,7 @@ window.onload = function () {
     document.getElementById("classTime")?.addEventListener("change", () => {
         checkSubmissionStatus()
         updateTimeRange()
+        updateDisplayTime() // 🔥 NEW
     })
 
     document.getElementById("numClasses")?.addEventListener("input", updateTimeRange)
