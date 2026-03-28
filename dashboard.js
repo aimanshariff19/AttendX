@@ -205,3 +205,57 @@ function showMessage(text, type) {
 /* -------- INIT -------- */
 
 document.addEventListener("DOMContentLoaded", loadStudents)
+
+function loadCourseCards() {
+
+    const container = document.getElementById("courseCards")
+    if (!container) return
+
+    container.innerHTML = ""
+
+    if (typeof timetable === "undefined") {
+        container.innerHTML = "<p>No data available</p>"
+        return
+    }
+
+    const unique = []
+
+    timetable.forEach(cls => {
+
+        const key = `${cls.subject}_${cls.program}_${cls.sem}_${cls.section}`
+
+        if (!unique.find(u => u.key === key)) {
+            unique.push({ ...cls, key })
+        }
+    })
+
+    unique.forEach(course => {
+
+        const card = document.createElement("div")
+        card.className = "card"
+
+        card.innerHTML = `
+            <p><strong>Subject:</strong> ${course.subject}</p>
+            <p><strong>Branch:</strong> ${course.program}</p>
+            <p><strong>Semester:</strong> ${course.sem}</p>
+            <p><strong>Section:</strong> ${course.section}</p>
+
+            <button onclick="openCourse('${course.subject}','${course.program}','${course.sem}','${course.section}')">
+                View
+            </button>
+        `
+
+        container.appendChild(card)
+    })
+}
+
+function openCourse(subject, program, sem, section) {
+    localStorage.setItem("subject", subject)
+    localStorage.setItem("program", program)
+    localStorage.setItem("sem", sem)
+    localStorage.setItem("section", section)
+
+    window.location.href = "attendance.html"
+}
+
+document.addEventListener("DOMContentLoaded", loadCourseCards)
