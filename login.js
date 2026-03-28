@@ -1,55 +1,88 @@
+/* -------- LOGIN -------- */
+
 function login() {
 
     const username = document.getElementById("username")
     const password = document.getElementById("password")
     const loginCard = document.querySelector(".login-container")
     const error = document.getElementById("error")
+    const btn = document.getElementById("loginBtn")
 
     error.innerText = ""
 
-    /* -------- Faculty Login -------- */
+    const user = username.value.trim()
+    const pass = password.value.trim()
 
-    if (username.value === "faculty1" && password.value === "1234") {
+    /* -------- HELPER: SUCCESS -------- */
 
-        localStorage.setItem("role", "faculty")
-        localStorage.setItem("faculty", "faculty1")
-        localStorage.setItem("facultyName", "Prof.Keerthi")
-        localStorage.setItem("department", "CSE")
+    function successLogin(role, data, redirectPage) {
 
-        window.location.href = "dashboard.html"
+        // 🌀 LOADING
+        btn.classList.add("loading")
+        btn.innerText = ""
+
+        setTimeout(() => {
+
+            Object.keys(data).forEach(key => {
+                localStorage.setItem(key, data[key])
+            })
+
+            // 🚀 PAGE EXIT
+            document.querySelector(".login-container").classList.add("page-exit")
+
+            setTimeout(() => {
+                window.location.href = redirectPage
+            }, 400)
+
+        }, 700)
+    }
+
+    /* -------- FACULTY LOGIN -------- */
+
+    if (user === "faculty1" && pass === "1234") {
+
+        successLogin("faculty", {
+            role: "faculty",
+            faculty: "faculty1",
+            facultyName: "Prof.Keerthi",
+            department: "CSE"
+        }, "dashboard.html")
+
         return
     }
 
-    if (username.value === "faculty2" && password.value === "1234") {
+    if (user === "faculty2" && pass === "1234") {
 
-        localStorage.setItem("role", "faculty")
-        localStorage.setItem("faculty", "faculty2")
-        localStorage.setItem("facultyName", "Prof.Geeta")
-        localStorage.setItem("department", "CSE")
+        successLogin("faculty", {
+            role: "faculty",
+            faculty: "faculty2",
+            facultyName: "Prof.Geeta",
+            department: "CSE"
+        }, "dashboard.html")
 
-        window.location.href = "dashboard.html"
         return
     }
 
-    /* -------- HOD Login -------- */
+    /* -------- HOD LOGIN -------- */
 
     const hod = hods.find(
-        h => h.username === username.value && h.password === password.value
+        h => h.username === user && h.password === pass
     )
 
     if (hod) {
 
-        localStorage.setItem("role", "hod")
-        localStorage.setItem("hodDepartment", hod.department)
-        localStorage.setItem("hodName", hod.name)
+        successLogin("hod", {
+            role: "hod",
+            hodDepartment: hod.department,
+            hodName: hod.name
+        }, "hod-dashboard.html")
 
-        window.location.href = "hod-dashboard.html"
         return
     }
 
-    /* -------- Invalid Login -------- */
+    /* -------- INVALID LOGIN -------- */
 
-    error.innerText = "Invalid Login"
+    error.innerText = "Invalid username or password ❌"
 
     loginCard.classList.add("shake")
 
@@ -62,12 +95,11 @@ function login() {
         loginCard.classList.remove("shake")
         username.classList.remove("input-error")
         password.classList.remove("input-error")
-    }, 600)
-
+    }, 500)
 }
 
 
-/* -------- Toggle Password Visibility -------- */
+/* -------- PASSWORD TOGGLE -------- */
 
 document.addEventListener("DOMContentLoaded", () => {
 
