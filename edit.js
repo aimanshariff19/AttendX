@@ -21,7 +21,6 @@ const table = document.getElementById("studentRows")
 /* -------- Message box -------- */
 
 function showMessage(text, type) {
-
     const box = document.getElementById("messageBox")
     if (!box) return
 
@@ -34,7 +33,7 @@ function showMessage(text, type) {
     }, 3000)
 }
 
-/* -------- Load previous attendance dates -------- */
+/* -------- Load Dates -------- */
 
 function loadAvailableDates() {
 
@@ -48,15 +47,12 @@ function loadAvailableDates() {
         const key = localStorage.key(i)
 
         if (key && key.startsWith(prefix)) {
-
             const date = key.substring(prefix.length)
             dates.push(date)
-
         }
     }
 
     if (dates.length === 0) {
-
         const option = document.createElement("option")
         option.value = ""
         option.textContent = "No attendance records"
@@ -67,16 +63,14 @@ function loadAvailableDates() {
     dates.sort().reverse()
 
     dates.forEach(date => {
-
         const option = document.createElement("option")
         option.value = date
         option.textContent = date
         dateDropdown.appendChild(option)
-
     })
 }
 
-/* -------- Calculate attendance percentage -------- */
+/* -------- Percentage -------- */
 
 function calculatePercentage(usn) {
 
@@ -89,81 +83,73 @@ function calculatePercentage(usn) {
 
         if (key && key.startsWith(`${subject}_${department}_${program}_${sem}_${section}_`)) {
 
-            let data = JSON.parse(localStorage.getItem(key) || "[]")
+            let stored = JSON.parse(localStorage.getItem(key) || "{}")
+            let records = stored.data || stored   // 🔥 FIX (important)
 
-            let record = data.find(r => r.usn === usn)
+            let record = records.find(r => r.usn === usn)
 
             if (record) {
-
                 total++
-
                 if (record.status === "Present") present++
-
             }
         }
     }
 
-    if (total === 0) return 0
-
-    return Math.round((present / total) * 100)
+    return total === 0 ? 0 : Math.round((present / total) * 100)
 }
 
-/* -------- Show reason box when edited -------- */
+/* -------- Toggle Reason + Color -------- */
 
-function toggleReasonBox(toggle) {
+function handleToggle(toggle) {
 
     const row = toggle.closest("tr")
     const reasonBox = row.querySelector(".reasonBox")
 
+    // Show reason box if changed
     if (toggle.checked !== toggle.defaultChecked) {
-
         reasonBox.style.display = "block"
-
     } else {
-
         reasonBox.style.display = "none"
         reasonBox.value = ""
     }
+
+    // 🔥 Row color
+    row.style.background = toggle.checked ? "#dcfce7" : "#fee2e2"
 }
 
-/* -------- Load attendance for selected date -------- */
+/* -------- Load Attendance -------- */
 
 function loadAttendance() {
 
     const date = dateDropdown.value
 
     if (!date) {
-
         showMessage("Select a date first", "error")
         return
     }
 
     const key = `${subject}_${department}_${program}_${sem}_${section}_${date}`
+    const saved = JSON.parse(localStorage.getItem(key))
 
-    const savedAttendance = localStorage.getItem(key)
-
-    if (!savedAttendance) {
-
-        showMessage("Attendance not found for selected date", "error")
+    if (!saved) {
+        showMessage("Attendance not found", "error")
         return
     }
 
-    const data = JSON.parse(savedAttendance)
+    const records = saved.data || saved   // 🔥 FIX
 
     table.innerHTML = ""
 
     studentsList.forEach(student => {
 
-        const record = data.find(r => r.usn === student.usn)
-
-        const checked = record && record.status === "Present" ? "checked" : ""
+        const record = records.find(r => r.usn === student.usn)
+        const isPresent = record && record.status === "Present"
 
         const percent = calculatePercentage(student.usn)
 
         let row = document.createElement("tr")
 
         row.innerHTML = `
-
 <td>${student.usn}</td>
 <td>${student.name}</td>
 <td>${percent}%</td>
@@ -172,35 +158,35 @@ function loadAttendance() {
 <label class="toggle-switch">
 <input type="checkbox"
 data-usn="${student.usn}"
-${checked}
-onchange="toggleReasonBox(this)">
+${isPresent ? "checked" : ""}>
 <span class="slider"></span>
 </label>
 </td>
 
 <td>
-<textarea
-class="reasonBox"
-placeholder="Enter reason for edit"
-style="display:none"></textarea>
+<textarea class="reasonBox" placeholder="Enter reason" style="display:none"></textarea>
 </td>
-
 `
 
         table.appendChild(row)
     })
 
-    showMessage("Attendance loaded successfully 🎉", "success")
+    // 🔥 ADD EVENTS + COLORS
+    document.querySelectorAll(".toggle-switch input").forEach(toggle => {
+        toggle.addEventListener("change", () => handleToggle(toggle))
+        handleToggle(toggle)
+    })
+
+    showMessage("Attendance loaded 🎉", "success")
 }
 
-/* -------- Update attendance -------- */
+/* -------- Update -------- */
 
 function updateAttendance() {
 
     const date = dateDropdown.value
 
     if (!date) {
-
         showMessage("Select a date first", "error")
         return
     }
@@ -217,46 +203,41 @@ function updateAttendance() {
         const usn = toggle.dataset.usn
 
         if (toggle.checked !== toggle.defaultChecked && reasonBox.value.trim() === "") {
-
             reasonMissing = true
             reasonBox.style.border = "1px solid red"
         }
 
         attendanceData.push({
-            usn: usn,
-            status: status
+            usn,
+            status
         })
     })
 
     if (reasonMissing) {
-
-        showMessage("Please enter reason for edited attendance", "error")
+        showMessage("Enter reason for changes", "error")
         return
     }
 
     const key = `${subject}_${department}_${program}_${sem}_${section}_${date}`
 
-    localStorage.setItem(key, JSON.stringify(attendanceData))
+    // 🔥 SAVE SAME STRUCTURE
+    localStorage.setItem(key, JSON.stringify({
+        data: attendanceData
+    }))
 
-    showMessage("Attendance updated successfully 🎉", "success")
+    showMessage("Updated successfully ✅", "success")
 
     setTimeout(() => {
         window.location.href = "attendance.html"
     }, 1200)
 }
 
-/* -------- Initialize page -------- */
+/* -------- INIT -------- */
 
 loadAvailableDates()
 
-/* -------- Back Button -------- */
+/* -------- Back -------- */
 
 function goBack() {
-
-    if (!localStorage.getItem("subject")) {
-        window.location.href = "dashboard.html"
-        return
-    }
-
     window.location.href = "attendance.html"
 }
