@@ -60,7 +60,7 @@
             flex-wrap: wrap;
         }
 
-        select {
+        input[type="date"] {
             padding: 8px;
             border-radius: 6px;
             border: 1px solid #d1d5db;
@@ -79,7 +79,6 @@
             background: #4f46e5;
         }
 
-        /* 🔥 BULK ACTIONS */
         .bulk-actions {
             display: flex;
             gap: 10px;
@@ -104,8 +103,6 @@
             padding: 10px;
             text-align: center;
         }
-
-        /* TOGGLE */
 
         .toggle-switch {
             position: relative;
@@ -154,10 +151,6 @@
         .update-btn {
             background: #10b981;
         }
-
-        .update-btn:hover {
-            background: #059669;
-        }
     </style>
 
 </head>
@@ -174,18 +167,18 @@
             <p><strong>Program:</strong> <span id="program"></span></p>
             <p><strong>Semester:</strong> <span id="sem"></span></p>
             <p><strong>Section:</strong> <span id="section"></span></p>
-            <p><strong>Class Timing:</strong> <span id="classTime"></span></p>
         </div>
 
         <div id="messageBox" class="message-box"></div>
 
+        <!-- 🔥 DATE PICKER -->
         <div class="attendance-controls">
             <label>Select Date:</label>
-            <select id="attendanceDate"></select>
+            <input type="date" id="attendanceDate">
             <button onclick="loadAttendance()">Load</button>
         </div>
 
-        <!-- 🔥 BULK ACTIONS -->
+        <!-- BULK -->
         <div class="bulk-actions">
             <button onclick="markAllEdit('Present')">All Present</button>
             <button onclick="markAllEdit('Absent')">All Absent</button>
