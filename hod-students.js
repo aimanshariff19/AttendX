@@ -1,4 +1,44 @@
-/* -------- Class Details -------- */
+/* -------- 💧 RIPPLE -------- */
+
+document.addEventListener("click", function (e) {
+    const btn = e.target.closest("button")
+    if (!btn) return
+
+    const circle = document.createElement("span")
+    circle.classList.add("ripple")
+
+    const rect = btn.getBoundingClientRect()
+    circle.style.left = (e.clientX - rect.left) + "px"
+    circle.style.top = (e.clientY - rect.top) + "px"
+
+    btn.appendChild(circle)
+    setTimeout(() => circle.remove(), 600)
+})
+
+
+/* -------- MESSAGE -------- */
+
+function showMessage(text, type = "success") {
+    let box = document.getElementById("messageBox")
+
+    if (!box) {
+        box = document.createElement("div")
+        box.id = "messageBox"
+        box.className = "message-box"
+        document.querySelector(".dashboard").prepend(box)
+    }
+
+    box.innerText = text
+    box.className = "message-box " + type
+    box.style.display = "block"
+
+    setTimeout(() => {
+        box.style.display = "none"
+    }, 2500)
+}
+
+
+/* -------- CLASS DETAILS -------- */
 
 const department = localStorage.getItem("department")
 const program = localStorage.getItem("program")
@@ -10,7 +50,8 @@ document.getElementById("program").innerText = program
 document.getElementById("sem").innerText = sem
 document.getElementById("section").innerText = section
 
-/* -------- Students -------- */
+
+/* -------- STUDENTS -------- */
 
 const classKey = `${department}_${program}_${sem}_${section}`
 const studentList = students[classKey] || []
@@ -18,7 +59,8 @@ const studentList = students[classKey] || []
 const table = document.getElementById("studentRows")
 const tableHead = document.getElementById("tableHead")
 
-/* -------- Subjects -------- */
+
+/* -------- SUBJECTS -------- */
 
 const classSubjects = courses.filter(course =>
     course.department === department &&
@@ -27,7 +69,8 @@ const classSubjects = courses.filter(course =>
     course.section === section
 )
 
-/* -------- Create Subject Columns -------- */
+
+/* -------- SUBJECT HEADERS -------- */
 
 function loadSubjectHeaders() {
 
@@ -42,7 +85,8 @@ function loadSubjectHeaders() {
 
 }
 
-/* -------- Calculate Attendance -------- */
+
+/* -------- CALCULATE -------- */
 
 function calculatePercentage(usn, subject) {
 
@@ -60,49 +104,37 @@ function calculatePercentage(usn, subject) {
             let record = data.find(r => r.usn === usn)
 
             if (record) {
-
                 total++
-
-                if (record.status === "Present") {
-                    present++
-                }
-
+                if (record.status === "Present") present++
             }
-
         }
-
     }
 
     if (total === 0) return 0
-
     return Math.round((present / total) * 100)
-
 }
 
-/* -------- Color Logic -------- */
+
+/* -------- COLOR -------- */
 
 function getColor(percent) {
 
     if (percent >= 85) return "eligible"
-
     if (percent >= 75) return "average"
-
     return "not-eligible"
-
 }
 
-/* -------- Load Students -------- */
+
+/* -------- LOAD STUDENTS -------- */
 
 function loadStudents() {
 
     table.innerHTML = ""
 
-    studentList.forEach(student => {
+    studentList.forEach((student, index) => {
 
         let row = `
-
-<tr>
-
+<tr style="animation: fadeUp ${0.3 + index * 0.05}s ease">
 <td>${student.usn}</td>
 <td>${student.name}</td>
 <td>${student.parentPhone || "-"}</td>
@@ -111,7 +143,6 @@ function loadStudents() {
         classSubjects.forEach(sub => {
 
             let percent = calculatePercentage(student.usn, sub.subject)
-
             let colorClass = getColor(percent)
 
             row += `<td class="${colorClass}">${percent}%</td>`
@@ -121,63 +152,91 @@ function loadStudents() {
         row += "</tr>"
 
         table.innerHTML += row
-
     })
-
 }
 
-/* -------- Initial Load -------- */
+
+/* -------- INIT -------- */
 
 window.onload = function () {
-
     loadSubjectHeaders()
     loadStudents()
-
 }
 
-/* -------- Auto Refresh -------- */
+
+/* -------- AUTO REFRESH -------- */
 
 window.addEventListener("storage", () => {
     loadStudents()
 })
 
-/* -------- Back Button -------- */
+
+/* -------- BACK -------- */
 
 function goBack() {
-    window.location.href = "hod-dashboard.html"
+
+    document.querySelector(".dashboard").classList.add("page-exit")
+
+    setTimeout(() => {
+        window.location.href = "hod-dashboard.html"
+    }, 400)
 }
 
-/* -------- Export to Excel -------- */
+
+/* -------- EXPORT (UPGRADED) -------- */
 
 function exportClassReport() {
 
-    const rows = document.querySelectorAll("#studentRows tr")
+    const btn = document.getElementById("exportBtn")
 
-    if (rows.length === 0) {
-        alert("No data to export")
-        return
-    }
+    btn.classList.add("loading")
+    btn.innerText = ""
 
-    let csv = "USN,Name,Parent Phone\n"
+    setTimeout(() => {
 
-    rows.forEach(row => {
-        const cols = row.querySelectorAll("td")
+        if (studentList.length === 0) {
+            showMessage("No data to export ❌", "error")
+            btn.classList.remove("loading")
+            btn.innerText = "Export Class Report"
+            return
+        }
 
-        let usn = cols[0]?.innerText || ""
-        let name = cols[1]?.innerText || ""
-        let phone = cols[2]?.innerText || ""
+        // 🔥 HEADER WITH SUBJECTS
+        let csv = "USN,Name,Parent Phone"
 
-        csv += `${usn},${name},${phone}\n`
-    })
+        classSubjects.forEach(sub => {
+            csv += `,${sub.subject}`
+        })
 
-    // Create file
-    const blob = new Blob([csv], { type: "text/csv" })
-    const url = URL.createObjectURL(blob)
+        csv += "\n"
 
-    const a = document.createElement("a")
-    a.href = url
-    a.download = "class_report.csv"
-    a.click()
+        // 🔥 DATA
+        studentList.forEach(student => {
 
-    URL.revokeObjectURL(url)
+            let row = `${student.usn},${student.name},${student.parentPhone || "-"}`
+
+            classSubjects.forEach(sub => {
+                let percent = calculatePercentage(student.usn, sub.subject)
+                row += `,${percent}%`
+            })
+
+            csv += row + "\n"
+        })
+
+        const blob = new Blob([csv], { type: "text/csv" })
+        const url = URL.createObjectURL(blob)
+
+        const a = document.createElement("a")
+        a.href = url
+        a.download = "class_report.csv"
+        a.click()
+
+        URL.revokeObjectURL(url)
+
+        btn.classList.remove("loading")
+        btn.innerText = "Export Class Report"
+
+        showMessage("Export successful 📁", "success")
+
+    }, 700)
 }
