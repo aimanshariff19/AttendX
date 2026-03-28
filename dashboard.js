@@ -1,4 +1,4 @@
-/* -------- SAFE TEXT (HTML ENABLED) -------- */
+/* -------- SAFE TEXT -------- */
 
 function setText(id, value) {
     const el = document.getElementById(id)
@@ -6,9 +6,30 @@ function setText(id, value) {
 }
 
 
-/* -------- GET LOGGED FACULTY -------- */
+/* -------- USER -------- */
 
 const faculty = localStorage.getItem("faculty")
+
+
+/* -------- 💧 RIPPLE EFFECT -------- */
+
+document.addEventListener("click", function (e) {
+
+    const btn = e.target.closest("button")
+    if (!btn) return
+
+    const circle = document.createElement("span")
+    circle.classList.add("ripple")
+
+    const rect = btn.getBoundingClientRect()
+
+    circle.style.left = (e.clientX - rect.left) + "px"
+    circle.style.top = (e.clientY - rect.top) + "px"
+
+    btn.appendChild(circle)
+
+    setTimeout(() => circle.remove(), 600)
+})
 
 
 /* -------- FACULTY DETAILS -------- */
@@ -20,10 +41,8 @@ function loadFacultyDetails() {
     const info = facultyList.find(f => f.id === faculty)
     if (!info) return
 
-    setText("welcomeText", `Welcome ${info.name}`)
     setText("facultyName", info.name)
 
-    // 🔥 styled department
     setText(
         "facultyDept",
         `<span style="font-weight:500;">Department:</span> ${info.department}`
@@ -71,7 +90,7 @@ function loadTodaySchedule() {
 
     box.innerHTML = ""
 
-    todayClasses.forEach(cls => {
+    todayClasses.forEach((cls, index) => {
 
         const div = document.createElement("div")
         div.className = "tt-item"
@@ -80,6 +99,8 @@ function loadTodaySchedule() {
             <strong>${cls.subject}</strong><br>
             ${cls.program} • Sem ${cls.sem} • Sec ${cls.section} • Room ${cls.room}
         `
+
+        div.style.animation = `fadeUp ${0.3 + index * 0.1}s ease`
 
         box.appendChild(div)
     })
@@ -113,37 +134,70 @@ function loadCourseCards() {
         return
     }
 
-    unique.forEach(course => {
+    unique.forEach((course, index) => {
 
         const card = document.createElement("div")
         card.className = "card"
 
         card.innerHTML = `
-            <p><span style="font-weight:600;">Subject:</span> ${course.subject}</p>
-            <p><span style="font-weight:600;">Branch:</span> ${course.program}</p>
-            <p><span style="font-weight:600;">Semester:</span> ${course.sem}</p>
-            <p><span style="font-weight:600;">Section:</span> ${course.section}</p>
+            <p><strong>Subject:</strong> ${course.subject}</p>
+            <p><strong>Branch:</strong> ${course.program}</p>
+            <p><strong>Semester:</strong> ${course.sem}</p>
+            <p><strong>Section:</strong> ${course.section}</p>
 
             <button onclick="openCourse('${course.subject}','${course.program}','${course.sem}','${course.section}')">
                 Take Attendance
             </button>
         `
 
+        card.style.animation = `fadeUp ${0.4 + index * 0.1}s ease`
+
         container.appendChild(card)
     })
 }
 
 
-/* -------- OPEN COURSE -------- */
+/* -------- 🚀 OPEN COURSE -------- */
 
 function openCourse(subject, program, sem, section) {
 
-    localStorage.setItem("subject", subject)
-    localStorage.setItem("program", program)
-    localStorage.setItem("sem", sem)
-    localStorage.setItem("section", section)
+    // 🔥 PAGE EXIT
+    document.querySelector(".dashboard").classList.add("page-exit")
 
-    window.location.href = "attendance.html"
+    setTimeout(() => {
+
+        localStorage.setItem("subject", subject)
+        localStorage.setItem("program", program)
+        localStorage.setItem("sem", sem)
+        localStorage.setItem("section", section)
+
+        window.location.href = "attendance.html"
+
+    }, 400)
+}
+
+
+/* -------- 🚪 LOGOUT -------- */
+
+function logout() {
+
+    const btn = event.target
+
+    // 🔥 LOADING EFFECT
+    btn.classList.add("loading")
+    btn.innerText = ""
+
+    setTimeout(() => {
+
+        localStorage.removeItem("faculty")
+
+        document.querySelector(".dashboard").classList.add("page-exit")
+
+        setTimeout(() => {
+            window.location.href = "index.html"
+        }, 400)
+
+    }, 800)
 }
 
 
@@ -152,7 +206,7 @@ function openCourse(subject, program, sem, section) {
 document.addEventListener("DOMContentLoaded", () => {
 
     if (!faculty) {
-        alert("No faculty logged in ❌")
+        document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>No faculty logged in ❌</h2>"
         return
     }
 

@@ -1,3 +1,21 @@
+/* -------- 💧 RIPPLE -------- */
+
+document.addEventListener("click", function (e) {
+    const btn = e.target.closest("button")
+    if (!btn) return
+
+    const circle = document.createElement("span")
+    circle.classList.add("ripple")
+
+    const rect = btn.getBoundingClientRect()
+    circle.style.left = (e.clientX - rect.left) + "px"
+    circle.style.top = (e.clientY - rect.top) + "px"
+
+    btn.appendChild(circle)
+    setTimeout(() => circle.remove(), 600)
+})
+
+
 /* -------- FORMAT TIME -------- */
 
 function formatTo12Hour(time24) {
@@ -52,13 +70,11 @@ function showMessage(text, type) {
 }
 
 
-/* -------- 🔥 LOAD TIMES (FIXED PROPERLY) -------- */
+/* -------- LOAD TIMES -------- */
 
 function loadTimesForDate() {
 
     const date = dateDropdown.value
-
-    console.log("📅 Selected date:", date)
 
     if (!date) {
         timeDropdown.innerHTML = "<option>Select date first</option>"
@@ -73,9 +89,6 @@ function loadTimesForDate() {
         const key = localStorage.key(i)
         if (!key) continue
 
-        console.log("🔍 Checking key:", key)
-
-        // 🔥 FLEXIBLE MATCH (IMPORTANT FIX)
         if (key.includes(subject) && key.includes(date)) {
 
             const parts = key.split("_")
@@ -96,7 +109,6 @@ function loadTimesForDate() {
 
     if (times.length === 0) {
         timeDropdown.innerHTML = "<option>No classes on this date</option>"
-        console.log("❌ No times found")
         return
     }
 
@@ -108,8 +120,6 @@ function loadTimesForDate() {
 
         timeDropdown.appendChild(option)
     })
-
-    console.log("✅ Times loaded:", times)
 }
 
 
@@ -164,36 +174,46 @@ function handleToggle(toggle) {
 
 function loadAttendance() {
 
-    const date = dateDropdown.value
-    const time = timeDropdown.value
+    const btn = event.target
+    btn.classList.add("loading")
+    btn.innerText = ""
 
-    if (!date || !time) {
-        showMessage("Select date & time", "error")
-        return
-    }
+    setTimeout(() => {
 
-    const key = `${subject}_${department}_${program}_${sem}_${section}_${date}_${time}`
+        const date = dateDropdown.value
+        const time = timeDropdown.value
 
-    const saved = JSON.parse(localStorage.getItem(key))
+        if (!date || !time) {
+            showMessage("Select date & time", "error")
+            btn.classList.remove("loading")
+            btn.innerText = "Load"
+            return
+        }
 
-    if (!saved) {
-        showMessage("Attendance not found", "error")
-        return
-    }
+        const key = `${subject}_${department}_${program}_${sem}_${section}_${date}_${time}`
 
-    const records = saved.data || saved
-    table.innerHTML = ""
+        const saved = JSON.parse(localStorage.getItem(key))
 
-    studentsList.forEach(student => {
+        if (!saved) {
+            showMessage("Attendance not found", "error")
+            btn.classList.remove("loading")
+            btn.innerText = "Load"
+            return
+        }
 
-        const record = records.find(r => r.usn === student.usn)
-        const isPresent = record && record.status === "Present"
+        const records = saved.data || saved
+        table.innerHTML = ""
 
-        const percent = calculatePercentage(student.usn)
+        studentsList.forEach((student, index) => {
 
-        let row = document.createElement("tr")
+            const record = records.find(r => r.usn === student.usn)
+            const isPresent = record && record.status === "Present"
 
-        row.innerHTML = `
+            const percent = calculatePercentage(student.usn)
+
+            let row = document.createElement("tr")
+
+            row.innerHTML = `
 <td>${student.usn}</td>
 <td>${student.name}</td>
 <td>${percent}%</td>
@@ -210,17 +230,23 @@ function loadAttendance() {
 </td>
 `
 
-        table.appendChild(row)
-    })
+            row.style.animation = `fadeUp ${0.3 + index * 0.05}s ease`
 
-    document.querySelectorAll(".toggle-switch input").forEach(toggle => {
+            table.appendChild(row)
+        })
 
-        toggle.defaultChecked = toggle.checked
-        toggle.addEventListener("change", () => handleToggle(toggle))
-        handleToggle(toggle)
-    })
+        document.querySelectorAll(".toggle-switch input").forEach(toggle => {
+            toggle.defaultChecked = toggle.checked
+            toggle.addEventListener("change", () => handleToggle(toggle))
+            handleToggle(toggle)
+        })
 
-    showMessage("Attendance loaded 🎉", "success")
+        btn.classList.remove("loading")
+        btn.innerText = "Load"
+
+        showMessage("Attendance loaded 🎉", "success")
+
+    }, 600)
 }
 
 
@@ -242,55 +268,68 @@ function markAllEdit(status) {
 
 function updateAttendance() {
 
-    const date = dateDropdown.value
-    const time = timeDropdown.value
+    const btn = document.querySelector(".update-btn")
 
-    if (!date || !time) {
-        showMessage("Select date & time", "error")
-        return
-    }
-
-    let attendanceData = []
-    let reasonMissing = false
-
-    document.querySelectorAll("#studentRows tr").forEach(row => {
-
-        const toggle = row.querySelector(".toggle-switch input")
-        const reasonBox = row.querySelector(".reasonBox")
-
-        if (toggle.checked !== toggle.defaultChecked && reasonBox.value.trim() === "") {
-            reasonMissing = true
-            reasonBox.style.border = "1px solid red"
-        }
-
-        attendanceData.push({
-            usn: toggle.dataset.usn,
-            status: toggle.checked ? "Present" : "Absent"
-        })
-    })
-
-    if (reasonMissing) {
-        showMessage("Enter reason for changes", "error")
-        return
-    }
-
-    const key = `${subject}_${department}_${program}_${sem}_${section}_${date}_${time}`
-
-    localStorage.setItem(key, JSON.stringify({
-        data: attendanceData
-    }))
-
-    showMessage("Updated successfully ✅", "success")
+    btn.classList.add("loading")
+    btn.innerText = ""
 
     setTimeout(() => {
-        window.location.href = "attendance.html"
-    }, 1200)
+
+        const date = dateDropdown.value
+        const time = timeDropdown.value
+
+        if (!date || !time) {
+            showMessage("Select date & time", "error")
+            btn.classList.remove("loading")
+            btn.innerText = "Update Attendance"
+            return
+        }
+
+        let attendanceData = []
+        let reasonMissing = false
+
+        document.querySelectorAll("#studentRows tr").forEach(row => {
+
+            const toggle = row.querySelector(".toggle-switch input")
+            const reasonBox = row.querySelector(".reasonBox")
+
+            if (toggle.checked !== toggle.defaultChecked && reasonBox.value.trim() === "") {
+                reasonMissing = true
+                reasonBox.style.border = "1px solid red"
+            }
+
+            attendanceData.push({
+                usn: toggle.dataset.usn,
+                status: toggle.checked ? "Present" : "Absent"
+            })
+        })
+
+        if (reasonMissing) {
+            showMessage("Enter reason for changes", "error")
+            btn.classList.remove("loading")
+            btn.innerText = "Update Attendance"
+            return
+        }
+
+        const key = `${subject}_${department}_${program}_${sem}_${section}_${date}_${time}`
+
+        localStorage.setItem(key, JSON.stringify({
+            data: attendanceData
+        }))
+
+        showMessage("Updated successfully ✅", "success")
+
+        document.querySelector(".dashboard").classList.add("page-exit")
+
+        setTimeout(() => {
+            window.location.href = "attendance.html"
+        }, 500)
+
+    }, 800)
 }
 
 
 /* -------- INIT -------- */
-
-console.log("✅ Edit page loaded")
 
 dateDropdown.addEventListener("change", loadTimesForDate)
 
@@ -298,5 +337,10 @@ dateDropdown.addEventListener("change", loadTimesForDate)
 /* -------- BACK -------- */
 
 function goBack() {
-    window.location.href = "attendance.html"
+
+    document.querySelector(".dashboard").classList.add("page-exit")
+
+    setTimeout(() => {
+        window.location.href = "attendance.html"
+    }, 400)
 }
