@@ -12,24 +12,70 @@ document.getElementById("program").innerText = program || "-"
 document.getElementById("sem").innerText = sem || "-"
 document.getElementById("section").innerText = section || "-"
 
+
 /* -------- Students -------- */
 
+// ❗ Make sure students object exists
 const classKey = `${department}_${program}_${sem}_${section}`
-const studentList = students[classKey] || []
+const studentList = (typeof students !== "undefined" && students[classKey]) ? students[classKey] : []
+
 const table = document.getElementById("studentRows")
 
+
+/* -------- Calculate % -------- */
+
+function calculatePercentage(usn, currentStatus = null) {
+
+    let present = 0
+    let total = 0
+
+    for (let i = 0; i < localStorage.length; i++) {
+
+        let key = localStorage.key(i)
+
+        // 🔥 Only match this class + subject (IMPORTANT FIX)
+        if (key && key.startsWith(`${subject}_${department}_${program}_${sem}_${section}`)) {
+
+            let stored = JSON.parse(localStorage.getItem(key) || "{}")
+            let records = stored.data || stored
+
+            let record = records.find(r => r.usn === usn)
+
+            if (record) {
+                total++
+                if (record.status === "Present") present++
+            }
+        }
+    }
+
+    // 🔥 include current toggle (live session)
+    if (currentStatus !== null) {
+        total++
+        if (currentStatus === "Present") present++
+    }
+
+    return total === 0 ? 0 : Math.round((present / total) * 100)
+}
+
+
+/* -------- Load Students -------- */
+
 function loadStudents() {
+
+    if (!table) return
 
     table.innerHTML = ""
 
     studentList.forEach(student => {
+
+        let percent = calculatePercentage(student.usn)
 
         let row = document.createElement("tr")
 
         row.innerHTML = `
             <td>${student.usn}</td>
             <td>${student.name}</td>
-            <td>-</td>
+            <td class="percent">${percent}%</td>
             <td>
                 <label class="toggle-switch">
                     <input type="checkbox" data-usn="${student.usn}" checked>
@@ -38,22 +84,71 @@ function loadStudents() {
             </td>
         `
 
+        updateRowStyle(row, percent, true)
+
         table.appendChild(row)
+    })
+
+    // 🔥 attach listeners AFTER rendering
+    document.querySelectorAll(".toggle-switch input").forEach(input => {
+        input.addEventListener("change", updateLivePercentage)
     })
 }
 
-/* -------- Submit Attendance (NO TIME) -------- */
+
+/* -------- Row Styling -------- */
+
+function updateRowStyle(row, percent, isPresent) {
+
+    // low attendance warning
+    row.style.borderLeft = percent < 75 ? "5px solid red" : "none"
+
+    // present/absent color
+    row.style.background = isPresent ? "#dcfce7" : "#fee2e2"
+}
+
+
+/* -------- Live Update -------- */
+
+function updateLivePercentage() {
+
+    document.querySelectorAll("#studentRows tr").forEach(row => {
+
+        const input = row.querySelector("input")
+        const usn = input.dataset.usn
+        const percentCell = row.querySelector(".percent")
+
+        const status = input.checked ? "Present" : "Absent"
+
+        let percent = calculatePercentage(usn, status)
+
+        percentCell.innerText = percent + "%"
+
+        updateRowStyle(row, percent, input.checked)
+    })
+}
+
+
+/* -------- Submit Attendance -------- */
 
 function submitAttendance() {
 
-    // Only date (NO TIME anywhere)
+    const btn = document.getElementById("submitBtn")
+
     const date = new Date().toISOString().split("T")[0]
 
     const key = `${subject}_${department}_${program}_${sem}_${section}_${date}`
 
+    // 🔥 prevent duplicate submit
+    if (localStorage.getItem(key)) {
+        showMessage("Already submitted for today ❌", "error")
+        return
+    }
+
     let data = []
 
     document.querySelectorAll(".toggle-switch input").forEach(input => {
+
         data.push({
             usn: input.dataset.usn,
             status: input.checked ? "Present" : "Absent"
@@ -62,32 +157,58 @@ function submitAttendance() {
 
     localStorage.setItem(key, JSON.stringify({ data }))
 
-    // 🔥 cleaner than alert
-    showSuccessMessage("Attendance Submitted ✅")
+    // 🔥 disable button after submit
+    if (btn) {
+        btn.innerText = "Submitted ✅"
+        btn.disabled = true
+    }
+
+    showMessage("Attendance Submitted ✅", "success")
 }
 
-/* -------- Message (NO ALERTS) -------- */
 
-function showSuccessMessage(text) {
+/* -------- Message -------- */
+
+function showMessage(text, type) {
+
     let box = document.getElementById("messageBox")
 
     if (!box) {
-        alert(text) // fallback
+        alert(text)
         return
     }
 
     box.innerText = text
     box.style.display = "block"
-    box.style.background = "#dcfce7"
-    box.style.color = "#166534"
+
+    if (type === "success") {
+        box.style.background = "#dcfce7"
+        box.style.color = "#166534"
+    } else {
+        box.style.background = "#fee2e2"
+        box.style.color = "#991b1b"
+    }
 
     setTimeout(() => {
         box.style.display = "none"
-    }, 2000)
+    }, 2500)
 }
+
 
 /* -------- INIT -------- */
 
 window.onload = function () {
+
+    // 🔥 check if already submitted today → disable button
+    const date = new Date().toISOString().split("T")[0]
+    const key = `${subject}_${department}_${program}_${sem}_${section}_${date}`
+
+    const btn = document.getElementById("submitBtn")
+
+    if (localStorage.getItem(key) && btn) {
+        btn.innerText = "Already Submitted ✅"
+        btn.disabled = true
+    }
+
     loadStudents()
 }
