@@ -7,28 +7,35 @@ body {
     padding: 0;
 }
 
-/* ================= LOGIN PAGE (UPGRADED ONLY) ================= */
+/* ================= LOGIN PAGE (FINAL CLEAN VERSION) ================= */
 
 body.login-page {
-    background: linear-gradient(135deg, #4f46e5, #9333ea);
+    min-height: 100vh;
+    background: #5b3df5;
+    /* solid clean background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
 }
 
 /* CONTAINER */
 
 body.login-page .login-container {
     width: 320px;
-    margin: 80px auto;
     padding: 30px 22px;
     border-radius: 18px;
     text-align: center;
 
-    /* Glassmorphism */
     background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(18px);
     border: 1px solid rgba(255, 255, 255, 0.2);
 
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
-    animation: fadeIn 0.8s ease;
+    animation: fadeIn 0.6s ease;
+
+    box-sizing: border-box;
+    /* IMPORTANT */
 }
 
 /* LOGO */
@@ -56,33 +63,36 @@ body.login-page .college-status {
 body.login-page .system-title {
     margin: 12px 0;
     font-size: 15px;
-    color: #c7d2fe;
+    color: #dcdcff;
 }
 
 /* INPUTS */
 
 body.login-page input {
     width: 100%;
-    padding: 11px;
-    margin: 8px 0;
+    padding: 12px;
+    margin: 10px 0;
     border-radius: 10px;
-    border: none;
-    font-size: 13px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+
+    font-size: 14px;
+    color: white;
 
     background: rgba(255, 255, 255, 0.15);
-    color: white;
-    backdrop-filter: blur(10px);
 
-    transition: 0.3s;
+    box-sizing: border-box;
+    /* FIXES OVERFLOW */
+    transition: 0.25s;
 }
 
 body.login-page input::placeholder {
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.85);
 }
 
 body.login-page input:focus {
     background: rgba(255, 255, 255, 0.25);
-    transform: scale(1.02);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
     outline: none;
 }
 
@@ -98,7 +108,7 @@ body.login-page .eye {
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.8);
     font-size: 13px;
 }
 
@@ -106,27 +116,26 @@ body.login-page .eye {
 
 body.login-page button {
     width: 100%;
-    padding: 11px;
-    margin-top: 12px;
-    border: none;
+    padding: 12px;
+    margin-top: 14px;
     border-radius: 10px;
 
-    background: linear-gradient(135deg, #6366f1, #a855f7);
+    background: #6366f1;
     color: white;
 
     font-size: 14px;
     font-weight: 500;
-    cursor: pointer;
+    border: none;
 
-    transition: 0.3s ease;
+    cursor: pointer;
+    transition: 0.25s;
 }
 
 body.login-page button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    background: #4f46e5;
 }
 
-/* EXTRA LINKS (optional if you add later) */
+/* EXTRA LINKS */
 
 body.login-page .extra-links {
     margin-top: 12px;
@@ -147,96 +156,13 @@ body.login-page .extra-links a:hover {
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(25px);
+        transform: translateY(20px);
     }
 
     to {
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-/* ===== INPUT UPGRADE ===== */
-
-body.login-page input {
-    background: rgba(255, 255, 255, 0.18);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1);
-    font-weight: 500;
-}
-
-body.login-page input:focus {
-    background: rgba(255, 255, 255, 0.28);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
-    transform: scale(1.02);
-}
-
-/* Placeholder brighter */
-
-body.login-page input::placeholder {
-    color: rgba(255, 255, 255, 0.85);
-}
-
-/* ===== PASSWORD EYE FIX ===== */
-
-body.login-page .eye {
-    color: rgba(255, 255, 255, 0.85);
-}
-
-/* ===== BUTTON UPGRADE ===== */
-
-body.login-page button {
-    background: linear-gradient(135deg, #6366f1, #9333ea, #ec4899);
-    background-size: 200% 200%;
-    transition: all 0.4s ease;
-}
-
-/* Hover = premium feel */
-
-body.login-page button:hover {
-    background-position: right center;
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-}
-
-/* Click effect */
-
-body.login-page button:active {
-    transform: scale(0.97);
-}
-
-/* ===== BACKGROUND DEPTH FIX ===== */
-
-body.login-page {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #4f46e5, #9333ea);
-    position: relative;
-    overflow: hidden;
-}
-
-/* TOP GLOW */
-body.login-page::before {
-    content: "";
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    top: -120px;
-    left: -120px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent);
-    filter: blur(100px);
-}
-
-/* BOTTOM GLOW (THIS FIXES YOUR ISSUE 🔥) */
-body.login-page::after {
-    content: "";
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    bottom: -120px;
-    right: -120px;
-    background: radial-gradient(circle, rgba(236, 72, 153, 0.25), transparent);
-    filter: blur(120px);
 }
 
 /* ================= DASHBOARD (UNCHANGED) ================= */
