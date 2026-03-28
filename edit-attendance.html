@@ -1,15 +1,127 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Edit Attendance</title>
 
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', Arial, sans-serif;
+            background: #f3f4f6;
+        }
+
+        .dashboard {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #111827;
+        }
+
+        /* CARD */
+
+        .card {
+            background: white;
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+        }
+
+        /* MESSAGE */
+
+        .message-box {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        /* CONTROLS */
+
+        .attendance-controls {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .attendance-controls select {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+        }
+
+        /* BUTTON */
+
+        button {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: none;
+            background: #6366f1;
+            color: white;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        button:hover {
+            background: #4f46e5;
+        }
+
+        /* TABLE */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        th {
+            background: #6366f1;
+            color: white;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        tbody tr:hover {
+            background: #eef2ff;
+        }
+
+        /* UPDATE BUTTON */
+
+        .update-btn-container {
+            margin-top: 15px;
+            text-align: right;
+        }
+
+        .update-btn {
+            background: #10b981;
+        }
+
+        .update-btn:hover {
+            background: #059669;
+        }
+    </style>
 
 </head>
 
@@ -20,35 +132,25 @@
         <h1>AttendX / Faculty Dashboard / Edit Attendance</h1>
 
         <div class="card">
-
             <p><strong>Course:</strong> <span id="subject"></span></p>
-
             <p><strong>Department:</strong> <span id="department"></span></p>
             <p><strong>Program:</strong> <span id="program"></span></p>
-
             <p><strong>Semester:</strong> <span id="sem"></span></p>
             <p><strong>Section:</strong> <span id="section"></span></p>
-
             <p><strong>Class Timing:</strong> <span id="classTime"></span></p>
-
         </div>
 
         <div id="messageBox" class="message-box"></div>
 
         <div class="attendance-controls">
-
             <label for="attendanceDate">Select Attendance Date:</label>
-
             <select id="attendanceDate"></select>
-
             <button onclick="loadAttendance()">Load Attendance</button>
-
         </div>
 
         <table id="attendanceTable">
 
             <thead>
-
                 <tr>
                     <th>USN</th>
                     <th>Name</th>
@@ -56,7 +158,6 @@
                     <th>Status</th>
                     <th>Edit Reason</th>
                 </tr>
-
             </thead>
 
             <tbody id="studentRows"></tbody>
@@ -64,9 +165,9 @@
         </table>
 
         <div class="update-btn-container">
-
-            <button id="updateBtn" class="update-btn" onclick="updateAttendance()">Update Attendance</button>
-
+            <button id="updateBtn" class="update-btn" onclick="updateAttendance()">
+                Update Attendance
+            </button>
         </div>
 
     </div>
