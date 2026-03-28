@@ -189,12 +189,7 @@ window.addEventListener("storage", () => {
 
 /* -------- BACK -------- */
 function goBack() {
-
-    document.querySelector(".dashboard").classList.add("page-exit")
-
-    setTimeout(() => {
-        window.location.href = "hod-dashboard.html"
-    }, 400)
+    window.history.back()
 }
 
 /* -------- EXPORT -------- */
