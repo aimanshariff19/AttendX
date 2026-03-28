@@ -81,7 +81,6 @@ if (container) {
 <p><strong>Program:</strong> ${course.program}</p>
 <p><strong>Semester:</strong> ${course.sem}</p>
 <p><strong>Section:</strong> ${course.section}</p>
-<p><strong>Class Timing:</strong> ${course.time}</p>
 
 ${takenToday ? `<p style="color:#16a34a;font-weight:600">✔ Attendance taken today</p>` : ""}
 
@@ -97,8 +96,7 @@ ${takenToday ? `<p style="color:#16a34a;font-weight:600">✔ Attendance taken to
                 course.department,
                 course.program,
                 course.sem,
-                course.section,
-                course.time
+                course.section
             )
 
         })
@@ -119,7 +117,6 @@ function takeAttendance(subject, department, program, sem, section, time) {
     localStorage.setItem("program", program)
     localStorage.setItem("sem", sem)
     localStorage.setItem("section", section)
-    localStorage.setItem("classTime", time)
 
     /* 🔥 FIX ADDED HERE */
     localStorage.setItem("prevPage", "dashboard.html")
