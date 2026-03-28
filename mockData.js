@@ -1,3 +1,14 @@
+const facultyInfo = {
+    faculty1: {
+        name: "Dr. Kumar",
+        department: "CSE"
+    },
+    faculty2: {
+        name: "Dr. Sharma",
+        department: "CSE"
+    }
+}
+
 /* -------- Courses -------- */
 
 const courses = [
