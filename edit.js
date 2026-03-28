@@ -30,7 +30,7 @@ function showMessage(text, type) {
 
     setTimeout(() => {
         box.style.display = "none"
-    }, 3000)
+    }, 2500)
 }
 
 /* -------- Load Dates -------- */
@@ -84,7 +84,7 @@ function calculatePercentage(usn) {
         if (key && key.startsWith(`${subject}_${department}_${program}_${sem}_${section}_`)) {
 
             let stored = JSON.parse(localStorage.getItem(key) || "{}")
-            let records = stored.data || stored   // 🔥 FIX (important)
+            let records = stored.data || stored
 
             let record = records.find(r => r.usn === usn)
 
@@ -98,14 +98,14 @@ function calculatePercentage(usn) {
     return total === 0 ? 0 : Math.round((present / total) * 100)
 }
 
-/* -------- Toggle Reason + Color -------- */
+/* -------- Toggle + Reason + Color -------- */
 
 function handleToggle(toggle) {
 
     const row = toggle.closest("tr")
     const reasonBox = row.querySelector(".reasonBox")
 
-    // Show reason box if changed
+    // show reason only if changed
     if (toggle.checked !== toggle.defaultChecked) {
         reasonBox.style.display = "block"
     } else {
@@ -113,7 +113,7 @@ function handleToggle(toggle) {
         reasonBox.value = ""
     }
 
-    // 🔥 Row color
+    // row color
     row.style.background = toggle.checked ? "#dcfce7" : "#fee2e2"
 }
 
@@ -136,7 +136,7 @@ function loadAttendance() {
         return
     }
 
-    const records = saved.data || saved   // 🔥 FIX
+    const records = saved.data || saved
 
     table.innerHTML = ""
 
@@ -171,13 +171,31 @@ ${isPresent ? "checked" : ""}>
         table.appendChild(row)
     })
 
-    // 🔥 ADD EVENTS + COLORS
     document.querySelectorAll(".toggle-switch input").forEach(toggle => {
+
+        // 🔥 SET DEFAULT STATE (THIS FIXES OFF BUG)
+        toggle.defaultChecked = toggle.checked
+
         toggle.addEventListener("change", () => handleToggle(toggle))
         handleToggle(toggle)
     })
 
     showMessage("Attendance loaded 🎉", "success")
+}
+
+/* -------- 🔥 BULK ACTIONS -------- */
+
+function markAllEdit(status) {
+
+    document.querySelectorAll(".toggle-switch input").forEach(toggle => {
+
+        toggle.checked = (status === "Present")
+
+        // force reason if changed
+        handleToggle(toggle)
+    })
+
+    showMessage(`All marked ${status} ✅`, "success")
 }
 
 /* -------- Update -------- */
@@ -202,6 +220,7 @@ function updateAttendance() {
         const status = toggle.checked ? "Present" : "Absent"
         const usn = toggle.dataset.usn
 
+        // require reason only if changed
         if (toggle.checked !== toggle.defaultChecked && reasonBox.value.trim() === "") {
             reasonMissing = true
             reasonBox.style.border = "1px solid red"
@@ -220,7 +239,7 @@ function updateAttendance() {
 
     const key = `${subject}_${department}_${program}_${sem}_${section}_${date}`
 
-    // 🔥 SAVE SAME STRUCTURE
+    // overwrite cleanly
     localStorage.setItem(key, JSON.stringify({
         data: attendanceData
     }))
