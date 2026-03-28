@@ -7,6 +7,104 @@ body {
     padding: 0;
 }
 
+/* -------- LOGIN PAGE ONLY -------- */
+
+body {
+    font-family: 'Inter', Arial, sans-serif;
+    background: linear-gradient(135deg, #eef2ff, #f8fafc);
+    margin: 0;
+    padding: 0;
+}
+
+/* CONTAINER */
+
+.login-container {
+    width: 320px;
+    margin: 70px auto;
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+/* LOGO + TEXT */
+
+.college-logo {
+    width: 70px;
+    margin-bottom: 10px;
+}
+
+.college-name {
+    margin: 5px 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.college-location,
+.college-status {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.system-title {
+    margin: 14px 0;
+    font-size: 16px;
+    color: #2563eb;
+}
+
+/* INPUTS */
+
+input {
+    width: 100%;
+    padding: 10px 12px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    font-size: 13px;
+}
+
+input:focus {
+    border-color: #2563eb;
+    background: white;
+    outline: none;
+}
+
+/* PASSWORD FIELD */
+
+.password-field {
+    position: relative;
+}
+
+.eye {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+/* BUTTON */
+
+button {
+    margin-top: 10px;
+    padding: 10px;
+    width: 100%;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
 /* -------- MAIN CONTAINER -------- */
 
 .dashboard {
@@ -302,9 +400,9 @@ tbody tr:hover {
     background: white;
     padding: 20px;
     border-radius: 14px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
     transition: 0.25s;
-    border: 1px solid rgba(0,0,0,0.04);
+    border: 1px solid rgba(0, 0, 0, 0.04);
 
     display: flex;
     flex-direction: column;
@@ -314,7 +412,7 @@ tbody tr:hover {
 /* HOVER */
 .card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
 }
 
 /* TEXT */
@@ -327,59 +425,4 @@ tbody tr:hover {
 .card button {
     margin-top: 15px;
     align-self: flex-start;
-}
-
-/* -------- LOGIN PAGE -------- */
-
-.login-container {
-    width: 350px;
-    margin: 80px auto;
-    padding: 30px;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    text-align: center;
-}
-
-.college-logo {
-    width: 80px;
-    margin-bottom: 10px;
-}
-
-.college-name {
-    margin: 5px 0;
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.college-location,
-.college-status {
-    font-size: 13px;
-    color: #6b7280;
-}
-
-.system-title {
-    margin: 15px 0;
-    font-size: 18px;
-    color: #2563eb;
-}
-
-input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
-}
-
-.password-field {
-    position: relative;
-}
-
-.eye {
-    position: absolute;
-    right: 10px;
-    top: 15px;
-    cursor: pointer;
-    color: #6b7280;
 }
