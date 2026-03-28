@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -9,12 +8,142 @@
 
     <title>AttendX Students Login</title>
 
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        /* ===== LOGIN PAGE CLEAN UI ===== */
+
+        body {
+            margin: 0;
+            font-family: 'Inter', Arial, sans-serif;
+        }
+
+        body.login-page {
+            min-height: 100vh;
+            background: #5b3df5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            width: 320px;
+            padding: 30px 22px;
+            border-radius: 18px;
+            text-align: center;
+
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+            box-sizing: border-box;
+        }
+
+        .college-logo {
+            width: 65px;
+            margin-bottom: 10px;
+        }
+
+        .college-name {
+            margin: 5px 0;
+            font-size: 17px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .college-location,
+        .college-status {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .system-title {
+            margin: 12px 0;
+            font-size: 15px;
+            color: #dcdcff;
+        }
+
+        /* INPUTS */
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+
+            font-size: 14px;
+            color: white;
+
+            background: rgba(255, 255, 255, 0.15);
+
+            box-sizing: border-box;
+            transition: 0.25s;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        input:focus {
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
+            outline: none;
+        }
+
+        /* PASSWORD */
+
+        .password-field {
+            position: relative;
+        }
+
+        .eye {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 13px;
+        }
+
+        /* BUTTON */
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 14px;
+            border-radius: 10px;
+
+            background: #6366f1;
+            color: white;
+
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        button:hover {
+            background: #4f46e5;
+        }
+
+        /* ERROR TEXT */
+
+        #error {
+            margin-top: 10px;
+            color: #fecaca;
+            font-size: 13px;
+        }
+    </style>
 
 </head>
 
-<body>
+<body class="login-page student">
 
     <div class="login-container">
 
