@@ -256,3 +256,14 @@ window.onload = function () {
     document.getElementById("date").addEventListener("change", checkSubmissionStatus)
     document.getElementById("classTime").addEventListener("change", checkSubmissionStatus)
 }
+
+function formatTo12Hour(time24) {
+    if (!time24) return "--"
+
+    let [hour, minute] = time24.split(":").map(Number)
+
+    let ampm = hour >= 12 ? "PM" : "AM"
+    hour = hour % 12 || 12
+
+    return `${hour}:${String(minute).padStart(2, "0")} ${ampm}`
+}
