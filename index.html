@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
-        /* ===== LOGIN PAGE CLEAN UI ===== */
+        /* ===== LOGIN PAGE FINAL UI ===== */
 
         body {
             margin: 0;
@@ -18,7 +18,7 @@
 
         body.login-page {
             min-height: 100vh;
-            background: #5b3df5;
+            background: linear-gradient(135deg, #5b3df5, #7c6cff);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -36,6 +36,20 @@
 
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
             box-sizing: border-box;
+
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
         }
 
         .college-logo {
@@ -115,7 +129,7 @@
             margin-top: 14px;
             border-radius: 10px;
 
-            background: #6366f1;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
             color: white;
 
             font-size: 14px;
@@ -127,15 +141,17 @@
         }
 
         button:hover {
-            background: #4f46e5;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
         }
 
-        /* ERROR TEXT */
+        /* ERROR */
 
         #error {
             margin-top: 10px;
             color: #fecaca;
             font-size: 13px;
+            font-weight: 500;
         }
     </style>
 
@@ -170,6 +186,19 @@
     <script src="hodData.js"></script>
     <script src="login.js"></script>
     <script src="utils.js"></script>
+
+    <script>
+        // 👁 Toggle password visibility
+        document.getElementById("eyeIcon").addEventListener("click", () => {
+            const pass = document.getElementById("password")
+
+            if (pass.type === "password") {
+                pass.type = "text"
+            } else {
+                pass.type = "password"
+            }
+        })
+    </script>
 
 </body>
 
