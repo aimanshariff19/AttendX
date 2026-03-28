@@ -1,18 +1,3 @@
-/* -------- Message Box -------- */
-
-function showMessage(text, type) {
-    const box = document.getElementById("messageBox")
-    if (!box) return
-
-    box.innerText = text
-    box.className = "message-box " + type
-    box.style.display = "block"
-
-    setTimeout(() => {
-        box.style.display = "none"
-    }, 2500)
-}
-
 /* -------- Class details -------- */
 
 const subject = localStorage.getItem("subject")
@@ -21,7 +6,7 @@ const program = localStorage.getItem("program")
 const sem = localStorage.getItem("sem")
 const section = localStorage.getItem("section")
 
-document.getElementById("subject").innerText = subject || "Not Selected"
+document.getElementById("subject").innerText = subject || "-"
 document.getElementById("department").innerText = department || "-"
 document.getElementById("program").innerText = program || "-"
 document.getElementById("sem").innerText = sem || "-"
@@ -33,69 +18,19 @@ const classKey = `${department}_${program}_${sem}_${section}`
 const studentList = students[classKey] || []
 const table = document.getElementById("studentRows")
 
-/* -------- TIME -------- */
+/* -------- Calculate % -------- */
 
-function updateCurrentTime() {
-    const now = new Date()
+function calculatePercentage(usn, currentStatus = null) {
 
-    let hours = now.getHours()
-    let minutes = now.getMinutes()
-    let ampm = hours >= 12 ? "PM" : "AM"
-
-    hours = hours % 12 || 12
-
-    document.getElementById("currentTime").innerText =
-        `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")} ${ampm}`
-}
-
-/* -------- TIME RANGE -------- */
-
-function updateTimeRange() {
-    const startTime = document.getElementById("classTime").value
-    const numClasses = parseInt(document.getElementById("numClasses").value)
-
-    if (!startTime || !numClasses) {
-        document.getElementById("timeRange").innerText = "--"
-        return null
-    }
-
-    let [hours, minutes] = startTime.split(":").map(Number)
-
-    let start = new Date()
-    start.setHours(hours, minutes)
-
-    let end = new Date(start)
-    end.setHours(end.getHours() + numClasses)
-
-    function format(date) {
-        let hrs = date.getHours()
-        let mins = date.getMinutes()
-        let ampm = hrs >= 12 ? "PM" : "AM"
-
-        hrs = hrs % 12 || 12
-
-        return `${String(hrs).padStart(2, "0")}:${String(mins).padStart(2, "0")} ${ampm}`
-    }
-
-    const range = `${format(start)} - ${format(end)}`
-    document.getElementById("timeRange").innerText = range
-
-    return {
-        startTime: format(start),
-        endTime: format(end),
-        range
-    }
-}
-
-/* -------- Percentage -------- */
-
-function calculatePercentage(usn) {
-    let present = 0, total = 0
+    let present = 0
+    let total = 0
 
     for (let i = 0; i < localStorage.length; i++) {
+
         let key = localStorage.key(i)
 
         if (key && key.includes(subject)) {
+
             let stored = JSON.parse(localStorage.getItem(key) || "{}")
             let records = stored.data || stored
 
@@ -106,6 +41,12 @@ function calculatePercentage(usn) {
                 if (record.status === "Present") present++
             }
         }
+    }
+
+    // 🔥 include current toggle (live session)
+    if (currentStatus !== null) {
+        total++
+        if (currentStatus === "Present") present++
     }
 
     return total === 0 ? 0 : Math.round((present / total) * 100)
@@ -124,146 +65,125 @@ function loadStudents() {
         let row = document.createElement("tr")
 
         row.innerHTML = `
-        <td>${student.usn}</td>
-        <td>${student.name}</td>
-        <td>${percent}%</td>
-        <td>
-            <label class="toggle-switch">
-                <input type="checkbox" data-usn="${student.usn}" checked>
-                <span class="slider"></span>
-            </label>
-        </td>
+            <td>${student.usn}</td>
+            <td>${student.name}</td>
+            <td class="percent">${percent}%</td>
+            <td>
+                <label class="toggle-switch">
+                    <input type="checkbox" data-usn="${student.usn}" checked>
+                    <span class="slider"></span>
+                </label>
+            </td>
         `
 
-        if (percent < 75) {
-            row.style.borderLeft = "5px solid red"
-        }
+        updateRowStyle(row, percent, true)
 
         table.appendChild(row)
     })
 
+    /* 🔥 Live update */
     document.querySelectorAll(".toggle-switch input").forEach(input => {
-        input.addEventListener("change", () => {
-            updateStats()
-            updateRowColor(input)
-        })
+        input.addEventListener("change", updateLivePercentage)
     })
-
-    updateStats()
-    applyRowColors()
 }
 
-/* -------- Row Color -------- */
+/* -------- Row Styling -------- */
 
-function updateRowColor(input) {
-    const row = input.closest("tr")
-    row.style.background = input.checked ? "#dcfce7" : "#fee2e2"
+function updateRowStyle(row, percent, isPresent) {
+
+    if (percent < 75) {
+        row.style.borderLeft = "5px solid red"
+    } else {
+        row.style.borderLeft = "none"
+    }
+
+    row.style.background = isPresent ? "#dcfce7" : "#fee2e2"
 }
 
-function applyRowColors() {
-    document.querySelectorAll(".toggle-switch input").forEach(updateRowColor)
-}
+/* -------- Live Update -------- */
 
-/* -------- Bulk -------- */
+function updateLivePercentage() {
 
-function markAll(status) {
-    document.querySelectorAll(".toggle-switch input").forEach(input => {
-        input.checked = (status === "Present")
-        updateRowColor(input)
+    document.querySelectorAll("#studentRows tr").forEach(row => {
+
+        const input = row.querySelector("input")
+        const usn = input.dataset.usn
+        const percentCell = row.querySelector(".percent")
+
+        const status = input.checked ? "Present" : "Absent"
+
+        let percent = calculatePercentage(usn, status)
+
+        percentCell.innerText = percent + "%"
+
+        updateRowStyle(row, percent, input.checked)
     })
-    updateStats()
 }
 
-/* -------- Stats -------- */
-
-function updateStats() {
-    let total = studentList.length
-    let present = document.querySelectorAll(".toggle-switch input:checked").length
-    let absent = total - present
-
-    document.getElementById("totalCount").innerText = total
-    document.getElementById("presentCount").innerText = present
-    document.getElementById("absentCount").innerText = absent
-}
-
-/* -------- Submit -------- */
+/* -------- Submit Attendance -------- */
 
 function submitAttendance() {
 
     const btn = document.getElementById("submitBtn")
 
-    const date = document.getElementById("date").value
-    const time = document.getElementById("classTime").value
-    const numClasses = document.getElementById("numClasses").value
-    const timeData = updateTimeRange()
+    const date = new Date().toISOString().split("T")[0]
+    const key = `${subject}_${department}_${program}_${sem}_${section}_${date}`
 
-    if (!date || !time || !timeData) {
-        showMessage("⚠️ Select date & time properly", "error")
-        return
-    }
-
-    let key = `${subject}_${department}_${program}_${sem}_${section}_${date}`
-
+    /* 🔥 Prevent duplicate */
     if (localStorage.getItem(key)) {
-        showMessage("❌ Already submitted for this date", "error")
+        showMessage("Already submitted for today ❌", "error")
         return
     }
 
-    btn.innerText = "Submitting..."
-    btn.disabled = true
-
-    let attendanceData = []
+    let data = []
 
     document.querySelectorAll(".toggle-switch input").forEach(input => {
-        attendanceData.push({
+        data.push({
             usn: input.dataset.usn,
             status: input.checked ? "Present" : "Absent"
         })
     })
 
-    localStorage.setItem(key, JSON.stringify({
-        date,
-        ...timeData,
-        numClasses,
-        data: attendanceData
-    }))
+    localStorage.setItem(key, JSON.stringify({ data }))
 
-    btn.innerText = "Submitted ✅"
+    /* 🔥 Disable button after submit */
+    if (btn) {
+        btn.innerText = "Submitted ✅"
+        btn.disabled = true
+    }
 
-    showMessage("🎉 Attendance submitted successfully", "success")
+    showMessage("Attendance Submitted ✅", "success")
+}
+
+/* -------- Message -------- */
+
+function showMessage(text, type) {
+
+    let box = document.getElementById("messageBox")
+
+    if (!box) {
+        alert(text)
+        return
+    }
+
+    box.innerText = text
+    box.style.display = "block"
+
+    if (type === "success") {
+        box.style.background = "#dcfce7"
+        box.style.color = "#166534"
+    } else {
+        box.style.background = "#fee2e2"
+        box.style.color = "#991b1b"
+    }
+
+    setTimeout(() => {
+        box.style.display = "none"
+    }, 2500)
 }
 
 /* -------- INIT -------- */
 
 window.onload = function () {
-
     loadStudents()
-
-    const btn = document.getElementById("submitBtn")
-    btn.disabled = false
-
-    document.getElementById("date").value =
-        new Date().toISOString().split("T")[0]
-
-    document.getElementById("classTime").value = "08:30"
-
-    document.getElementById("classTime").addEventListener("change", updateTimeRange)
-    document.getElementById("numClasses").addEventListener("change", updateTimeRange)
-
-    updateCurrentTime()
-    setInterval(updateCurrentTime, 1000)
-
-    updateTimeRange()
-}
-
-/* -------- NAV -------- */
-
-function viewAttendance() {
-    window.location.href = "edit-attendance.html"
-}
-
-/* 🔥 FINAL BACK FIX */
-
-function goBack() {
-    window.location.href = "dashboard.html"
 }
