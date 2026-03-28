@@ -24,6 +24,57 @@ function getBaseKey() {
     return `${subject}_${department}_${program}_${sem}_${section}`
 }
 
+/* -------- 12hr Format -------- */
+
+function formatTo12Hour(time24) {
+    if (!time24) return "--"
+
+    let [hour, minute] = time24.split(":").map(Number)
+
+    let ampm = hour >= 12 ? "PM" : "AM"
+    hour = hour % 12 || 12
+
+    return `${hour}:${String(minute).padStart(2, "0")} ${ampm}`
+}
+
+/* -------- Time Range -------- */
+
+function updateTimeRange() {
+
+    const startTime = document.getElementById("classTime").value
+    const numClasses = parseInt(document.getElementById("numClasses").value)
+
+    if (!startTime || !numClasses) return
+
+    let [hour, minute] = startTime.split(":").map(Number)
+    let endHour = hour + numClasses
+
+    const startFormatted = formatTo12Hour(startTime)
+    const endFormatted = formatTo12Hour(
+        `${String(endHour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`
+    )
+
+    document.getElementById("timeRange").innerText =
+        `${startFormatted} - ${endFormatted}`
+}
+
+/* -------- Current Time -------- */
+
+function updateCurrentTime() {
+
+    const now = new Date()
+
+    let hours = now.getHours()
+    let minutes = now.getMinutes()
+
+    let ampm = hours >= 12 ? "PM" : "AM"
+    hours = hours % 12 || 12
+
+    const timeString = `${hours}:${String(minutes).padStart(2, "0")} ${ampm}`
+
+    document.getElementById("currentTime").innerText = timeString
+}
+
 /* -------- Calculate % -------- */
 
 function calculatePercentage(usn, currentStatus = null) {
@@ -49,7 +100,6 @@ function calculatePercentage(usn, currentStatus = null) {
         }
     }
 
-    // include current session live toggle
     if (currentStatus !== null) {
         total++
         if (currentStatus === "Present") present++
@@ -165,7 +215,7 @@ function submitAttendance() {
         const key = `${getBaseKey()}_${date}_${currentTime}`
 
         if (localStorage.getItem(key)) {
-            showMessage(`Already submitted for ${currentTime} ❌`, "error")
+            showMessage(`Already submitted for ${formatTo12Hour(currentTime)} ❌`, "error")
         } else {
 
             let data = []
@@ -253,17 +303,15 @@ window.onload = function () {
 
     loadStudents()
 
+    updateCurrentTime()
+    setInterval(updateCurrentTime, 1000)
+
     document.getElementById("date").addEventListener("change", checkSubmissionStatus)
-    document.getElementById("classTime").addEventListener("change", checkSubmissionStatus)
-}
 
-function formatTo12Hour(time24) {
-    if (!time24) return "--"
+    document.getElementById("classTime").addEventListener("change", () => {
+        checkSubmissionStatus()
+        updateTimeRange()
+    })
 
-    let [hour, minute] = time24.split(":").map(Number)
-
-    let ampm = hour >= 12 ? "PM" : "AM"
-    hour = hour % 12 || 12
-
-    return `${hour}:${String(minute).padStart(2, "0")} ${ampm}`
+    document.getElementById("numClasses").addEventListener("input", updateTimeRange)
 }
