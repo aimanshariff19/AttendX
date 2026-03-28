@@ -167,3 +167,19 @@ function openChangePassword() {
         window.location.href = "change-password.html"
     }, 400)
 }
+
+// 💧 Ripple
+        document.addEventListener("click", function (e) {
+            const btn = e.target.closest("button")
+            if (!btn) return
+
+            const circle = document.createElement("span")
+            circle.classList.add("ripple")
+
+            const rect = btn.getBoundingClientRect()
+            circle.style.left = (e.clientX - rect.left) + "px"
+            circle.style.top = (e.clientY - rect.top) + "px"
+
+            btn.appendChild(circle)
+            setTimeout(() => circle.remove(), 600)
+        })
