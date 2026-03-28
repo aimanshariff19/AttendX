@@ -43,55 +43,18 @@ function showMessage(text, type) {
 }
 
 
-/* -------- Load Dates -------- */
-
-function loadAvailableDates() {
-
-    dateDropdown.innerHTML = ""
-
-    const base = getBaseKey()
-    let dates = []
-
-    for (let i = 0; i < localStorage.length; i++) {
-
-        const key = localStorage.key(i)
-
-        if (key && key.startsWith(base + "_")) {
-
-            const remaining = key.replace(base + "_", "")
-            const parts = remaining.split("_")
-
-            if (parts.length !== 2) continue
-
-            const date = parts[0]
-            dates.push(date)
-        }
-    }
-
-    dates = [...new Set(dates)]
-
-    if (dates.length === 0) {
-        dateDropdown.innerHTML = "<option>No attendance records</option>"
-        return
-    }
-
-    dates.sort().reverse()
-
-    dates.forEach(date => {
-        const option = document.createElement("option")
-        option.value = date
-        option.textContent = date
-        dateDropdown.appendChild(option)
-    })
-}
-
-
-/* -------- 🔥 LOAD TIMES (FIXED PROPERLY) -------- */
+/* -------- 🔥 LOAD TIMES (FINAL FIX) -------- */
 
 function loadTimesForDate() {
 
     const date = dateDropdown.value
-    if (!date) return
+
+    console.log("Selected date:", date)
+
+    if (!date) {
+        timeDropdown.innerHTML = "<option>Select date first</option>"
+        return
+    }
 
     const base = getBaseKey()
     let times = []
@@ -108,7 +71,6 @@ function loadTimesForDate() {
             const remaining = key.replace(base + "_", "")
             const parts = remaining.split("_")
 
-            // MUST be [date, time]
             if (parts.length !== 2) continue
 
             const keyDate = parts[0]
@@ -121,8 +83,6 @@ function loadTimesForDate() {
     }
 
     times = [...new Set(times)]
-
-    // 🔥 proper sorting
     times.sort((a, b) => a.localeCompare(b))
 
     if (times.length === 0) {
@@ -137,7 +97,7 @@ function loadTimesForDate() {
         timeDropdown.appendChild(option)
     })
 
-    console.log("Loaded times:", times) // debug
+    console.log("Times loaded:", times)
 }
 
 
@@ -319,7 +279,8 @@ function updateAttendance() {
 
 /* -------- INIT -------- */
 
-loadAvailableDates()
+console.log("Edit page loaded ✅")
+
 dateDropdown.addEventListener("change", loadTimesForDate)
 
 
