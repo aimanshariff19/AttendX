@@ -22,11 +22,11 @@ setText("section", section)
 
 function viewAttendance() {
     // 👉 change file name if different
-    window.location.href = "./edit.html"
+    window.location.href = "edit-attendance.html"
 }
 
 function goBack() {
-    window.location.href = "./dashboard.html"
+    window.location.href = "dashboard.html"
 }
 
 
