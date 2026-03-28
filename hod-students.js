@@ -1,5 +1,4 @@
 /* -------- 💧 RIPPLE -------- */
-
 document.addEventListener("click", function (e) {
     const btn = e.target.closest("button")
     if (!btn) return
@@ -15,9 +14,18 @@ document.addEventListener("click", function (e) {
     setTimeout(() => circle.remove(), 600)
 })
 
+/* -------- 🔥 NORMALIZE -------- */
+function normalize(str) {
+    return (str || "").toString().toLowerCase().replace(/\s+/g, "")
+}
+
+/* -------- UNIVERSAL GET -------- */
+function getAttendanceRecords(key) {
+    let stored = JSON.parse(localStorage.getItem(key) || "{}")
+    return stored.data || []
+}
 
 /* -------- MESSAGE -------- */
-
 function showMessage(text, type = "success") {
     let box = document.getElementById("messageBox")
 
@@ -37,9 +45,7 @@ function showMessage(text, type = "success") {
     }, 2500)
 }
 
-
 /* -------- CLASS DETAILS -------- */
-
 const department = localStorage.getItem("department")
 const program = localStorage.getItem("program")
 const sem = localStorage.getItem("sem")
@@ -50,9 +56,7 @@ document.getElementById("program").innerText = program
 document.getElementById("sem").innerText = sem
 document.getElementById("section").innerText = section
 
-
-/* -------- 🔥 FIXED STUDENT MATCHING -------- */
-
+/* -------- STUDENT MATCH -------- */
 let studentList = []
 
 for (let key in students) {
@@ -62,7 +66,6 @@ for (let key in students) {
 
     const [d, p, s, sec] = parts
 
-    // normalize
     const cleanP1 = p.replace(".", "").toLowerCase()
     const cleanP2 = program.replace(".", "").toLowerCase()
 
@@ -77,15 +80,11 @@ for (let key in students) {
     }
 }
 
-
 /* -------- TABLE -------- */
-
 const table = document.getElementById("studentRows")
 const tableHead = document.getElementById("tableHead")
 
-
 /* -------- SUBJECTS -------- */
-
 const classSubjects = courses.filter(course =>
     course.department === department &&
     course.program === program &&
@@ -93,9 +92,7 @@ const classSubjects = courses.filter(course =>
     course.section === section
 )
 
-
 /* -------- SUBJECT HEADERS -------- */
-
 function loadSubjectHeaders() {
 
     classSubjects.forEach(sub => {
@@ -109,23 +106,22 @@ function loadSubjectHeaders() {
 
 }
 
-
-/* -------- CALCULATE -------- */
-
+/* -------- FIXED CALCULATE -------- */
 function calculatePercentage(usn, subject) {
 
     let present = 0
     let total = 0
 
+    const base = `${normalize(subject)}_${normalize(department)}_${normalize(program)}_${sem}_${normalize(section)}`
+
     for (let i = 0; i < localStorage.length; i++) {
 
         let key = localStorage.key(i)
 
-        if (key.startsWith(`${subject}_${department}_${program}_${sem}_${section}_`)) {
+        if (key && key.toLowerCase().startsWith(base)) {
 
-            let data = JSON.parse(localStorage.getItem(key) || "[]")
-
-            let record = data.find(r => r.usn === usn)
+            let records = getAttendanceRecords(key)
+            let record = records.find(r => r.usn === usn)
 
             if (record) {
                 total++
@@ -138,9 +134,7 @@ function calculatePercentage(usn, subject) {
     return Math.round((present / total) * 100)
 }
 
-
 /* -------- COLOR -------- */
-
 function getColor(percent) {
 
     if (percent >= 85) return "eligible"
@@ -148,9 +142,7 @@ function getColor(percent) {
     return "not-eligible"
 }
 
-
 /* -------- LOAD STUDENTS -------- */
-
 function loadStudents() {
 
     table.innerHTML = ""
@@ -184,24 +176,18 @@ function loadStudents() {
     })
 }
 
-
 /* -------- INIT -------- */
-
 window.onload = function () {
     loadSubjectHeaders()
     loadStudents()
 }
 
-
 /* -------- AUTO REFRESH -------- */
-
 window.addEventListener("storage", () => {
     loadStudents()
 })
 
-
 /* -------- BACK -------- */
-
 function goBack() {
 
     document.querySelector(".dashboard").classList.add("page-exit")
@@ -211,9 +197,7 @@ function goBack() {
     }, 400)
 }
 
-
 /* -------- EXPORT -------- */
-
 function exportClassReport() {
 
     const btn = document.getElementById("exportBtn")
