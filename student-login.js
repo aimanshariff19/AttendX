@@ -1,4 +1,5 @@
 /* -------- 💧 RIPPLE -------- */
+
 document.addEventListener("click", function (e) {
     const btn = e.target.closest("button")
     if (!btn) return
@@ -14,93 +15,188 @@ document.addEventListener("click", function (e) {
     setTimeout(() => circle.remove(), 600)
 })
 
-/* -------- 👁 TOGGLE PASSWORD -------- */
-const eyeIcon = document.getElementById("eyeIcon")
-const passwordInput = document.getElementById("password")
 
-if (eyeIcon && passwordInput) {
-    eyeIcon.addEventListener("click", () => {
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text"
-            eyeIcon.classList.remove("fa-eye")
-            eyeIcon.classList.add("fa-eye-slash")
-        } else {
-            passwordInput.type = "password"
-            eyeIcon.classList.remove("fa-eye-slash")
-            eyeIcon.classList.add("fa-eye")
+/* -------- INIT -------- */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const usn = localStorage.getItem("studentUSN")
+    const classKey = localStorage.getItem("studentClass")
+
+    if (!usn || !classKey) {
+        window.location.href = "student-login.html"
+        return
+    }
+
+    document.getElementById("studentUSN").innerText = usn
+
+    const [department, program, sem, section] = classKey.split("_")
+
+    document.getElementById("department").innerText = department
+    document.getElementById("program").innerText = program
+    document.getElementById("sem").innerText = sem
+    document.getElementById("section").innerText = section
+
+    const table = document.getElementById("subjectRows")
+    if (!table || typeof courses === "undefined") return
+
+    /* -------- 🔥 FIX: FETCH ALL SUBJECTS -------- */
+
+    const rawSubjects = courses.filter(c =>
+        c.department === department &&
+        c.sem.toString() === sem &&
+        c.section === section
+    )
+
+    /* -------- REMOVE DUPLICATES -------- */
+
+    const classSubjects = []
+
+    rawSubjects.forEach(c => {
+        if (!classSubjects.find(s => s.subject === c.subject)) {
+            classSubjects.push(c)
         }
     })
-}
 
-/* -------- 🎓 LOGIN FUNCTION -------- */
-function studentLogin() {
+    /* -------- CALCULATE -------- */
 
-    const usn = document.getElementById("studentId").value.trim()
-    const password = document.getElementById("password").value.trim()
-    const error = document.getElementById("error")
-    const btn = document.getElementById("loginBtn")
+    function calculateAttendance(subject) {
 
-    error.innerText = ""
+        let present = 0
+        let total = 0
 
-    if (!usn || !password) {
-        error.innerText = "⚠ Enter all fields"
-        shakeInputs()
-        return
-    }
+        for (let i = 0; i < localStorage.length; i++) {
 
-    // 🔥 Find student from mockData
-    let foundStudent = null
-    let classKey = null
+            let key = localStorage.key(i)
 
-    for (let key in students) {
-        const student = students[key].find(s => s.usn === usn && s.password === password)
-        if (student) {
-            foundStudent = student
-            classKey = key
-            break
+            if (key && key.startsWith(`${subject}_${department}_${program}_${sem}_${section}_`)) {
+
+                let data = JSON.parse(localStorage.getItem(key) || "[]")
+
+                let record = data.find(r => r.usn === usn)
+
+                if (record) {
+                    total++
+                    if (record.status === "Present") present++
+                }
+            }
+        }
+
+        return {
+            conducted: total,
+            present,
+            absent: total - present,
+            percent: total === 0 ? 0 : Math.round((present / total) * 100)
         }
     }
 
-    if (!foundStudent) {
-        error.innerText = "❌ Invalid USN or Password"
-        shakeInputs()
-        return
+    /* -------- COLOR -------- */
+
+    function getColor(percent) {
+        if (percent >= 85) return "#22c55e"
+        if (percent >= 75) return "#f59e0b"
+        return "#ef4444"
     }
 
-    // ✅ Save session
-    localStorage.setItem("studentUSN", foundStudent.usn)
-    localStorage.setItem("studentName", foundStudent.name)
-    localStorage.setItem("studentClass", classKey)
+    /* -------- LOAD TABLE -------- */
 
-    // 🌀 loading animation
+    table.innerHTML = ""
+
+    let totalPercent = 0
+
+    classSubjects.forEach((sub, index) => {
+
+        const stats = calculateAttendance(sub.subject)
+        totalPercent += stats.percent
+
+        const row = document.createElement("tr")
+        row.style.animation = `fadeUp ${0.3 + index * 0.08}s ease`
+
+        row.innerHTML = `
+<td>${sub.subject}</td>
+<td>${sub.subjectCode || "-"}</td>
+<td>${stats.conducted}</td>
+<td>${stats.present}</td>
+<td>${stats.absent}</td>
+<td style="font-weight:600;color:${getColor(stats.percent)}">
+    ${stats.percent}%
+</td>
+`
+
+        table.appendChild(row)
+    })
+
+    /* -------- 🔥 OVERALL ATTENDANCE -------- */
+
+    const overall = classSubjects.length > 0
+        ? Math.round(totalPercent / classSubjects.length)
+        : 0
+
+    let overallBox = document.getElementById("overallBox")
+
+    if (!overallBox) {
+        overallBox = document.createElement("div")
+        overallBox.id = "overallBox"
+        overallBox.className = "card"
+        document.querySelector(".dashboard").prepend(overallBox)
+    }
+
+    overallBox.innerHTML = `
+<p><strong>Overall Attendance:</strong> 
+<span style="color:${getColor(overall)}">${overall}%</span></p>
+<p id="warningText" style="font-weight:600;"></p>
+`
+
+    /* -------- ⚠ WARNING -------- */
+
+    const warning = document.getElementById("warningText")
+
+    if (overall < 75) {
+        warning.innerText = "⚠ Low Attendance! Improve immediately"
+        warning.style.color = "#dc2626"
+    } else if (overall < 85) {
+        warning.innerText = "⚠ Average Attendance"
+        warning.style.color = "#f59e0b"
+    } else {
+        warning.innerText = "✅ Good Attendance"
+        warning.style.color = "#16a34a"
+    }
+
+})
+
+
+/* -------- LOGOUT -------- */
+
+function studentLogout() {
+
+    const btn = document.querySelector(".logout-btn")
+
     btn.classList.add("loading")
     btn.innerText = ""
 
     setTimeout(() => {
 
-        document.body.classList.add("page-exit")
+        localStorage.removeItem("studentUSN")
+        localStorage.removeItem("studentClass")
+        localStorage.removeItem("studentName")
+
+        document.querySelector(".dashboard").classList.add("page-exit")
 
         setTimeout(() => {
-            window.location.href = "student-dashboard.html"
+            window.location.href = "student-login.html"
         }, 400)
 
     }, 700)
 }
 
-/* -------- ⚡ SHAKE EFFECT -------- */
-function shakeInputs() {
 
-    const inputs = document.querySelectorAll("input")
+/* -------- CHANGE PASSWORD -------- */
 
-    inputs.forEach(input => {
-        input.classList.add("input-error")
-    })
+function openChangePassword() {
 
-    const container = document.querySelector(".login-container")
-    container.style.animation = "shake 0.3s"
+    document.querySelector(".dashboard").classList.add("page-exit")
 
     setTimeout(() => {
-        container.style.animation = ""
-        inputs.forEach(input => input.classList.remove("input-error"))
-    }, 300)
+        window.location.href = "change-password.html"
+    }, 400)
 }
