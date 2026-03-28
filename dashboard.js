@@ -1,14 +1,3 @@
-/* -------- GitHub Pages FIX (Initial Data) -------- */
-
-if (!localStorage.getItem("subject")) {
-    localStorage.setItem("subject", "Math")
-    localStorage.setItem("department", "CSE")
-    localStorage.setItem("program", "BTech")
-    localStorage.setItem("sem", "3")
-    localStorage.setItem("section", "A")
-}
-
-
 /* -------- Class details -------- */
 
 const subject = localStorage.getItem("subject")
@@ -17,29 +6,29 @@ const program = localStorage.getItem("program")
 const sem = localStorage.getItem("sem")
 const section = localStorage.getItem("section")
 
-document.getElementById("subject").innerText = subject || "-"
-document.getElementById("department").innerText = department || "-"
-document.getElementById("program").innerText = program || "-"
-document.getElementById("sem").innerText = sem || "-"
-document.getElementById("section").innerText = section || "-"
+function setText(id, value) {
+    const el = document.getElementById(id)
+    if (el) el.innerText = value || "-"
+}
+
+setText("subject", subject)
+setText("department", department)
+setText("program", program)
+setText("sem", sem)
+setText("section", section)
 
 
 /* -------- Students -------- */
 
+// ❗ FIXED template string
 const classKey = `${department}_${program}_${sem}_${section}`
 
-// ✅ SAFE CHECK (prevents crash on GitHub Pages)
+// ❗ SAFE students check
 const studentList = (typeof students !== "undefined" && students[classKey])
     ? students[classKey]
     : []
 
 const table = document.getElementById("studentRows")
-
-
-// 🔥 DEBUG (remove later)
-console.log("classKey:", classKey)
-console.log("students:", typeof students !== "undefined" ? students : "NOT LOADED")
-console.log("studentList:", studentList)
 
 
 /* -------- Calculate % -------- */
@@ -67,7 +56,6 @@ function calculatePercentage(usn, currentStatus = null) {
         }
     }
 
-    // include current toggle
     if (currentStatus !== null) {
         total++
         if (currentStatus === "Present") present++
@@ -81,14 +69,9 @@ function calculatePercentage(usn, currentStatus = null) {
 
 function loadStudents() {
 
-    if (!table) return
+    if (!table) return   // ✅ prevents crash
 
     table.innerHTML = ""
-
-    if (studentList.length === 0) {
-        table.innerHTML = `<tr><td colspan="4">No students found</td></tr>`
-        return
-    }
 
     studentList.forEach(student => {
 
@@ -96,6 +79,7 @@ function loadStudents() {
 
         let row = document.createElement("tr")
 
+        // ❗ FIXED HTML template
         row.innerHTML = `
             <td>${student.usn}</td>
             <td>${student.name}</td>
@@ -123,7 +107,12 @@ function loadStudents() {
 
 function updateRowStyle(row, percent, isPresent) {
 
-    row.style.borderLeft = percent < 75 ? "5px solid red" : "none"
+    if (percent < 75) {
+        row.style.borderLeft = "5px solid red"
+    } else {
+        row.style.borderLeft = "none"
+    }
+
     row.style.background = isPresent ? "#dcfce7" : "#fee2e2"
 }
 
@@ -157,6 +146,7 @@ function submitAttendance() {
 
     const date = new Date().toISOString().split("T")[0]
 
+    // ❗ FIXED template string
     const key = `${subject}_${department}_${program}_${sem}_${section}_${date}`
 
     if (localStorage.getItem(key)) {
@@ -214,6 +204,4 @@ function showMessage(text, type) {
 
 /* -------- INIT -------- */
 
-window.onload = function () {
-    loadStudents()
-}
+document.addEventListener("DOMContentLoaded", loadStudents)
