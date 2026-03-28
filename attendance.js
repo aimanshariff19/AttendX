@@ -21,11 +21,11 @@ const program = localStorage.getItem("program")
 const sem = localStorage.getItem("sem")
 const section = localStorage.getItem("section")
 
-document.getElementById("subject").innerText = subject
-document.getElementById("department").innerText = department
-document.getElementById("program").innerText = program
-document.getElementById("sem").innerText = sem
-document.getElementById("section").innerText = section
+document.getElementById("subject").innerText = subject || "Not Selected"
+document.getElementById("department").innerText = department || "-"
+document.getElementById("program").innerText = program || "-"
+document.getElementById("sem").innerText = sem || "-"
+document.getElementById("section").innerText = section || "-"
 
 /* -------- Students -------- */
 
@@ -135,7 +135,6 @@ function loadStudents() {
         </td>
         `
 
-        // LOW ATTENDANCE highlight
         if (percent < 75) {
             row.style.borderLeft = "5px solid red"
         }
@@ -261,4 +260,14 @@ window.onload = function () {
 
 function viewAttendance() {
     window.location.href = "edit-attendance.html"
+}
+
+/* 🔥 FIXED BACK BUTTON */
+
+function goBack() {
+    if (document.referrer) {
+        window.history.back()
+    } else {
+        window.location.href = "dashboard.html" // fallback
+    }
 }
