@@ -65,21 +65,32 @@
         .attendance-controls div {
             display: flex;
             flex-direction: column;
-            gap: 4px;
-            min-width: 200px;
+            gap: 6px;
+            min-width: 220px;
         }
 
+        /* 🔥 FIXED INPUT + SELECT */
         input,
         select {
-            padding: 10px;
-            border-radius: 8px;
+            padding: 10px 12px;
+            border-radius: 10px;
             border: 1px solid #d1d5db;
             width: 100%;
             font-size: 14px;
             background: white;
             box-sizing: border-box;
+            height: 42px;
+            /* SAME HEIGHT */
         }
 
+        /* 🔥 REMOVE BAD STYLING */
+        select {
+            border-bottom: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        /* 🔥 FOCUS EFFECT */
         input:focus,
         select:focus {
             outline: none;
@@ -87,8 +98,13 @@
             box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
         }
 
+        /* 🔥 BUTTON ALIGN FIX */
+        .attendance-controls button {
+            height: 42px;
+            padding: 0 20px;
+        }
+
         button {
-            padding: 10px 14px;
             border-radius: 10px;
             border: none;
             background: linear-gradient(135deg, #6366f1, #4f46e5);
@@ -208,8 +224,10 @@
             </div>
 
             <div>
-                <label>⏰ Time</label>
-                <select id="timeSelect"></select>
+                <label>⏰ Class Time</label>
+                <select id="timeSelect">
+                    <option>Select date first</option>
+                </select>
             </div>
 
             <div>
