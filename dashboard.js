@@ -15,10 +15,11 @@ const faculty = localStorage.getItem("faculty")
 
 function loadFacultyDetails() {
 
-    setText("facultyName", faculty || "Faculty")
+    if (!faculty) return
+
+    setText("facultyName", faculty)
     setText("facultyDept", "Department: CSE")
 
-    // simple stats
     const myCourses = courses.filter(c => c.faculty === faculty)
 
     setText("facultyId", faculty)
@@ -37,7 +38,7 @@ function loadFacultyDetails() {
 }
 
 
-/* -------- TODAY SCHEDULE (NO TIME) -------- */
+/* -------- TODAY SCHEDULE (COMPACT, NO TIME) -------- */
 
 function loadTodaySchedule() {
 
@@ -48,6 +49,7 @@ function loadTodaySchedule() {
 
     const todayClasses = timetable.filter(t =>
         t.faculty === faculty &&
+        t.day &&
         t.day.toLowerCase() === today.toLowerCase()
     )
 
@@ -61,15 +63,12 @@ function loadTodaySchedule() {
     todayClasses.forEach(cls => {
 
         const div = document.createElement("div")
-        div.className = "card"
-        div.style.marginBottom = "10px"
+        div.className = "tt-item"
 
-        // ❌ NO TIME HERE
+        // 🔥 compact layout (no time)
         div.innerHTML = `
-            <p><strong>${cls.subject}</strong></p>
-            <p>${cls.program} - Sem ${cls.sem}</p>
-            <p>Section ${cls.section}</p>
-            <p>Room ${cls.room}</p>
+            <strong>${cls.subject}</strong><br>
+            ${cls.program} • Sem ${cls.sem} • Sec ${cls.section} • Room ${cls.room}
         `
 
         box.appendChild(div)
@@ -99,12 +98,16 @@ function loadCourseCards() {
         }
     })
 
+    if (unique.length === 0) {
+        container.innerHTML = "<p>No courses assigned</p>"
+        return
+    }
+
     unique.forEach(course => {
 
         const card = document.createElement("div")
         card.className = "card"
 
-        // ❌ NO TIME HERE
         card.innerHTML = `
             <p><strong>Subject:</strong> ${course.subject}</p>
             <p><strong>Branch:</strong> ${course.program}</p>
