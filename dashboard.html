@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Take Attendance</title>
-
+    <title>AttendX Dashboard</title>
     <style>
         body {
             margin: 0;
@@ -19,145 +18,150 @@
             padding: 20px;
         }
 
+        /* HEADER */
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
         h1 {
-            font-size: 20px;
+            font-size: 22px;
             color: #4338ca;
         }
 
         button {
-            padding: 10px 14px;
+            padding: 10px 16px;
             border-radius: 8px;
             border: none;
             background: linear-gradient(135deg, #6366f1, #4f46e5);
             color: white;
+            font-size: 14px;
             cursor: pointer;
+            transition: 0.25s;
+            font-weight: 500;
         }
 
-        .card {
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        /* FACULTY PANEL */
+        .faculty-panel {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(10px);
-            padding: 18px;
+            padding: 20px;
             border-radius: 14px;
-            margin-top: 15px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-            line-height: 1.4;
+            border-left: 5px solid #6366f1;
         }
 
-        /* 🔥 FIXED SPACING */
+        .faculty-panel h2 {
+            margin: 0 0 8px;
+            color: #4338ca;
+        }
 
-        .card p {
+        .faculty-panel p {
             margin: 4px 0;
             font-size: 14px;
             color: #374151;
-            display: flex;
-            justify-content: space-between;
         }
 
-        .card p strong {
-            color: #111827;
-            font-weight: 500;
+        .faculty-stats {
+            margin-top: 10px;
         }
 
-        .card p span {
-            color: #4338ca;
-            font-weight: 500;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        /* MESSAGE */
+        .message-box {
             margin-top: 15px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 12px;
-        }
-
-        th {
-            background: #6366f1;
-            color: white;
-        }
-
-        th,
-        td {
             padding: 10px;
-            text-align: center;
+            border-radius: 8px;
+            font-weight: 500;
+            display: none;
         }
 
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 46px;
-            height: 24px;
+        .message-box.success {
+            background: #dcfce7;
+            color: #166534;
         }
 
-        .toggle-switch input {
-            opacity: 0;
+        .message-box.error {
+            background: #fee2e2;
+            color: #991b1b;
         }
 
-        .slider {
-            position: absolute;
-            background: #dc2626;
-            border-radius: 24px;
-            inset: 0;
-            transition: .3s;
+        /* CARD */
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
         }
 
-        .slider:before {
-            content: "";
-            position: absolute;
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background: white;
-            border-radius: 50%;
-            transition: .3s;
+        .timetable-card h3 {
+            margin-bottom: 10px;
+            color: #4338ca;
         }
 
-        .toggle-switch input:checked+.slider {
-            background: #16a34a;
+        /* COURSE CARDS */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
         }
 
-        .toggle-switch input:checked+.slider:before {
-            transform: translateX(22px);
+        .cards .card {
+            transition: 0.25s;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .cards .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
         }
     </style>
-
 </head>
 
 <body>
 
     <div class="dashboard">
 
-        <h1>AttendX / Take Attendance</h1>
-
-        <!-- ✅ CLEAN INFO BOX (NO TIME) -->
-
-        <div class="card">
-            <p><strong>Course</strong><span id="subject"></span></p>
-            <p><strong>Department</strong><span id="department"></span></p>
-            <p><strong>Program</strong><span id="program"></span></p>
-            <p><strong>Semester</strong><span id="sem"></span></p>
-            <p><strong>Section</strong><span id="section"></span></p>
+        <div class="header-actions">
+            <h1>AttendX / Faculty Dashboard</h1>
+            <div> <button onclick="logout()">Logout</button> </div>
         </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>USN</th>
-                    <th>Name</th>
-                    <th>%</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="studentRows"></tbody>
-        </table>
+        <div class="faculty-panel">
+            <h2 id="facultyName"></h2>
+            <p id="facultyDept"></p>
 
-        <button onclick="submitAttendance()">Submit</button>
+            <div class="faculty-stats">
+                <p><strong>Faculty ID:</strong> <span id="facultyId"></span></p>
+                <p><strong>Courses Handling:</strong> <span id="courseCount"></span></p>
+                <p><strong>Sections Teaching:</strong> <span id="sectionCount"></span></p>
+                <p><strong>Total Students:</strong> <span id="studentCount"></span></p>
+            </div>
+
+        </div>
+
+        <div id="messageBox" class="message-box"></div> <br>
+
+        <div class="card timetable-card">
+            <h3>Today's Schedule</h3>
+            <div id="todaySchedule"></div>
+        </div>
+
+        <div class="cards" id="courseCards"></div>
 
     </div>
 
     <script src="mockData.js"></script>
-    <script src="attendance.js"></script>
+    <script src="utils.js"></script>
+    <script src="dashboard.js"></script>
 
 </body>
 
