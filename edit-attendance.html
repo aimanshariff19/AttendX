@@ -27,18 +27,18 @@
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
-            padding: 18px;
-            border-radius: 14px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             margin-bottom: 15px;
         }
 
         .message-box {
             margin-top: 10px;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 12px;
+            border-radius: 10px;
             display: none;
             font-weight: 500;
         }
@@ -56,12 +56,13 @@
         .attendance-controls {
             margin: 15px 0;
             display: flex;
-            align-items: center;
-            gap: 10px;
+            gap: 20px;
             flex-wrap: wrap;
+            align-items: flex-end;
         }
 
-        input[type="date"] {
+        input,
+        select {
             padding: 8px;
             border-radius: 6px;
             border: 1px solid #d1d5db;
@@ -69,7 +70,7 @@
 
         button {
             padding: 10px 14px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: none;
             background: linear-gradient(135deg, #6366f1, #4f46e5);
             color: white;
@@ -79,7 +80,7 @@
         }
 
         button:hover {
-            transform: translateY(-1px);
+            transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
         }
 
@@ -92,8 +93,8 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 14px;
             overflow: hidden;
         }
 
@@ -167,27 +168,40 @@
 
     <div class="dashboard">
 
-        <h1>AttendX / Faculty Dashboard / Edit Attendance</h1>
+        <h1>📊 AttendX / Edit Attendance</h1>
 
         <div class="card">
-            <p><strong>Course:</strong> <span id="subject"></span></p>
-            <p><strong>Department:</strong> <span id="department"></span></p>
-            <p><strong>Program:</strong> <span id="program"></span></p>
-            <p><strong>Semester:</strong> <span id="sem"></span></p>
-            <p><strong>Section:</strong> <span id="section"></span></p>
+            <p>📘 <strong>Course:</strong> <span id="subject"></span></p>
+            <p>🏢 <strong>Department:</strong> <span id="department"></span></p>
+            <p>🎓 <strong>Program:</strong> <span id="program"></span></p>
+            <p>📚 <strong>Semester:</strong> <span id="sem"></span></p>
+            <p>👥 <strong>Section:</strong> <span id="section"></span></p>
         </div>
 
         <div id="messageBox" class="message-box"></div>
 
+        <!-- 🔥 FIXED CONTROLS -->
         <div class="attendance-controls">
-            <label>Select Date:</label>
-            <input type="date" id="attendanceDate">
-            <button onclick="loadAttendance()">Load</button>
+
+            <div>
+                <label>📅 Date</label><br>
+                <input type="date" id="attendanceDate">
+            </div>
+
+            <div>
+                <label>⏰ Time</label><br>
+                <select id="timeSelect"></select>
+            </div>
+
+            <div>
+                <button onclick="loadAttendance()">Load</button>
+            </div>
+
         </div>
 
         <div class="bulk-actions">
-            <button onclick="markAllEdit('Present')">All Present</button>
-            <button onclick="markAllEdit('Absent')">All Absent</button>
+            <button onclick="markAllEdit('Present')">✅ All Present</button>
+            <button onclick="markAllEdit('Absent')">❌ All Absent</button>
         </div>
 
         <table>
