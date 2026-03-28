@@ -17,7 +17,7 @@ const studentsList = students[classKey] || []
 
 const dateDropdown = document.getElementById("attendanceDate")
 const table = document.getElementById("studentRows")
-const timeDropdown = document.getElementById("timeSelect") // 🔥 NEW
+const timeDropdown = document.getElementById("timeSelect")
 
 
 /* -------- Base Key -------- */
@@ -27,7 +27,7 @@ function getBaseKey() {
 }
 
 
-/* -------- Message box -------- */
+/* -------- Message -------- */
 
 function showMessage(text, type) {
     const box = document.getElementById("messageBox")
@@ -43,7 +43,7 @@ function showMessage(text, type) {
 }
 
 
-/* -------- Load Dates (FIXED) -------- */
+/* -------- Load Dates -------- */
 
 function loadAvailableDates() {
 
@@ -56,11 +56,14 @@ function loadAvailableDates() {
 
         const key = localStorage.key(i)
 
-        if (key && key.startsWith(base)) {
+        if (key && key.startsWith(base + "_")) {
 
-            const parts = key.split("_")
-            const date = parts[parts.length - 2] // 🔥 FIX
+            const remaining = key.replace(base + "_", "")
+            const parts = remaining.split("_")
 
+            if (parts.length !== 2) continue
+
+            const date = parts[0]
             dates.push(date)
         }
     }
@@ -68,10 +71,7 @@ function loadAvailableDates() {
     dates = [...new Set(dates)]
 
     if (dates.length === 0) {
-        const option = document.createElement("option")
-        option.value = ""
-        option.textContent = "No attendance records"
-        dateDropdown.appendChild(option)
+        dateDropdown.innerHTML = "<option>No attendance records</option>"
         return
     }
 
@@ -86,43 +86,58 @@ function loadAvailableDates() {
 }
 
 
-/* -------- Load Times (NEW) -------- */
+/* -------- 🔥 LOAD TIMES (FIXED PROPERLY) -------- */
 
 function loadTimesForDate() {
 
     const date = dateDropdown.value
     if (!date) return
 
-    let times = []
     const base = getBaseKey()
+    let times = []
+
+    timeDropdown.innerHTML = ""
 
     for (let i = 0; i < localStorage.length; i++) {
 
-        let key = localStorage.key(i)
+        const key = localStorage.key(i)
+        if (!key) continue
 
-        if (key && key.startsWith(`${base}_${date}`)) {
+        if (key.startsWith(base + "_")) {
 
-            let parts = key.split("_")
-            let time = parts[parts.length - 1]
+            const remaining = key.replace(base + "_", "")
+            const parts = remaining.split("_")
 
-            times.push(time)
+            // MUST be [date, time]
+            if (parts.length !== 2) continue
+
+            const keyDate = parts[0]
+            const keyTime = parts[1]
+
+            if (keyDate === date) {
+                times.push(keyTime)
+            }
         }
     }
 
-    times = [...new Set(times)].sort()
-    timeDropdown.innerHTML = ""
+    times = [...new Set(times)]
+
+    // 🔥 proper sorting
+    times.sort((a, b) => a.localeCompare(b))
 
     if (times.length === 0) {
-        timeDropdown.innerHTML = "<option>No classes</option>"
+        timeDropdown.innerHTML = "<option>No classes found</option>"
         return
     }
 
     times.forEach(time => {
-        let option = document.createElement("option")
+        const option = document.createElement("option")
         option.value = time
         option.textContent = formatTo12Hour(time)
         timeDropdown.appendChild(option)
     })
+
+    console.log("Loaded times:", times) // debug
 }
 
 
@@ -173,7 +188,7 @@ function handleToggle(toggle) {
 }
 
 
-/* -------- Load Attendance (FIXED) -------- */
+/* -------- Load Attendance -------- */
 
 function loadAttendance() {
 
@@ -185,7 +200,7 @@ function loadAttendance() {
         return
     }
 
-    const key = `${getBaseKey()}_${date}_${time}` // 🔥 FIX
+    const key = `${getBaseKey()}_${date}_${time}`
     const saved = JSON.parse(localStorage.getItem(key))
 
     if (!saved) {
@@ -231,7 +246,6 @@ ${isPresent ? "checked" : ""}>
     document.querySelectorAll(".toggle-switch input").forEach(toggle => {
 
         toggle.defaultChecked = toggle.checked
-
         toggle.addEventListener("change", () => handleToggle(toggle))
         handleToggle(toggle)
     })
@@ -245,7 +259,6 @@ ${isPresent ? "checked" : ""}>
 function markAllEdit(status) {
 
     document.querySelectorAll(".toggle-switch input").forEach(toggle => {
-
         toggle.checked = (status === "Present")
         handleToggle(toggle)
     })
@@ -254,7 +267,7 @@ function markAllEdit(status) {
 }
 
 
-/* -------- Update (FIXED) -------- */
+/* -------- Update -------- */
 
 function updateAttendance() {
 
@@ -290,7 +303,7 @@ function updateAttendance() {
         return
     }
 
-    const key = `${getBaseKey()}_${date}_${time}` // 🔥 FIX
+    const key = `${getBaseKey()}_${date}_${time}`
 
     localStorage.setItem(key, JSON.stringify({
         data: attendanceData
@@ -307,8 +320,7 @@ function updateAttendance() {
 /* -------- INIT -------- */
 
 loadAvailableDates()
-
-dateDropdown.addEventListener("change", loadTimesForDate) // 🔥 NEW
+dateDropdown.addEventListener("change", loadTimesForDate)
 
 
 /* -------- Back -------- */
