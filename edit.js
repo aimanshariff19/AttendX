@@ -334,8 +334,3 @@ function updateAttendance() {
 dateDropdown.addEventListener("change", loadTimesForDate)
 
 
-/* -------- BACK -------- */
-
-function goBack() {
-    window.location.href = "attendance.html"
-}

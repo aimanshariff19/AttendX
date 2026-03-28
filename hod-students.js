@@ -189,7 +189,7 @@ window.addEventListener("storage", () => {
 
 /* -------- BACK -------- */
 function goBack() {
-    window.history.back()
+    window.location.href = "attendance.html"
 }
 
 /* -------- EXPORT -------- */

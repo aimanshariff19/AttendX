@@ -320,7 +320,8 @@ window.onload = function () {
     }, 100)
 }
 
-/* -------- BACK BUTTON (FIXED) -------- */
+/* -------- BACK -------- */
+
 function goBack() {
     window.location.href = "dashboard.html"
 }
