@@ -33,30 +33,24 @@ const classKey = `${department}_${program}_${sem}_${section}`
 const studentList = students[classKey] || []
 const table = document.getElementById("studentRows")
 
-/* -------- 🔥 CURRENT TIME (12 HR) -------- */
+/* -------- TIME -------- */
 
 function updateCurrentTime() {
-
     const now = new Date()
 
     let hours = now.getHours()
     let minutes = now.getMinutes()
-
     let ampm = hours >= 12 ? "PM" : "AM"
 
-    hours = hours % 12
-    hours = hours ? hours : 12
+    hours = hours % 12 || 12
 
-    let h = hours.toString().padStart(2, "0")
-    let m = minutes.toString().padStart(2, "0")
-
-    document.getElementById("currentTime").innerText = `${h}:${m} ${ampm}`
+    document.getElementById("currentTime").innerText =
+        `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")} ${ampm}`
 }
 
-/* -------- TIME RANGE LOGIC (12 HR) -------- */
+/* -------- TIME RANGE -------- */
 
 function updateTimeRange() {
-
     const startTime = document.getElementById("classTime").value
     const numClasses = parseInt(document.getElementById("numClasses").value)
 
@@ -68,33 +62,27 @@ function updateTimeRange() {
     let [hours, minutes] = startTime.split(":").map(Number)
 
     let start = new Date()
-    start.setHours(hours)
-    start.setMinutes(minutes)
+    start.setHours(hours, minutes)
 
     let end = new Date(start)
     end.setHours(end.getHours() + numClasses)
 
-    function formatTime(date) {
+    function format(date) {
         let hrs = date.getHours()
         let mins = date.getMinutes()
-
         let ampm = hrs >= 12 ? "PM" : "AM"
 
-        hrs = hrs % 12
-        hrs = hrs ? hrs : 12
+        hrs = hrs % 12 || 12
 
-        let h = hrs.toString().padStart(2, "0")
-        let m = mins.toString().padStart(2, "0")
-
-        return `${h}:${m} ${ampm}`
+        return `${String(hrs).padStart(2, "0")}:${String(mins).padStart(2, "0")} ${ampm}`
     }
 
-    let range = `${formatTime(start)} - ${formatTime(end)}`
+    const range = `${format(start)} - ${format(end)}`
     document.getElementById("timeRange").innerText = range
 
     return {
-        startTime: formatTime(start),
-        endTime: formatTime(end),
+        startTime: format(start),
+        endTime: format(end),
         range
     }
 }
@@ -102,16 +90,12 @@ function updateTimeRange() {
 /* -------- Percentage -------- */
 
 function calculatePercentage(usn) {
-
-    let present = 0
-    let total = 0
+    let present = 0, total = 0
 
     for (let i = 0; i < localStorage.length; i++) {
-
         let key = localStorage.key(i)
 
         if (key && key.includes(subject)) {
-
             let stored = JSON.parse(localStorage.getItem(key) || "{}")
             let records = stored.data || stored
 
@@ -124,8 +108,7 @@ function calculatePercentage(usn) {
         }
     }
 
-    if (total === 0) return 0
-    return Math.round((present / total) * 100)
+    return total === 0 ? 0 : Math.round((present / total) * 100)
 }
 
 /* -------- Load Students -------- */
@@ -146,7 +129,7 @@ function loadStudents() {
         <td>${percent}%</td>
         <td>
             <label class="toggle-switch">
-                <input type="checkbox" data-usn="${student.usn}" checked onchange="updateStats()">
+                <input type="checkbox" data-usn="${student.usn}" checked>
                 <span class="slider"></span>
             </label>
         </td>
@@ -155,14 +138,35 @@ function loadStudents() {
         table.appendChild(row)
     })
 
+    // 🔥 ADD EVENT LISTENER HERE (important fix)
+    document.querySelectorAll(".toggle-switch input").forEach(input => {
+        input.addEventListener("change", () => {
+            updateStats()
+            updateRowColor(input)
+        })
+    })
+
     updateStats()
+    applyRowColors()
 }
 
-/* -------- Bulk Actions -------- */
+/* -------- Row Color -------- */
+
+function updateRowColor(input) {
+    const row = input.closest("tr")
+    row.style.background = input.checked ? "#dcfce7" : "#fee2e2"
+}
+
+function applyRowColors() {
+    document.querySelectorAll(".toggle-switch input").forEach(updateRowColor)
+}
+
+/* -------- Bulk -------- */
 
 function markAll(status) {
     document.querySelectorAll(".toggle-switch input").forEach(input => {
         input.checked = (status === "Present")
+        updateRowColor(input)
     })
     updateStats()
 }
@@ -170,7 +174,6 @@ function markAll(status) {
 /* -------- Stats -------- */
 
 function updateStats() {
-
     let total = studentList.length
     let present = document.querySelectorAll(".toggle-switch input:checked").length
     let absent = total - present
@@ -180,7 +183,7 @@ function updateStats() {
     document.getElementById("absentCount").innerText = absent
 }
 
-/* -------- Submit Attendance -------- */
+/* -------- Submit -------- */
 
 function submitAttendance() {
 
@@ -197,7 +200,7 @@ function submitAttendance() {
     let key = `${subject}_${department}_${program}_${sem}_${section}_${date}`
 
     if (localStorage.getItem(key)) {
-        showMessage("Already submitted for this date", "error")
+        showMessage("Already submitted", "error")
         return
     }
 
@@ -210,74 +213,15 @@ function submitAttendance() {
         })
     })
 
-    let fullData = {
+    localStorage.setItem(key, JSON.stringify({
         date,
-        startTime: timeData.startTime,
-        endTime: timeData.endTime,
-        timeRange: timeData.range,
+        ...timeData,
         numClasses,
         data: attendanceData
-    }
-
-    localStorage.setItem(key, JSON.stringify(fullData))
+    }))
 
     showMessage("Attendance submitted ✅", "success")
-
     document.getElementById("submitBtn").disabled = true
-}
-
-/* -------- Navigation -------- */
-
-function viewAttendance() {
-    window.location.href = "edit-attendance.html"
-}
-
-function goBack() {
-    window.location.href = "dashboard.html"
-}
-
-/* -------- Export -------- */
-
-function exportToExcel() {
-
-    let rows = document.querySelectorAll("#studentRows tr")
-
-    let excel = `
-<table border="1">
-<tr>
-<th>USN</th>
-<th>Name</th>
-<th>%</th>
-<th>Status</th>
-</tr>
-`
-
-    rows.forEach(row => {
-        let usn = row.children[0].innerText
-        let name = row.children[1].innerText
-        let percent = row.children[2].innerText
-        let status = row.querySelector("input").checked ? "Present" : "Absent"
-
-        excel += `
-<tr>
-<td>${usn}</td>
-<td>${name}</td>
-<td>${percent}</td>
-<td>${status}</td>
-</tr>
-`
-    })
-
-    excel += `</table>`
-
-    let blob = new Blob([excel], { type: "application/vnd.ms-excel" })
-    let link = document.createElement("a")
-
-    link.href = URL.createObjectURL(blob)
-    link.download = "attendance.xls"
-    link.click()
-
-    showMessage("Exported 📊", "success")
 }
 
 /* -------- INIT -------- */
