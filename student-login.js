@@ -96,28 +96,28 @@ function studentLogin() {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    /* 👁 PASSWORD TOGGLE (FIXED) */
+    /* 👁 PASSWORD TOGGLE (FINAL FIX) */
 
     const eyeIcon = document.getElementById("eyeIcon")
     const passwordInput = document.getElementById("password")
 
     if (eyeIcon && passwordInput) {
 
-        eyeIcon.addEventListener("click", () => {
+        eyeIcon.onclick = function () {
 
             if (passwordInput.type === "password") {
                 passwordInput.type = "text"
-                eyeIcon.classList.replace("fa-eye", "fa-eye-slash")
+                eyeIcon.className = "fa-solid fa-eye-slash eye"
             } else {
                 passwordInput.type = "password"
-                eyeIcon.classList.replace("fa-eye-slash", "fa-eye")
+                eyeIcon.className = "fa-solid fa-eye eye"
             }
 
-        })
+        }
 
     }
 
-    /* 💧 RIPPLE */
+    /* 💧 RIPPLE EFFECT */
 
     document.addEventListener("click", function (e) {
 
