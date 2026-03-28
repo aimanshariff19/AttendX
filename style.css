@@ -379,7 +379,7 @@ input {
 .eye {
     position: absolute;
     right: 10px;
-    top: 12px;
+    top: 15px;
     cursor: pointer;
     color: #6b7280;
 }
