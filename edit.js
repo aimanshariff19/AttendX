@@ -1,4 +1,19 @@
-/* -------- Class details -------- */
+/* -------- FORMAT TIME -------- */
+
+function formatTo12Hour(time24) {
+
+    if (!time24) return "--"
+
+    let [hour, minute] = time24.split(":").map(Number)
+
+    let ampm = hour >= 12 ? "PM" : "AM"
+    hour = hour % 12 || 12
+
+    return `${hour}:${String(minute).padStart(2, "0")} ${ampm}`
+}
+
+
+/* -------- CLASS DETAILS -------- */
 
 const subject = localStorage.getItem("subject")
 const department = localStorage.getItem("department")
@@ -20,16 +35,10 @@ const table = document.getElementById("studentRows")
 const timeDropdown = document.getElementById("timeSelect")
 
 
-/* -------- Base Key -------- */
-
-function getBaseKey() {
-    return `${subject}_${department}_${program}_${sem}_${section}`
-}
-
-
-/* -------- Message -------- */
+/* -------- MESSAGE -------- */
 
 function showMessage(text, type) {
+
     const box = document.getElementById("messageBox")
     if (!box) return
 
@@ -43,22 +52,20 @@ function showMessage(text, type) {
 }
 
 
-/* -------- 🔥 LOAD TIMES (FINAL FIX) -------- */
+/* -------- 🔥 LOAD TIMES (FIXED PROPERLY) -------- */
 
 function loadTimesForDate() {
 
     const date = dateDropdown.value
 
-    console.log("Selected date:", date)
+    console.log("📅 Selected date:", date)
 
     if (!date) {
         timeDropdown.innerHTML = "<option>Select date first</option>"
         return
     }
 
-    const base = getBaseKey()
     let times = []
-
     timeDropdown.innerHTML = ""
 
     for (let i = 0; i < localStorage.length; i++) {
@@ -66,15 +73,17 @@ function loadTimesForDate() {
         const key = localStorage.key(i)
         if (!key) continue
 
-        if (key.startsWith(base + "_")) {
+        console.log("🔍 Checking key:", key)
 
-            const remaining = key.replace(base + "_", "")
-            const parts = remaining.split("_")
+        // 🔥 FLEXIBLE MATCH (IMPORTANT FIX)
+        if (key.includes(subject) && key.includes(date)) {
 
-            if (parts.length !== 2) continue
+            const parts = key.split("_")
 
-            const keyDate = parts[0]
-            const keyTime = parts[1]
+            if (parts.length < 2) continue
+
+            const keyDate = parts[parts.length - 2]
+            const keyTime = parts[parts.length - 1]
 
             if (keyDate === date) {
                 times.push(keyTime)
@@ -86,22 +95,25 @@ function loadTimesForDate() {
     times.sort((a, b) => a.localeCompare(b))
 
     if (times.length === 0) {
-        timeDropdown.innerHTML = "<option>No classes found</option>"
+        timeDropdown.innerHTML = "<option>No classes on this date</option>"
+        console.log("❌ No times found")
         return
     }
 
-    times.forEach(time => {
+    times.forEach((time, index) => {
+
         const option = document.createElement("option")
         option.value = time
-        option.textContent = formatTo12Hour(time)
+        option.textContent = `${formatTo12Hour(time)} (Class ${index + 1})`
+
         timeDropdown.appendChild(option)
     })
 
-    console.log("Times loaded:", times)
+    console.log("✅ Times loaded:", times)
 }
 
 
-/* -------- Percentage -------- */
+/* -------- PERCENTAGE -------- */
 
 function calculatePercentage(usn) {
 
@@ -112,7 +124,7 @@ function calculatePercentage(usn) {
 
         let key = localStorage.key(i)
 
-        if (key && key.startsWith(getBaseKey())) {
+        if (key && key.includes(subject)) {
 
             let stored = JSON.parse(localStorage.getItem(key) || "{}")
             let records = stored.data || stored
@@ -130,7 +142,7 @@ function calculatePercentage(usn) {
 }
 
 
-/* -------- Toggle -------- */
+/* -------- TOGGLE -------- */
 
 function handleToggle(toggle) {
 
@@ -148,7 +160,7 @@ function handleToggle(toggle) {
 }
 
 
-/* -------- Load Attendance -------- */
+/* -------- LOAD ATTENDANCE -------- */
 
 function loadAttendance() {
 
@@ -160,7 +172,8 @@ function loadAttendance() {
         return
     }
 
-    const key = `${getBaseKey()}_${date}_${time}`
+    const key = `${subject}_${department}_${program}_${sem}_${section}_${date}_${time}`
+
     const saved = JSON.parse(localStorage.getItem(key))
 
     if (!saved) {
@@ -169,7 +182,6 @@ function loadAttendance() {
     }
 
     const records = saved.data || saved
-
     table.innerHTML = ""
 
     studentsList.forEach(student => {
@@ -188,9 +200,7 @@ function loadAttendance() {
 
 <td>
 <label class="toggle-switch">
-<input type="checkbox"
-data-usn="${student.usn}"
-${isPresent ? "checked" : ""}>
+<input type="checkbox" data-usn="${student.usn}" ${isPresent ? "checked" : ""}>
 <span class="slider"></span>
 </label>
 </td>
@@ -214,11 +224,12 @@ ${isPresent ? "checked" : ""}>
 }
 
 
-/* -------- Bulk -------- */
+/* -------- BULK -------- */
 
 function markAllEdit(status) {
 
     document.querySelectorAll(".toggle-switch input").forEach(toggle => {
+
         toggle.checked = (status === "Present")
         handleToggle(toggle)
     })
@@ -227,7 +238,7 @@ function markAllEdit(status) {
 }
 
 
-/* -------- Update -------- */
+/* -------- UPDATE -------- */
 
 function updateAttendance() {
 
@@ -263,7 +274,7 @@ function updateAttendance() {
         return
     }
 
-    const key = `${getBaseKey()}_${date}_${time}`
+    const key = `${subject}_${department}_${program}_${sem}_${section}_${date}_${time}`
 
     localStorage.setItem(key, JSON.stringify({
         data: attendanceData
@@ -279,12 +290,12 @@ function updateAttendance() {
 
 /* -------- INIT -------- */
 
-console.log("Edit page loaded ✅")
+console.log("✅ Edit page loaded")
 
 dateDropdown.addEventListener("change", loadTimesForDate)
 
 
-/* -------- Back -------- */
+/* -------- BACK -------- */
 
 function goBack() {
     window.location.href = "attendance.html"
