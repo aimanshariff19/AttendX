@@ -1,200 +1,93 @@
-/* -------- Faculty Welcome Panel -------- */
+/* -------- Class details -------- */
 
-const facultyName = localStorage.getItem("facultyName")
+const subject = localStorage.getItem("subject")
 const department = localStorage.getItem("department")
+const program = localStorage.getItem("program")
+const sem = localStorage.getItem("sem")
+const section = localStorage.getItem("section")
 
-const faculty = localStorage.getItem("faculty") || facultyName
+document.getElementById("subject").innerText = subject || "-"
+document.getElementById("department").innerText = department || "-"
+document.getElementById("program").innerText = program || "-"
+document.getElementById("sem").innerText = sem || "-"
+document.getElementById("section").innerText = section || "-"
 
-/* -------- Session Check -------- */
+/* -------- Students -------- */
 
-if (!faculty) {
-    alert("Session expired. Please login again.")
-    window.location.href = "html/index.html"
+const classKey = `${department}_${program}_${sem}_${section}`
+const studentList = students[classKey] || []
+const table = document.getElementById("studentRows")
+
+function loadStudents() {
+
+    table.innerHTML = ""
+
+    studentList.forEach(student => {
+
+        let row = document.createElement("tr")
+
+        row.innerHTML = `
+            <td>${student.usn}</td>
+            <td>${student.name}</td>
+            <td>-</td>
+            <td>
+                <label class="toggle-switch">
+                    <input type="checkbox" data-usn="${student.usn}" checked>
+                    <span class="slider"></span>
+                </label>
+            </td>
+        `
+
+        table.appendChild(row)
+    })
 }
 
-/* -------- Display Faculty Info -------- */
+/* -------- Submit Attendance (NO TIME) -------- */
 
-const facultyNameEl = document.getElementById("facultyName")
-const facultyDeptEl = document.getElementById("facultyDept")
-const facultyIdEl = document.getElementById("facultyId")
+function submitAttendance() {
 
-if (facultyNameEl) facultyNameEl.innerText = "Welcome " + facultyName
-if (facultyDeptEl) facultyDeptEl.innerText = "Department of " + department
-if (facultyIdEl) facultyIdEl.innerText = faculty
+    // Only date (NO TIME anywhere)
+    const date = new Date().toISOString().split("T")[0]
 
-/* -------- Faculty Stats -------- */
+    const key = `${subject}_${department}_${program}_${sem}_${section}_${date}`
 
-const facultyCourses = courses.filter(course => course.faculty === faculty)
+    let data = []
 
-const courseCountEl = document.getElementById("courseCount")
-if (courseCountEl) courseCountEl.innerText = facultyCourses.length
-
-/* -------- Sections Teaching -------- */
-
-const sections = [...new Set(
-    facultyCourses.map(
-        course => `${course.department}_${course.program}_${course.sem}_${course.section}`
-    )
-)]
-
-const sectionCountEl = document.getElementById("sectionCount")
-if (sectionCountEl) sectionCountEl.innerText = sections.length
-
-/* -------- Total Students -------- */
-
-let totalStudents = 0
-
-sections.forEach(sec => {
-    if (students[sec]) {
-        totalStudents += students[sec].length
-    }
-})
-
-const studentCountEl = document.getElementById("studentCount")
-if (studentCountEl) studentCountEl.innerText = totalStudents
-
-/* -------- Course Cards -------- */
-
-const container = document.getElementById("courseCards")
-
-if (container) {
-
-    container.innerHTML = ""
-
-    facultyCourses.forEach(course => {
-
-        const today = new Date().toISOString().split("T")[0]
-
-        const attendanceKey =
-            `${course.subject}_${course.department}_${course.program}_${course.sem}_${course.section}_${today}`
-
-        const takenToday = localStorage.getItem(attendanceKey)
-
-        const card = document.createElement("div")
-
-        card.className = takenToday ? "card completed" : "card"
-
-        card.innerHTML = `
-
-<p><strong>Course:</strong> ${course.subject}</p>
-<p><strong>Dept:</strong> ${course.department}</p>
-<p><strong>Program:</strong> ${course.program}</p>
-<p><strong>Semester:</strong> ${course.sem}</p>
-<p><strong>Section:</strong> ${course.section}</p>
-
-${takenToday ? `<p style="color:#16a34a;font-weight:600">✔ Attendance taken today</p>` : ""}
-
-`
-
-        const btn = document.createElement("button")
-        btn.innerText = "Take Attendance"
-
-        btn.addEventListener("click", () => {
-
-            takeAttendance(
-                course.subject,
-                course.department,
-                course.program,
-                course.sem,
-                course.section
-            )
-
+    document.querySelectorAll(".toggle-switch input").forEach(input => {
+        data.push({
+            usn: input.dataset.usn,
+            status: input.checked ? "Present" : "Absent"
         })
-
-        card.appendChild(btn)
-        container.appendChild(card)
-
     })
 
+    localStorage.setItem(key, JSON.stringify({ data }))
+
+    // 🔥 cleaner than alert
+    showSuccessMessage("Attendance Submitted ✅")
 }
 
-/* -------- Open Attendance Page -------- */
+/* -------- Message (NO ALERTS) -------- */
 
-function takeAttendance(subject, department, program, sem, section, time) {
+function showSuccessMessage(text) {
+    let box = document.getElementById("messageBox")
 
-    localStorage.setItem("subject", subject)
-    localStorage.setItem("department", department)
-    localStorage.setItem("program", program)
-    localStorage.setItem("sem", sem)
-    localStorage.setItem("section", section)
-
-    /* 🔥 FIX ADDED HERE */
-    localStorage.setItem("prevPage", "dashboard.html")
-
-    window.location.href = "attendance.html"
-}
-
-/* -------- Faculty Timetable -------- */
-
-const today = new Date().toLocaleString('en-US', { weekday: 'long' })
-
-const todayClasses = timetable.filter(
-    t => t.faculty === faculty && t.day === today
-)
-
-const scheduleBox = document.getElementById("todaySchedule")
-
-if (scheduleBox) {
-
-    scheduleBox.innerHTML = ""
-
-    if (todayClasses.length === 0) {
-
-        scheduleBox.innerHTML = "<p>No classes scheduled today</p>"
-
-    } else {
-
-        todayClasses.forEach((cls, index) => {
-
-            let status = "Upcoming"
-
-            if (index === 0) status = "Next"
-
-            let row = document.createElement("p")
-
-            row.innerHTML = `
-<strong>${cls.time}</strong> 
-${cls.subject} | Sem ${cls.sem}${cls.section} 
-<span style="color:#2563eb;font-weight:600">${status}</span>
-`
-
-            scheduleBox.appendChild(row)
-
-        })
-
+    if (!box) {
+        alert(text) // fallback
+        return
     }
 
+    box.innerText = text
+    box.style.display = "block"
+    box.style.background = "#dcfce7"
+    box.style.color = "#166534"
+
+    setTimeout(() => {
+        box.style.display = "none"
+    }, 2000)
 }
 
-/* -------- Class Reminder System -------- */
+/* -------- INIT -------- */
 
-setInterval(() => {
-
-    let now = new Date()
-
-    let hour = now.getHours().toString().padStart(2, "0")
-    let min = now.getMinutes().toString().padStart(2, "0")
-
-    let current = hour + ":" + min
-
-    todayClasses.forEach(cls => {
-
-        if (current === cls.time) {
-
-            if (typeof showMessage === "function") {
-
-                showMessage(
-                    `🔔 Class Reminder
-${cls.subject}
-Sem ${cls.sem}${cls.section}
-Room ${cls.room}`,
-                    "success"
-                )
-
-            }
-
-        }
-
-    })
-
-}, 60000)
+window.onload = function () {
+    loadStudents()
+}
