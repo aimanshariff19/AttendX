@@ -1,4 +1,4 @@
-/* -------- Class details -------- */
+/* -------- CLASS DETAILS -------- */
 
 const subject = localStorage.getItem("subject")
 const department = localStorage.getItem("department")
@@ -8,7 +8,7 @@ const section = localStorage.getItem("section")
 
 function setText(id, value) {
     const el = document.getElementById(id)
-    if (el) el.innerText = value || "-"
+    if (el) el.innerHTML = value || "-"
 }
 
 setText("subject", subject)
@@ -29,27 +29,26 @@ function goBack() {
 }
 
 
-/* -------- Students -------- */
+/* -------- STUDENTS -------- */
 
 const classKey = `${department}_${program}_${sem}_${section}`
 const studentList = students[classKey] || []
 const table = document.getElementById("studentRows")
 
 
-/* -------- Base Key -------- */
+/* -------- BASE KEY -------- */
 
 function getBaseKey() {
     return `${subject}_${department}_${program}_${sem}_${section}`
 }
 
 
-/* -------- 12hr Format -------- */
+/* -------- TIME FORMAT -------- */
 
 function formatTo12Hour(time24) {
     if (!time24) return "--"
 
     let [hour, minute] = time24.split(":").map(Number)
-
     let ampm = hour >= 12 ? "PM" : "AM"
     hour = hour % 12 || 12
 
@@ -57,7 +56,7 @@ function formatTo12Hour(time24) {
 }
 
 
-/* -------- Time Range -------- */
+/* -------- TIME RANGE -------- */
 
 function updateTimeRange() {
 
@@ -78,7 +77,7 @@ function updateTimeRange() {
 }
 
 
-/* -------- Current Time -------- */
+/* -------- CURRENT TIME -------- */
 
 function updateCurrentTime() {
 
@@ -96,7 +95,7 @@ function updateCurrentTime() {
 }
 
 
-/* -------- Calculate % -------- */
+/* -------- CALCULATE % -------- */
 
 function calculatePercentage(usn, currentStatus = null) {
 
@@ -130,7 +129,7 @@ function calculatePercentage(usn, currentStatus = null) {
 }
 
 
-/* -------- Load Students -------- */
+/* -------- LOAD STUDENTS -------- */
 
 function loadStudents() {
 
@@ -138,7 +137,7 @@ function loadStudents() {
 
     table.innerHTML = ""
 
-    studentList.forEach(student => {
+    studentList.forEach((student, index) => {
 
         let percent = calculatePercentage(student.usn)
 
@@ -156,6 +155,8 @@ function loadStudents() {
             </td>
         `
 
+        row.style.animation = `fadeUp ${0.4 + index * 0.05}s ease`
+
         updateRowStyle(row, percent, true)
         table.appendChild(row)
     })
@@ -168,7 +169,7 @@ function loadStudents() {
 }
 
 
-/* -------- Row Styling -------- */
+/* -------- ROW STYLE -------- */
 
 function updateRowStyle(row, percent, isPresent) {
     row.style.borderLeft = percent < 75 ? "5px solid red" : "none"
@@ -176,7 +177,7 @@ function updateRowStyle(row, percent, isPresent) {
 }
 
 
-/* -------- Live Update -------- */
+/* -------- LIVE UPDATE -------- */
 
 function updateLivePercentage() {
 
@@ -198,7 +199,7 @@ function updateLivePercentage() {
 }
 
 
-/* -------- Stats -------- */
+/* -------- STATS -------- */
 
 function updateStats() {
 
@@ -216,7 +217,7 @@ function updateStats() {
 }
 
 
-/* -------- Submit Attendance -------- */
+/* -------- SUBMIT ATTENDANCE (SMART) -------- */
 
 function submitAttendance() {
 
@@ -227,22 +228,22 @@ function submitAttendance() {
     const numClasses = parseInt(document.getElementById("numClasses")?.value)
 
     if (!date || !startTime) {
-        showMessage("Fill date & time properly ❌", "error")
+        showMessage("⚠️ Fill date & time properly", "error")
         return
     }
 
     let [hour, minute] = startTime.split(":").map(Number)
 
-    let submittedAny = false
+    let successCount = 0
+    let skippedCount = 0
 
     for (let i = 0; i < numClasses; i++) {
 
         const currentTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`
-
         const key = `${getBaseKey()}_${date}_${currentTime}`
 
         if (localStorage.getItem(key)) {
-            showMessage(`Already submitted for ${formatTo12Hour(currentTime)} ❌`, "error")
+            skippedCount++
         } else {
 
             let data = []
@@ -255,35 +256,36 @@ function submitAttendance() {
             })
 
             localStorage.setItem(key, JSON.stringify({ data }))
-            submittedAny = true
+            successCount++
         }
 
         hour += 1
     }
 
-    if (submittedAny) {
-        btn.innerText = "Submitted ✅"
+    if (successCount > 0) {
+        btn.innerHTML = "✅ Submitted"
         btn.disabled = true
-        showMessage("Attendance Submitted ✅", "success")
+        btn.style.background = "#16a34a"
+
+        showMessage(`✅ Saved ${successCount} class(es)`, "success")
+    }
+
+    if (skippedCount > 0) {
+        showMessage(`⚠️ ${skippedCount} already existed`, "error")
     }
 }
 
 
-/* -------- Message -------- */
+/* -------- MESSAGE -------- */
 
 function showMessage(text, type) {
 
     let box = document.getElementById("messageBox")
+    if (!box) return
 
-    if (!box) {
-        alert(text)
-        return
-    }
-
-    box.innerText = text
+    box.innerHTML = text
     box.style.display = "block"
-
-    box.className = "message-box " + (type === "success" ? "success" : "error")
+    box.className = "message-box " + type
 
     setTimeout(() => {
         box.style.display = "none"
@@ -291,7 +293,7 @@ function showMessage(text, type) {
 }
 
 
-/* -------- CHECK SUBMISSION (🔥 FIXED) -------- */
+/* -------- CHECK SUBMISSION -------- */
 
 function checkSubmissionStatus() {
 
@@ -305,10 +307,10 @@ function checkSubmissionStatus() {
     const key = `${getBaseKey()}_${date}_${startTime}`
 
     if (localStorage.getItem(key)) {
-        btn.innerText = "Already Submitted ✅"
+        btn.innerHTML = "⚠️ Already Submitted"
         btn.disabled = true
     } else {
-        btn.innerText = "Submit Attendance"
+        btn.innerHTML = "🚀 Submit Attendance"
         btn.disabled = false
     }
 }
