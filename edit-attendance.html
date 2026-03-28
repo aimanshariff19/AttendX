@@ -53,6 +53,7 @@
             color: #991b1b;
         }
 
+        /* 🔥 CONTROLS */
         .attendance-controls {
             margin: 15px 0;
             display: flex;
@@ -61,11 +62,29 @@
             align-items: flex-end;
         }
 
+        .attendance-controls div {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 200px;
+        }
+
         input,
         select {
-            padding: 8px;
-            border-radius: 6px;
+            padding: 10px;
+            border-radius: 8px;
             border: 1px solid #d1d5db;
+            width: 100%;
+            font-size: 14px;
+            background: white;
+            box-sizing: border-box;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
         }
 
         button {
@@ -180,16 +199,16 @@
 
         <div id="messageBox" class="message-box"></div>
 
-        <!-- 🔥 FIXED CONTROLS -->
+        <!-- 🔥 CONTROLS -->
         <div class="attendance-controls">
 
             <div>
-                <label>📅 Date</label><br>
+                <label>📅 Date</label>
                 <input type="date" id="attendanceDate">
             </div>
 
             <div>
-                <label>⏰ Time</label><br>
+                <label>⏰ Time</label>
                 <select id="timeSelect"></select>
             </div>
 
