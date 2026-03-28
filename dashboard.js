@@ -1,8 +1,8 @@
-/* -------- SAFE TEXT -------- */
+/* -------- SAFE TEXT (HTML ENABLED) -------- */
 
 function setText(id, value) {
     const el = document.getElementById(id)
-    if (el) el.innerText = value || "-"
+    if (el) el.innerHTML = value || "-"
 }
 
 
@@ -17,14 +17,18 @@ function loadFacultyDetails() {
 
     if (!faculty) return
 
-    // 🔥 find faculty object
     const info = facultyList.find(f => f.id === faculty)
-
     if (!info) return
 
     setText("welcomeText", `Welcome ${info.name}`)
     setText("facultyName", info.name)
-    setText("facultyDept", `Department: ${info.department}`)
+
+    // 🔥 styled department
+    setText(
+        "facultyDept",
+        `<span style="font-weight:500;">Department:</span> ${info.department}`
+    )
+
     setText("facultyId", info.id)
 
     const myCourses = courses.filter(c => c.faculty === faculty)
@@ -35,6 +39,7 @@ function loadFacultyDetails() {
     setText("sectionCount", sections.size)
 
     let totalStudents = 0
+
     myCourses.forEach(c => {
         const key = `${c.department}_${c.program}_${c.sem}_${c.section}`
         if (students[key]) totalStudents += students[key].length
@@ -44,7 +49,7 @@ function loadFacultyDetails() {
 }
 
 
-/* -------- TODAY SCHEDULE (COMPACT, NO TIME) -------- */
+/* -------- TODAY SCHEDULE -------- */
 
 function loadTodaySchedule() {
 
@@ -71,7 +76,6 @@ function loadTodaySchedule() {
         const div = document.createElement("div")
         div.className = "tt-item"
 
-        // 🔥 compact layout (no time)
         div.innerHTML = `
             <strong>${cls.subject}</strong><br>
             ${cls.program} • Sem ${cls.sem} • Sec ${cls.section} • Room ${cls.room}
@@ -82,7 +86,7 @@ function loadTodaySchedule() {
 }
 
 
-/* -------- COURSE CARDS (NO TIME) -------- */
+/* -------- COURSE CARDS -------- */
 
 function loadCourseCards() {
 
@@ -115,10 +119,10 @@ function loadCourseCards() {
         card.className = "card"
 
         card.innerHTML = `
-            <p><strong>Subject:</strong> ${course.subject}</p>
-            <p><strong>Branch:</strong> ${course.program}</p>
-            <p><strong>Semester:</strong> ${course.sem}</p>
-            <p><strong>Section:</strong> ${course.section}</p>
+            <p><span style="font-weight:600;">Subject:</span> ${course.subject}</p>
+            <p><span style="font-weight:600;">Branch:</span> ${course.program}</p>
+            <p><span style="font-weight:600;">Semester:</span> ${course.sem}</p>
+            <p><span style="font-weight:600;">Section:</span> ${course.section}</p>
 
             <button onclick="openCourse('${course.subject}','${course.program}','${course.sem}','${course.section}')">
                 Take Attendance
