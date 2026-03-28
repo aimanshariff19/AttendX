@@ -18,6 +18,12 @@ const classKey = `${department}_${program}_${sem}_${section}`
 const studentList = students[classKey] || []
 const table = document.getElementById("studentRows")
 
+/* -------- Base Key -------- */
+
+function getBaseKey() {
+    return `${subject}_${department}_${program}_${sem}_${section}`
+}
+
 /* -------- Calculate % -------- */
 
 function calculatePercentage(usn, currentStatus = null) {
@@ -29,7 +35,7 @@ function calculatePercentage(usn, currentStatus = null) {
 
         let key = localStorage.key(i)
 
-        if (key && key.includes(subject)) {
+        if (key && key.startsWith(getBaseKey())) {
 
             let stored = JSON.parse(localStorage.getItem(key) || "{}")
             let records = stored.data || stored
@@ -43,7 +49,7 @@ function calculatePercentage(usn, currentStatus = null) {
         }
     }
 
-    // 🔥 include current toggle (live session)
+    // include current session live toggle
     if (currentStatus !== null) {
         total++
         if (currentStatus === "Present") present++
@@ -77,26 +83,21 @@ function loadStudents() {
         `
 
         updateRowStyle(row, percent, true)
-
         table.appendChild(row)
     })
 
-    /* 🔥 Live update */
     document.querySelectorAll(".toggle-switch input").forEach(input => {
         input.addEventListener("change", updateLivePercentage)
     })
+
+    updateStats()
 }
 
 /* -------- Row Styling -------- */
 
 function updateRowStyle(row, percent, isPresent) {
 
-    if (percent < 75) {
-        row.style.borderLeft = "5px solid red"
-    } else {
-        row.style.borderLeft = "none"
-    }
-
+    row.style.borderLeft = percent < 75 ? "5px solid red" : "none"
     row.style.background = isPresent ? "#dcfce7" : "#fee2e2"
 }
 
@@ -115,9 +116,27 @@ function updateLivePercentage() {
         let percent = calculatePercentage(usn, status)
 
         percentCell.innerText = percent + "%"
-
         updateRowStyle(row, percent, input.checked)
     })
+
+    updateStats()
+}
+
+/* -------- Stats -------- */
+
+function updateStats() {
+
+    let total = 0
+    let present = 0
+
+    document.querySelectorAll(".toggle-switch input").forEach(input => {
+        total++
+        if (input.checked) present++
+    })
+
+    document.getElementById("totalCount").innerText = total
+    document.getElementById("presentCount").innerText = present
+    document.getElementById("absentCount").innerText = total - present
 }
 
 /* -------- Submit Attendance -------- */
@@ -126,33 +145,50 @@ function submitAttendance() {
 
     const btn = document.getElementById("submitBtn")
 
-    const date = new Date().toISOString().split("T")[0]
-    const key = `${subject}_${department}_${program}_${sem}_${section}_${date}`
+    const date = document.getElementById("date").value
+    const startTime = document.getElementById("classTime").value
+    const numClasses = parseInt(document.getElementById("numClasses").value)
 
-    /* 🔥 Prevent duplicate */
-    if (localStorage.getItem(key)) {
-        showMessage("Already submitted for today ❌", "error")
+    if (!date || !startTime) {
+        showMessage("Fill date & time properly ❌", "error")
         return
     }
 
-    let data = []
+    let [hour, minute] = startTime.split(":").map(Number)
 
-    document.querySelectorAll(".toggle-switch input").forEach(input => {
-        data.push({
-            usn: input.dataset.usn,
-            status: input.checked ? "Present" : "Absent"
-        })
-    })
+    let submittedAny = false
 
-    localStorage.setItem(key, JSON.stringify({ data }))
+    for (let i = 0; i < numClasses; i++) {
 
-    /* 🔥 Disable button after submit */
-    if (btn) {
-        btn.innerText = "Submitted ✅"
-        btn.disabled = true
+        const currentTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`
+
+        const key = `${getBaseKey()}_${date}_${currentTime}`
+
+        if (localStorage.getItem(key)) {
+            showMessage(`Already submitted for ${currentTime} ❌`, "error")
+        } else {
+
+            let data = []
+
+            document.querySelectorAll(".toggle-switch input").forEach(input => {
+                data.push({
+                    usn: input.dataset.usn,
+                    status: input.checked ? "Present" : "Absent"
+                })
+            })
+
+            localStorage.setItem(key, JSON.stringify({ data }))
+            submittedAny = true
+        }
+
+        hour += 1
     }
 
-    showMessage("Attendance Submitted ✅", "success")
+    if (submittedAny) {
+        btn.innerText = "Submitted ✅"
+        btn.disabled = true
+        showMessage("Attendance Submitted ✅", "success")
+    }
 }
 
 /* -------- Message -------- */
@@ -169,21 +205,54 @@ function showMessage(text, type) {
     box.innerText = text
     box.style.display = "block"
 
-    if (type === "success") {
-        box.style.background = "#dcfce7"
-        box.style.color = "#166534"
-    } else {
-        box.style.background = "#fee2e2"
-        box.style.color = "#991b1b"
-    }
+    box.className = "message-box " + (type === "success" ? "success" : "error")
 
     setTimeout(() => {
         box.style.display = "none"
     }, 2500)
 }
 
+/* -------- Button State Check -------- */
+
+function checkSubmissionStatus() {
+
+    const btn = document.getElementById("submitBtn")
+
+    const date = document.getElementById("date").value
+    const startTime = document.getElementById("classTime").value
+
+    if (!date || !startTime) return
+
+    const key = `${getBaseKey()}_${date}_${startTime}`
+
+    if (localStorage.getItem(key)) {
+        btn.innerText = "Already Submitted ✅"
+        btn.disabled = true
+    } else {
+        btn.innerText = "Submit Attendance"
+        btn.disabled = false
+    }
+}
+
+/* -------- Bulk Actions -------- */
+
+function markAll(status) {
+
+    const isPresent = status === "Present"
+
+    document.querySelectorAll(".toggle-switch input").forEach(input => {
+        input.checked = isPresent
+    })
+
+    updateLivePercentage()
+}
+
 /* -------- INIT -------- */
 
 window.onload = function () {
+
     loadStudents()
+
+    document.getElementById("date").addEventListener("change", checkSubmissionStatus)
+    document.getElementById("classTime").addEventListener("change", checkSubmissionStatus)
 }
