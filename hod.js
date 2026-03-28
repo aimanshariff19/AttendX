@@ -1,5 +1,4 @@
 /* -------- 💧 RIPPLE -------- */
-
 document.addEventListener("click", function (e) {
     const btn = e.target.closest("button")
     if (!btn) return
@@ -15,30 +14,33 @@ document.addEventListener("click", function (e) {
     setTimeout(() => circle.remove(), 600)
 })
 
+/* -------- 🔥 NORMALIZE -------- */
+function normalize(str) {
+    return (str || "").toString().toLowerCase().replace(/\s+/g, "")
+}
+
+/* -------- UNIVERSAL GET -------- */
+function getAttendanceRecords(key) {
+    let stored = JSON.parse(localStorage.getItem(key) || "{}")
+    return stored.data || []
+}
 
 /* -------- HOD INFO -------- */
-
 const hodName = localStorage.getItem("hodName")
 const department = localStorage.getItem("hodDepartment")
 
 document.getElementById("hodName").innerText = "Welcome " + (hodName || "")
 document.getElementById("hodDept").innerText = "Department of " + (department || "")
 
-
 /* -------- CONTAINER -------- */
-
 const container = document.getElementById("courseCards")
 
-
 /* -------- GET COURSES -------- */
-
 const deptCourses = courses.filter(
     course => course.department === department
 )
 
-
 /* -------- STATS -------- */
-
 if (document.getElementById("totalCourses")) {
 
     document.getElementById("totalCourses").innerText = deptCourses.length
@@ -66,9 +68,7 @@ if (document.getElementById("totalCourses")) {
     document.getElementById("totalFaculty").innerText = facultySet.size
 }
 
-
 /* -------- CREATE CARDS -------- */
-
 const classMap = new Map()
 
 deptCourses.forEach(course => {
@@ -110,12 +110,9 @@ this
 
 })
 
-
 /* -------- VIEW -------- */
-
 function viewAttendance(department, program, sem, section, btn) {
 
-    // 🌀 LOADING BUTTON
     if (btn) {
         btn.classList.add("loading")
         btn.innerText = ""
@@ -128,7 +125,6 @@ function viewAttendance(department, program, sem, section, btn) {
         localStorage.setItem("sem", sem)
         localStorage.setItem("section", section)
 
-        // 🚀 PAGE EXIT
         document.querySelector(".dashboard").classList.add("page-exit")
 
         setTimeout(() => {
@@ -138,9 +134,7 @@ function viewAttendance(department, program, sem, section, btn) {
     }, 600)
 }
 
-
 /* -------- LOGOUT -------- */
-
 function logout() {
 
     const btn = event.target
@@ -162,23 +156,22 @@ function logout() {
     }, 700)
 }
 
-
-/* -------- CALCULATE -------- */
-
+/* -------- ✅ FIXED CALCULATE -------- */
 function calculateSubjectPercentage(usn, subject, department, program, sem, section) {
 
     let present = 0
     let total = 0
 
+    const base = `${normalize(subject)}_${normalize(department)}_${normalize(program)}_${sem}_${normalize(section)}`
+
     for (let i = 0; i < localStorage.length; i++) {
 
         let key = localStorage.key(i)
 
-        if (key.startsWith(`${subject}_${department}_${program}_${sem}_${section}_`)) {
+        if (key && key.toLowerCase().startsWith(base)) {
 
-            let data = JSON.parse(localStorage.getItem(key) || "[]")
-
-            let record = data.find(r => r.usn === usn)
+            let records = getAttendanceRecords(key)
+            let record = records.find(r => r.usn === usn)
 
             if (record) {
                 total++
@@ -188,5 +181,6 @@ function calculateSubjectPercentage(usn, subject, department, program, sem, sect
     }
 
     if (total === 0) return "0%"
+
     return Math.round((present / total) * 100) + "%"
 }
