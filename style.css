@@ -329,3 +329,57 @@ tbody tr:hover {
     align-self: flex-start;
 }
 
+/* -------- LOGIN PAGE -------- */
+
+.login-container {
+    width: 350px;
+    margin: 80px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+.college-logo {
+    width: 80px;
+    margin-bottom: 10px;
+}
+
+.college-name {
+    margin: 5px 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.college-location,
+.college-status {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.system-title {
+    margin: 15px 0;
+    font-size: 18px;
+    color: #2563eb;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+}
+
+.password-field {
+    position: relative;
+}
+
+.eye {
+    position: absolute;
+    right: 10px;
+    top: 12px;
+    cursor: pointer;
+    color: #6b7280;
+}
