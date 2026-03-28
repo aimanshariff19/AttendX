@@ -101,28 +101,28 @@ function login() {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    /* 👁 PASSWORD TOGGLE */
+    /* 👁 PASSWORD TOGGLE (FINAL FIX) */
 
     const eyeIcon = document.getElementById("eyeIcon")
     const password = document.getElementById("password")
 
     if (eyeIcon && password) {
 
-        eyeIcon.addEventListener("click", () => {
+        eyeIcon.onclick = function () {
 
             if (password.type === "password") {
                 password.type = "text"
-                eyeIcon.classList.replace("fa-eye", "fa-eye-slash")
+                eyeIcon.className = "fa-solid fa-eye-slash eye"
             } else {
                 password.type = "password"
-                eyeIcon.classList.replace("fa-eye-slash", "fa-eye")
+                eyeIcon.className = "fa-solid fa-eye eye"
             }
 
-        })
+        }
 
     }
 
-    /* 💧 RIPPLE */
+    /* 💧 RIPPLE EFFECT */
 
     document.addEventListener("click", function (e) {
 
