@@ -1,3 +1,5 @@
+/* -------- STUDENT LOGIN -------- */
+
 function studentLogin() {
 
     const idInput = document.getElementById("studentId")
@@ -46,7 +48,6 @@ function studentLogin() {
     // 🔥 SUCCESS LOGIN
     if (foundStudent) {
 
-        // 🌀 LOADING
         btn.classList.add("loading")
         btn.innerText = ""
 
@@ -57,8 +58,7 @@ function studentLogin() {
             localStorage.setItem("studentName", foundStudent.name)
             localStorage.setItem("studentClass", studentClassKey)
 
-            // 🚀 PAGE EXIT
-            document.querySelector(".login-container").classList.add("page-exit")
+            card.classList.add("page-exit")
 
             setTimeout(() => {
                 window.location.href = "student-dashboard.html"
@@ -69,7 +69,6 @@ function studentLogin() {
     } else {
         showError("Invalid Student ID or Password ❌")
     }
-
 
     /* -------- ERROR HANDLER -------- */
 
@@ -93,54 +92,48 @@ function studentLogin() {
 }
 
 
-/* -------- PASSWORD TOGGLE -------- */
+/* -------- DOM READY -------- */
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    /* 👁 PASSWORD TOGGLE (FIXED) */
 
     const eyeIcon = document.getElementById("eyeIcon")
     const passwordInput = document.getElementById("password")
 
-    if (!eyeIcon || !passwordInput) return
+    if (eyeIcon && passwordInput) {
 
-    eyeIcon.addEventListener("click", () => {
+        eyeIcon.addEventListener("click", () => {
 
-        const isPassword = passwordInput.type === "password"
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text"
+                eyeIcon.classList.replace("fa-eye", "fa-eye-slash")
+            } else {
+                passwordInput.type = "password"
+                eyeIcon.classList.replace("fa-eye-slash", "fa-eye")
+            }
 
-        passwordInput.type = isPassword ? "text" : "password"
+        })
 
-        eyeIcon.classList.toggle("fa-eye")
-        eyeIcon.classList.toggle("fa-eye-slash")
+    }
 
+    /* 💧 RIPPLE */
+
+    document.addEventListener("click", function (e) {
+
+        const btn = e.target.closest("button")
+        if (!btn) return
+
+        const circle = document.createElement("span")
+        circle.classList.add("ripple")
+
+        const rect = btn.getBoundingClientRect()
+        circle.style.left = (e.clientX - rect.left) + "px"
+        circle.style.top = (e.clientY - rect.top) + "px"
+
+        btn.appendChild(circle)
+
+        setTimeout(() => circle.remove(), 600)
     })
 
 })
-
-// 💧 Ripple
-        document.addEventListener("click", function (e) {
-            const btn = e.target.closest("button")
-            if (!btn) return
-
-            const circle = document.createElement("span")
-            circle.classList.add("ripple")
-
-            const rect = btn.getBoundingClientRect()
-            circle.style.left = (e.clientX - rect.left) + "px"
-            circle.style.top = (e.clientY - rect.top) + "px"
-
-            btn.appendChild(circle)
-            setTimeout(() => circle.remove(), 600)
-        })
-
-        // 👁 Toggle password
-        document.getElementById("eyeIcon").addEventListener("click", () => {
-            const pass = document.getElementById("password")
-            const icon = document.getElementById("eyeIcon")
-
-            if (pass.type === "password") {
-                pass.type = "text"
-                icon.classList.replace("fa-eye", "fa-eye-slash")
-            } else {
-                pass.type = "password"
-                icon.classList.replace("fa-eye-slash", "fa-eye")
-            }
-        })
