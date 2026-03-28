@@ -1,5 +1,9 @@
-/* -------- CLASS DETAILS -------- */
+/* -------- 🔥 NORMALIZE -------- */
+function normalize(str) {
+    return (str || "").toString().toLowerCase().replace(/\s+/g, "")
+}
 
+/* -------- CLASS DETAILS -------- */
 const subject = localStorage.getItem("subject")
 const department = localStorage.getItem("department")
 const program = localStorage.getItem("program")
@@ -17,112 +21,37 @@ setText("program", program)
 setText("sem", sem)
 setText("section", section)
 
-
-/* -------- NAVIGATION -------- */
-
-function viewAttendance() {
-    window.location.href = "edit-attendance.html"
+/* -------- BASE KEY (FIXED) -------- */
+function getBaseKey() {
+    return `${normalize(subject)}_${normalize(department)}_${normalize(program)}_${sem}_${normalize(section)}`
 }
 
-function goBack() {
-    window.location.href = "dashboard.html"
+/* -------- UNIVERSAL GET -------- */
+function getAttendanceRecords(key) {
+    let stored = JSON.parse(localStorage.getItem(key) || "{}")
+    return stored.data || []
 }
-
 
 /* -------- STUDENTS -------- */
-
 const classKey = `${department}_${program}_${sem}_${section}`
 const studentList = students[classKey] || []
 const table = document.getElementById("studentRows")
 
-
-/* -------- BASE KEY -------- */
-
-function getBaseKey() {
-    return `${subject}_${department}_${program}_${sem}_${section}`
-}
-
-
-/* -------- TIME FORMAT -------- */
-
-function formatTo12Hour(time24) {
-    if (!time24) return "--"
-
-    let [hour, minute] = time24.split(":").map(Number)
-    let ampm = hour >= 12 ? "PM" : "AM"
-    hour = hour % 12 || 12
-
-    return `${hour}:${String(minute).padStart(2, "0")} ${ampm}`
-}
-
-
-/* -------- TIME DISPLAY -------- */
-
-function updateDisplayTime() {
-    const time = document.getElementById("classTime")?.value
-    if (!time) {
-        setText("displayTime", "--")
-        return
-    }
-    setText("displayTime", formatTo12Hour(time))
-}
-
-
-/* -------- TIME RANGE -------- */
-
-function updateTimeRange() {
-
-    const startTime = document.getElementById("classTime")?.value
-    const numClasses = parseInt(document.getElementById("numClasses")?.value)
-
-    if (!startTime || !numClasses) return
-
-    let [hour, minute] = startTime.split(":").map(Number)
-    let endHour = hour + numClasses
-
-    const startFormatted = formatTo12Hour(startTime)
-    const endFormatted = formatTo12Hour(
-        `${String(endHour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`
-    )
-
-    setText("timeRange", `${startFormatted} - ${endFormatted}`)
-}
-
-
-/* -------- CURRENT TIME -------- */
-
-function updateCurrentTime() {
-
-    const now = new Date()
-
-    let hours = now.getHours()
-    let minutes = now.getMinutes()
-
-    let ampm = hours >= 12 ? "PM" : "AM"
-    hours = hours % 12 || 12
-
-    const timeString = `${hours}:${String(minutes).padStart(2, "0")} ${ampm}`
-
-    setText("currentTime", timeString)
-}
-
-
-/* -------- CALCULATE % -------- */
-
+/* -------- CALCULATE % (FIXED) -------- */
 function calculatePercentage(usn, currentStatus = null) {
 
     let present = 0
     let total = 0
 
+    const base = getBaseKey()
+
     for (let i = 0; i < localStorage.length; i++) {
 
         let key = localStorage.key(i)
 
-        if (key && key.startsWith(getBaseKey())) {
+        if (key && key.toLowerCase().startsWith(base)) {
 
-            let stored = JSON.parse(localStorage.getItem(key) || "{}")
-            let records = stored.data || stored
-
+            let records = getAttendanceRecords(key)
             let record = records.find(r => r.usn === usn)
 
             if (record) {
@@ -140,9 +69,7 @@ function calculatePercentage(usn, currentStatus = null) {
     return total === 0 ? 0 : Math.round((present / total) * 100)
 }
 
-
 /* -------- LOAD STUDENTS -------- */
-
 function loadStudents() {
 
     if (!table) return
@@ -180,17 +107,13 @@ function loadStudents() {
     updateStats()
 }
 
-
 /* -------- ROW STYLE -------- */
-
 function updateRowStyle(row, percent, isPresent) {
     row.style.borderLeft = percent < 75 ? "5px solid red" : "none"
     row.style.background = isPresent ? "#dcfce7" : "#fee2e2"
 }
 
-
 /* -------- LIVE UPDATE -------- */
-
 function updateLivePercentage() {
 
     document.querySelectorAll("#studentRows tr").forEach(row => {
@@ -210,9 +133,7 @@ function updateLivePercentage() {
     updateStats()
 }
 
-
 /* -------- STATS -------- */
-
 function updateStats() {
 
     let total = 0
@@ -228,9 +149,7 @@ function updateStats() {
     setText("absentCount", total - present)
 }
 
-
-/* -------- 💧 RIPPLE EFFECT -------- */
-
+/* -------- 💧 RIPPLE -------- */
 document.addEventListener("click", function (e) {
     const btn = e.target.closest("button")
     if (!btn) return
@@ -243,13 +162,10 @@ document.addEventListener("click", function (e) {
     circle.style.top = (e.clientY - rect.top) + "px"
 
     btn.appendChild(circle)
-
     setTimeout(() => circle.remove(), 600)
 })
 
-
-/* -------- 🚀 SUBMIT ATTENDANCE (UPGRADED) -------- */
-
+/* -------- 🚀 SUBMIT ATTENDANCE (FIXED) -------- */
 function submitAttendance() {
 
     const btn = document.getElementById("submitBtn")
@@ -263,63 +179,42 @@ function submitAttendance() {
         return
     }
 
-    // 🔥 START LOADING
     btn.classList.add("loading")
     btn.innerText = ""
 
     setTimeout(() => {
 
         let [hour, minute] = startTime.split(":").map(Number)
-
-        let successCount = 0
-        let skippedCount = 0
+        const base = getBaseKey()
 
         for (let i = 0; i < numClasses; i++) {
 
             const currentTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`
-            const key = `${getBaseKey()}_${date}_${currentTime}`
+            const key = `${base}_${date}_${currentTime}`
 
-            if (localStorage.getItem(key)) {
-                skippedCount++
-            } else {
+            let data = []
 
-                let data = []
-
-                document.querySelectorAll(".toggle-switch input").forEach(input => {
-                    data.push({
-                        usn: input.dataset.usn,
-                        status: input.checked ? "Present" : "Absent"
-                    })
+            document.querySelectorAll(".toggle-switch input").forEach(input => {
+                data.push({
+                    usn: input.dataset.usn,
+                    status: input.checked ? "Present" : "Absent"
                 })
+            })
 
-                localStorage.setItem(key, JSON.stringify({ data }))
-                successCount++
-            }
-
-            hour += 1
+            localStorage.setItem(key, JSON.stringify({ data }))
+            hour++
         }
 
-        if (successCount > 0) {
-            showMessage(`✅ Saved ${successCount} class(es)`, "success")
+        showMessage("✅ Attendance Saved", "success")
 
-            // 🔥 PAGE EXIT
-            document.querySelector(".dashboard").classList.add("page-exit")
+        setTimeout(() => {
+            window.location.href = "dashboard.html"
+        }, 600)
 
-            setTimeout(() => {
-                window.location.href = "dashboard.html"
-            }, 600)
-        }
-
-        if (skippedCount > 0) {
-            showMessage(`⚠️ ${skippedCount} already existed`, "error")
-        }
-
-    }, 1000)
+    }, 800)
 }
 
-
 /* -------- MESSAGE -------- */
-
 function showMessage(text, type) {
 
     let box = document.getElementById("messageBox")
@@ -334,32 +229,7 @@ function showMessage(text, type) {
     }, 2500)
 }
 
-
-/* -------- CHECK SUBMISSION -------- */
-
-function checkSubmissionStatus() {
-
-    const btn = document.getElementById("submitBtn")
-
-    const date = document.getElementById("date")?.value
-    const startTime = document.getElementById("classTime")?.value
-
-    if (!date || !startTime) return
-
-    const key = `${getBaseKey()}_${date}_${startTime}`
-
-    if (localStorage.getItem(key)) {
-        btn.innerHTML = "⚠️ Already Submitted"
-        btn.disabled = true
-    } else {
-        btn.innerHTML = "🚀 Submit Attendance"
-        btn.disabled = false
-    }
-}
-
-
 /* -------- INIT -------- */
-
 window.onload = function () {
 
     const today = new Date().toISOString().split("T")[0]
@@ -369,14 +239,4 @@ window.onload = function () {
 
     updateCurrentTime()
     setInterval(updateCurrentTime, 1000)
-
-    document.getElementById("date")?.addEventListener("change", checkSubmissionStatus)
-
-    document.getElementById("classTime")?.addEventListener("change", () => {
-        checkSubmissionStatus()
-        updateTimeRange()
-        updateDisplayTime()
-    })
-
-    document.getElementById("numClasses")?.addEventListener("input", updateTimeRange)
 }

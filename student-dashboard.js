@@ -1,5 +1,4 @@
-/* -------- 💧 RIPPLE (FIXED - SINGLE) -------- */
-
+/* -------- 💧 RIPPLE -------- */
 document.addEventListener("click", function (e) {
     const btn = e.target.closest("button")
     if (!btn) return
@@ -15,9 +14,18 @@ document.addEventListener("click", function (e) {
     setTimeout(() => circle.remove(), 600)
 })
 
+/* -------- 🔥 NORMALIZE -------- */
+function normalize(str) {
+    return (str || "").toString().toLowerCase().replace(/\s+/g, "")
+}
+
+/* -------- UNIVERSAL GET -------- */
+function getAttendanceRecords(key) {
+    let stored = JSON.parse(localStorage.getItem(key) || "{}")
+    return stored.data || []
+}
 
 /* -------- INIT -------- */
-
 document.addEventListener("DOMContentLoaded", () => {
 
     const usn = localStorage.getItem("studentUSN")
@@ -40,8 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const table = document.getElementById("subjectRows")
     if (!table || typeof courses === "undefined") return
 
-    /* -------- 🔥 FETCH SUBJECTS -------- */
-
+    /* -------- FETCH SUBJECTS -------- */
     const rawSubjects = courses.filter(c =>
         c.department === department &&
         c.sem.toString() === sem &&
@@ -55,22 +62,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
-    /* -------- CALCULATE -------- */
-
+    /* -------- FIXED CALCULATE -------- */
     function calculateAttendance(subject) {
 
         let present = 0
         let total = 0
 
+        const base = `${normalize(subject)}_${normalize(department)}_${normalize(program)}_${sem}_${normalize(section)}`
+
         for (let i = 0; i < localStorage.length; i++) {
 
             let key = localStorage.key(i)
 
-            if (key && key.startsWith(`${subject}_${department}_${program}_${sem}_${section}_`)) {
+            if (key && key.toLowerCase().startsWith(base)) {
 
-                let data = JSON.parse(localStorage.getItem(key) || "[]")
-
-                let record = data.find(r => r.usn === usn)
+                let records = getAttendanceRecords(key)
+                let record = records.find(r => r.usn === usn)
 
                 if (record) {
                     total++
@@ -88,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* -------- COLOR -------- */
-
     function getColor(percent) {
         if (percent >= 85) return "#22c55e"
         if (percent >= 75) return "#f59e0b"
@@ -96,7 +102,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* -------- LOAD TABLE -------- */
-
     table.innerHTML = ""
 
     let totalPercent = 0
@@ -129,8 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
         table.appendChild(row)
     })
 
-    /* -------- 🔥 OVERALL ATTENDANCE -------- */
-
+    /* -------- OVERALL -------- */
     const overall = Math.round(totalPercent / classSubjects.length)
 
     const overallBox = document.createElement("div")
@@ -148,8 +152,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector("table")
     )
 
-    /* -------- ⚠ WARNING -------- */
-
     const warning = overallBox.querySelector("#warningText")
 
     if (overall < 75) {
@@ -165,9 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 })
 
-
 /* -------- LOGOUT -------- */
-
 function studentLogout() {
 
     const btn = document.querySelector(".logout-btn")
@@ -190,9 +190,7 @@ function studentLogout() {
     }, 700)
 }
 
-
 /* -------- CHANGE PASSWORD -------- */
-
 function openChangePassword() {
 
     document.querySelector(".dashboard").classList.add("page-exit")
