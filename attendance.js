@@ -262,12 +262,8 @@ function viewAttendance() {
     window.location.href = "edit-attendance.html"
 }
 
-/* 🔥 FIXED BACK BUTTON */
+/* 🔥 FINAL BACK FIX */
 
 function goBack() {
-    if (document.referrer) {
-        window.history.back()
-    } else {
-        window.location.href = "dashboard.html" // fallback
-    }
+    window.location.href = "dashboard.html"
 }
