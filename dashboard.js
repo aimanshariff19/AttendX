@@ -1,3 +1,14 @@
+/* -------- GitHub Pages FIX (Initial Data) -------- */
+
+if (!localStorage.getItem("subject")) {
+    localStorage.setItem("subject", "Math")
+    localStorage.setItem("department", "CSE")
+    localStorage.setItem("program", "BTech")
+    localStorage.setItem("sem", "3")
+    localStorage.setItem("section", "A")
+}
+
+
 /* -------- Class details -------- */
 
 const subject = localStorage.getItem("subject")
@@ -15,11 +26,20 @@ document.getElementById("section").innerText = section || "-"
 
 /* -------- Students -------- */
 
-// ❗ FIXED: template string backticks
 const classKey = `${department}_${program}_${sem}_${section}`
 
-const studentList = students[classKey] || []
+// ✅ SAFE CHECK (prevents crash on GitHub Pages)
+const studentList = (typeof students !== "undefined" && students[classKey])
+    ? students[classKey]
+    : []
+
 const table = document.getElementById("studentRows")
+
+
+// 🔥 DEBUG (remove later)
+console.log("classKey:", classKey)
+console.log("students:", typeof students !== "undefined" ? students : "NOT LOADED")
+console.log("studentList:", studentList)
 
 
 /* -------- Calculate % -------- */
@@ -47,7 +67,7 @@ function calculatePercentage(usn, currentStatus = null) {
         }
     }
 
-    // 🔥 include current toggle (live session)
+    // include current toggle
     if (currentStatus !== null) {
         total++
         if (currentStatus === "Present") present++
@@ -61,7 +81,14 @@ function calculatePercentage(usn, currentStatus = null) {
 
 function loadStudents() {
 
+    if (!table) return
+
     table.innerHTML = ""
+
+    if (studentList.length === 0) {
+        table.innerHTML = `<tr><td colspan="4">No students found</td></tr>`
+        return
+    }
 
     studentList.forEach(student => {
 
@@ -69,7 +96,6 @@ function loadStudents() {
 
         let row = document.createElement("tr")
 
-        // ❗ FIXED: template string with backticks
         row.innerHTML = `
             <td>${student.usn}</td>
             <td>${student.name}</td>
@@ -87,7 +113,6 @@ function loadStudents() {
         table.appendChild(row)
     })
 
-    /* 🔥 Live update */
     document.querySelectorAll(".toggle-switch input").forEach(input => {
         input.addEventListener("change", updateLivePercentage)
     })
@@ -98,12 +123,7 @@ function loadStudents() {
 
 function updateRowStyle(row, percent, isPresent) {
 
-    if (percent < 75) {
-        row.style.borderLeft = "5px solid red"
-    } else {
-        row.style.borderLeft = "none"
-    }
-
+    row.style.borderLeft = percent < 75 ? "5px solid red" : "none"
     row.style.background = isPresent ? "#dcfce7" : "#fee2e2"
 }
 
@@ -137,10 +157,8 @@ function submitAttendance() {
 
     const date = new Date().toISOString().split("T")[0]
 
-    // ❗ FIXED: template string
     const key = `${subject}_${department}_${program}_${sem}_${section}_${date}`
 
-    /* 🔥 Prevent duplicate */
     if (localStorage.getItem(key)) {
         showMessage("Already submitted for today ❌", "error")
         return
@@ -149,7 +167,6 @@ function submitAttendance() {
     let data = []
 
     document.querySelectorAll(".toggle-switch input").forEach(input => {
-
         data.push({
             usn: input.dataset.usn,
             status: input.checked ? "Present" : "Absent"
@@ -158,7 +175,6 @@ function submitAttendance() {
 
     localStorage.setItem(key, JSON.stringify({ data }))
 
-    /* 🔥 Disable button after submit */
     if (btn) {
         btn.innerText = "Submitted ✅"
         btn.disabled = true
