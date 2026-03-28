@@ -217,7 +217,7 @@ function updateStats() {
 }
 
 
-/* -------- SUBMIT ATTENDANCE (SMART) -------- */
+/* -------- SUBMIT ATTENDANCE -------- */
 
 function submitAttendance() {
 
@@ -319,6 +319,10 @@ function checkSubmissionStatus() {
 /* -------- INIT -------- */
 
 window.onload = function () {
+
+    // 🔥 AUTO DATE (YOUR FEATURE)
+    const today = new Date().toISOString().split("T")[0]
+    document.getElementById("date").value = today
 
     loadStudents()
 
