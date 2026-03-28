@@ -17,6 +17,7 @@
             max-width: 1100px;
             margin: 30px auto;
             padding: 20px;
+            transition: 0.5s;
         }
 
         .header-actions {
@@ -63,6 +64,48 @@
 
         button:hover::after {
             width: 100%;
+        }
+
+        /* 🔥 RIPPLE */
+        button span.ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: rippleAnim 0.6s linear;
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        @keyframes rippleAnim {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* 🔥 LOADING BUTTON */
+        button.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        button.loading::after {
+            content: "";
+            width: 18px;
+            height: 18px;
+            border: 3px solid white;
+            border-top: 3px solid transparent;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
         }
 
         .back-btn {
@@ -260,6 +303,18 @@
             width: 100%;
         }
 
+        /* 🔥 PAGE EXIT */
+        .page-exit {
+            animation: pageOut 0.6s ease forwards;
+        }
+
+        @keyframes pageOut {
+            to {
+                opacity: 0;
+                transform: translateY(-40px) scale(0.98);
+            }
+        }
+
         /* 🔥 ANIMATION */
         @keyframes fadeUp {
             from {
@@ -282,26 +337,24 @@
 
         <div class="header-actions">
             <h1>AttendX / Faculty Dashboard / Take Attendance</h1>
-            <button onclick="viewAttendance()"> Edit Attendance</button>
+            <button onclick="viewAttendance()">Edit Attendance</button>
         </div>
 
         <button class="back-btn" onclick="goBack()">← Go Back</button>
 
-        <!-- 🔥 COURSE INFO -->
         <div class="card">
-            <p> <strong>Course:</strong> <span id="subject"></span></p>
-            <p> <strong>Department:</strong> <span id="department"></span></p>
-            <p> <strong>Program:</strong> <span id="program"></span></p>
-            <p> <strong>Semester:</strong> <span id="sem"></span></p>
-            <p> <strong>Section:</strong> <span id="section"></span></p>
+            <p><strong>Course:</strong> <span id="subject"></span></p>
+            <p><strong>Department:</strong> <span id="department"></span></p>
+            <p><strong>Program:</strong> <span id="program"></span></p>
+            <p><strong>Semester:</strong> <span id="sem"></span></p>
+            <p><strong>Section:</strong> <span id="section"></span></p>
         </div>
 
-        <!-- 🔥 CONTROLS -->
         <div class="controls-box">
             <div class="controls-top">
                 <div>⏱ Current Time: <span id="currentTime">--</span></div>
                 <div>🕒 Duration: <span id="timeRange">--</span></div>
-                <div>⏰ Start Time: <span id="displayTime">--</span></div> <!-- 🔥 NEW -->
+                <div>⏰ Start Time: <span id="displayTime">--</span></div>
             </div>
 
             <div class="controls-bottom">
@@ -311,12 +364,12 @@
                 </div>
 
                 <div class="control-item">
-                    <label> Start Time</label>
+                    <label>Start Time</label>
                     <input type="time" id="classTime">
                 </div>
 
                 <div class="control-item">
-                    <label> No. of Classes</label>
+                    <label>No. of Classes</label>
                     <input type="number" id="numClasses" min="1" value="1">
                 </div>
             </div>
@@ -324,20 +377,17 @@
 
         <div id="messageBox" class="message-box"></div>
 
-        <!-- 🔥 ANALYTICS -->
         <div class="analytics">
-            <div class="analytic-card"> Total <span id="totalCount">0</span></div>
-            <div class="analytic-card"> Present <span id="presentCount">0</span></div>
-            <div class="analytic-card"> Absent <span id="absentCount">0</span></div>
+            <div class="analytic-card">Total <span id="totalCount">0</span></div>
+            <div class="analytic-card">Present <span id="presentCount">0</span></div>
+            <div class="analytic-card">Absent <span id="absentCount">0</span></div>
         </div>
 
-        <!-- 🔥 BULK -->
         <div class="bulk-actions">
             <button onclick="markAll('Present')">All Present</button>
             <button onclick="markAll('Absent')">All Absent</button>
         </div>
 
-        <!-- 🔥 TABLE -->
         <table>
             <thead>
                 <tr>

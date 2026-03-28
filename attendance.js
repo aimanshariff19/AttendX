@@ -56,15 +56,15 @@ function formatTo12Hour(time24) {
 }
 
 
-/* -------- 🔥 DISPLAY SELECTED TIME -------- */
+/* -------- TIME DISPLAY -------- */
 
 function updateDisplayTime() {
-
     const time = document.getElementById("classTime")?.value
-    if (!time) return
-
-    const formatted = formatTo12Hour(time)
-    setText("displayTime", formatted)
+    if (!time) {
+        setText("displayTime", "--")
+        return
+    }
+    setText("displayTime", formatTo12Hour(time))
 }
 
 
@@ -229,7 +229,26 @@ function updateStats() {
 }
 
 
-/* -------- SUBMIT ATTENDANCE -------- */
+/* -------- 💧 RIPPLE EFFECT -------- */
+
+document.addEventListener("click", function (e) {
+    const btn = e.target.closest("button")
+    if (!btn) return
+
+    const circle = document.createElement("span")
+    circle.classList.add("ripple")
+
+    const rect = btn.getBoundingClientRect()
+    circle.style.left = (e.clientX - rect.left) + "px"
+    circle.style.top = (e.clientY - rect.top) + "px"
+
+    btn.appendChild(circle)
+
+    setTimeout(() => circle.remove(), 600)
+})
+
+
+/* -------- 🚀 SUBMIT ATTENDANCE (UPGRADED) -------- */
 
 function submitAttendance() {
 
@@ -244,47 +263,58 @@ function submitAttendance() {
         return
     }
 
-    let [hour, minute] = startTime.split(":").map(Number)
+    // 🔥 START LOADING
+    btn.classList.add("loading")
+    btn.innerText = ""
 
-    let successCount = 0
-    let skippedCount = 0
+    setTimeout(() => {
 
-    for (let i = 0; i < numClasses; i++) {
+        let [hour, minute] = startTime.split(":").map(Number)
 
-        const currentTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`
-        const key = `${getBaseKey()}_${date}_${currentTime}`
+        let successCount = 0
+        let skippedCount = 0
 
-        if (localStorage.getItem(key)) {
-            skippedCount++
-        } else {
+        for (let i = 0; i < numClasses; i++) {
 
-            let data = []
+            const currentTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`
+            const key = `${getBaseKey()}_${date}_${currentTime}`
 
-            document.querySelectorAll(".toggle-switch input").forEach(input => {
-                data.push({
-                    usn: input.dataset.usn,
-                    status: input.checked ? "Present" : "Absent"
+            if (localStorage.getItem(key)) {
+                skippedCount++
+            } else {
+
+                let data = []
+
+                document.querySelectorAll(".toggle-switch input").forEach(input => {
+                    data.push({
+                        usn: input.dataset.usn,
+                        status: input.checked ? "Present" : "Absent"
+                    })
                 })
-            })
 
-            localStorage.setItem(key, JSON.stringify({ data }))
-            successCount++
+                localStorage.setItem(key, JSON.stringify({ data }))
+                successCount++
+            }
+
+            hour += 1
         }
 
-        hour += 1
-    }
+        if (successCount > 0) {
+            showMessage(`✅ Saved ${successCount} class(es)`, "success")
 
-    if (successCount > 0) {
-        btn.innerHTML = "✅ Submitted"
-        btn.disabled = true
-        btn.style.background = "#16a34a"
+            // 🔥 PAGE EXIT
+            document.querySelector(".dashboard").classList.add("page-exit")
 
-        showMessage(`✅ Saved ${successCount} class(es)`, "success")
-    }
+            setTimeout(() => {
+                window.location.href = "dashboard.html"
+            }, 600)
+        }
 
-    if (skippedCount > 0) {
-        showMessage(`⚠️ ${skippedCount} already existed`, "error")
-    }
+        if (skippedCount > 0) {
+            showMessage(`⚠️ ${skippedCount} already existed`, "error")
+        }
+
+    }, 1000)
 }
 
 
@@ -332,7 +362,6 @@ function checkSubmissionStatus() {
 
 window.onload = function () {
 
-    // 🔥 AUTO DATE
     const today = new Date().toISOString().split("T")[0]
     document.getElementById("date").value = today
 
@@ -346,23 +375,8 @@ window.onload = function () {
     document.getElementById("classTime")?.addEventListener("change", () => {
         checkSubmissionStatus()
         updateTimeRange()
-        updateDisplayTime() // 🔥 NEW
+        updateDisplayTime()
     })
 
     document.getElementById("numClasses")?.addEventListener("input", updateTimeRange)
-}
-
-/* -------- DISPLAY 12HR TIME -------- */
-
-function updateDisplayTime() {
-
-    const time = document.getElementById("classTime")?.value
-
-    if (!time) {
-        document.getElementById("displayTime").innerText = "--"
-        return
-    }
-
-    const formatted = formatTo12Hour(time)
-    document.getElementById("displayTime").innerText = formatted
 }
