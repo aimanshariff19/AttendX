@@ -151,62 +151,33 @@ function goBack() {
 
 function exportClassReport() {
 
-    let table = `
+    const rows = document.querySelectorAll("#studentRows tr")
 
-<table border="1">
-<tr>
-<th>USN</th>
-<th>Name</th>
-<th>Parent Phone</th>
-`
+    if (rows.length === 0) {
+        alert("No data to export")
+        return
+    }
 
-    classSubjects.forEach(sub => {
-        table += `<th>${sub.subject}</th>`
+    let csv = "USN,Name,Parent Phone\n"
+
+    rows.forEach(row => {
+        const cols = row.querySelectorAll("td")
+
+        let usn = cols[0]?.innerText || ""
+        let name = cols[1]?.innerText || ""
+        let phone = cols[2]?.innerText || ""
+
+        csv += `${usn},${name},${phone}\n`
     })
 
-    table += `<th>Overall %</th></tr>`
+    // Create file
+    const blob = new Blob([csv], { type: "text/csv" })
+    const url = URL.createObjectURL(blob)
 
-    studentList.forEach(student => {
+    const a = document.createElement("a")
+    a.href = url
+    a.download = "class_report.csv"
+    a.click()
 
-        let total = 0
-        let count = 0
-
-        table += `
-
-<tr>
-<td>${student.usn}</td>
-<td>${student.name}</td>
-<td>${student.parentPhone || "-"}</td>
-`
-
-        classSubjects.forEach(sub => {
-
-            let percent = calculatePercentage(student.usn, sub.subject)
-
-            total += percent
-            count++
-
-            table += `<td>${percent}%</td>`
-
-        })
-
-        let overall = count === 0 ? 0 : Math.round(total / count)
-
-        table += `<td>${overall}%</td></tr>`
-
-    })
-
-    table += "</table>"
-
-    let blob = new Blob([table], { type: "application/vnd.ms-excel" })
-
-    let link = document.createElement("a")
-
-    link.href = URL.createObjectURL(blob)
-
-    link.download =
-        `${department}_${program}_${sem}_${section}_attendance_report.xls`
-
-    link.click()
-
+    URL.revokeObjectURL(url)
 }
