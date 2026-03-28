@@ -15,9 +15,8 @@ function login() {
 
     /* -------- HELPER: SUCCESS -------- */
 
-    function successLogin(role, data, redirectPage) {
+    function successLogin(data, redirectPage) {
 
-        // 🌀 LOADING
         btn.classList.add("loading")
         btn.innerText = ""
 
@@ -27,8 +26,7 @@ function login() {
                 localStorage.setItem(key, data[key])
             })
 
-            // 🚀 PAGE EXIT
-            document.querySelector(".login-container").classList.add("page-exit")
+            loginCard.classList.add("page-exit")
 
             setTimeout(() => {
                 window.location.href = redirectPage
@@ -41,7 +39,7 @@ function login() {
 
     if (user === "faculty1" && pass === "1234") {
 
-        successLogin("faculty", {
+        successLogin({
             role: "faculty",
             faculty: "faculty1",
             facultyName: "Prof.Keerthi",
@@ -53,7 +51,7 @@ function login() {
 
     if (user === "faculty2" && pass === "1234") {
 
-        successLogin("faculty", {
+        successLogin({
             role: "faculty",
             faculty: "faculty2",
             facultyName: "Prof.Geeta",
@@ -71,7 +69,7 @@ function login() {
 
     if (hod) {
 
-        successLogin("hod", {
+        successLogin({
             role: "hod",
             hodDepartment: hod.department,
             hodName: hod.name
@@ -99,58 +97,48 @@ function login() {
 }
 
 
-/* -------- PASSWORD TOGGLE -------- */
+/* -------- DOM READY -------- */
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    /* 👁 PASSWORD TOGGLE */
+
     const eyeIcon = document.getElementById("eyeIcon")
+    const password = document.getElementById("password")
 
-    if (eyeIcon) {
+    if (eyeIcon && password) {
 
-        eyeIcon.addEventListener("click", function () {
-
-            const password = document.getElementById("password")
+        eyeIcon.addEventListener("click", () => {
 
             if (password.type === "password") {
                 password.type = "text"
-                this.classList.replace("fa-eye", "fa-eye-slash")
+                eyeIcon.classList.replace("fa-eye", "fa-eye-slash")
             } else {
                 password.type = "password"
-                this.classList.replace("fa-eye-slash", "fa-eye")
+                eyeIcon.classList.replace("fa-eye-slash", "fa-eye")
             }
 
         })
 
     }
 
+    /* 💧 RIPPLE */
+
+    document.addEventListener("click", function (e) {
+
+        const btn = e.target.closest("button")
+        if (!btn) return
+
+        const circle = document.createElement("span")
+        circle.classList.add("ripple")
+
+        const rect = btn.getBoundingClientRect()
+        circle.style.left = (e.clientX - rect.left) + "px"
+        circle.style.top = (e.clientY - rect.top) + "px"
+
+        btn.appendChild(circle)
+
+        setTimeout(() => circle.remove(), 600)
+    })
+
 })
-
-// 💧 Ripple
-        document.addEventListener("click", function (e) {
-            const btn = e.target.closest("button")
-            if (!btn) return
-
-            const circle = document.createElement("span")
-            circle.classList.add("ripple")
-
-            const rect = btn.getBoundingClientRect()
-            circle.style.left = (e.clientX - rect.left) + "px"
-            circle.style.top = (e.clientY - rect.top) + "px"
-
-            btn.appendChild(circle)
-            setTimeout(() => circle.remove(), 600)
-        })
-
-        // 👁 Toggle password
-        document.getElementById("eyeIcon").addEventListener("click", () => {
-            const pass = document.getElementById("password")
-            const icon = document.getElementById("eyeIcon")
-
-            if (pass.type === "password") {
-                pass.type = "text"
-                icon.classList.replace("fa-eye", "fa-eye-slash")
-            } else {
-                pass.type = "password"
-                icon.classList.replace("fa-eye-slash", "fa-eye")
-            }
-        })
