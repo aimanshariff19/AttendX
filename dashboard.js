@@ -17,12 +17,18 @@ function loadFacultyDetails() {
 
     if (!faculty) return
 
-    setText("facultyName", faculty)
-    setText("facultyDept", "Department: CSE")
+    // 🔥 find faculty object
+    const info = facultyList.find(f => f.id === faculty)
+
+    if (!info) return
+
+    setText("welcomeText", `Welcome ${info.name}`)
+    setText("facultyName", info.name)
+    setText("facultyDept", `Department: ${info.department}`)
+    setText("facultyId", info.id)
 
     const myCourses = courses.filter(c => c.faculty === faculty)
 
-    setText("facultyId", faculty)
     setText("courseCount", myCourses.length)
 
     const sections = new Set(myCourses.map(c => c.section))
