@@ -308,3 +308,7 @@ window.onload = function () {
 
     document.getElementById("numClasses")?.addEventListener("input", updateTimeRange)
 }
+
+function viewAttendance() {
+    window.location.href = "edit-attendance.html"
+}
