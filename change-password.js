@@ -1,6 +1,9 @@
+/* -------- USER -------- */
+
 const usn = localStorage.getItem("studentUSN")
 
-/* -------- Message Box -------- */
+
+/* -------- MESSAGE BOX -------- */
 
 function showMessage(text, type) {
 
@@ -12,27 +15,50 @@ function showMessage(text, type) {
 
     setTimeout(() => {
         box.style.display = "none"
-    }, 3000)
-
+    }, 2500)
 }
 
-/* -------- Shake Animation -------- */
+
+/* -------- SHAKE -------- */
 
 function shakeForm() {
 
     const card = document.querySelector(".card")
 
-    card.classList.add("shake")
+    card.style.animation = "shake 0.4s"
 
     setTimeout(() => {
-        card.classList.remove("shake")
+        card.style.animation = ""
     }, 400)
-
 }
 
-/* -------- Update Password -------- */
+
+/* -------- 💧 RIPPLE EFFECT -------- */
+
+document.addEventListener("click", function (e) {
+
+    const btn = e.target.closest("button")
+    if (!btn) return
+
+    const circle = document.createElement("span")
+    circle.classList.add("ripple")
+
+    const rect = btn.getBoundingClientRect()
+
+    circle.style.left = (e.clientX - rect.left) + "px"
+    circle.style.top = (e.clientY - rect.top) + "px"
+
+    btn.appendChild(circle)
+
+    setTimeout(() => circle.remove(), 600)
+})
+
+
+/* -------- 🚀 UPDATE PASSWORD -------- */
 
 function updatePassword() {
+
+    const btn = document.getElementById("updateBtn")
 
     let oldPass = document.getElementById("oldPass").value.trim()
     let newPass = document.getElementById("newPass").value.trim()
@@ -41,40 +67,45 @@ function updatePassword() {
     let savedPass = localStorage.getItem("password_" + usn) || usn
 
     if (oldPass !== savedPass) {
-
         showMessage("Old password is incorrect", "error")
         shakeForm()
         return
-
     }
 
     if (newPass.length < 4) {
-
         showMessage("Password must be at least 4 characters", "error")
         shakeForm()
         return
-
     }
 
     if (newPass !== confirmPass) {
-
         showMessage("Passwords do not match", "error")
         shakeForm()
         return
-
     }
 
-    localStorage.setItem("password_" + usn, newPass)
-
-    showMessage("Password updated successfully 🎉", "success")
+    // 🔥 START LOADING
+    btn.classList.add("loading")
+    btn.innerText = ""
 
     setTimeout(() => {
-        window.location.href = "student-dashboard.html"
-    }, 1200)
 
+        localStorage.setItem("password_" + usn, newPass)
+
+        showMessage("Password updated successfully 🎉", "success")
+
+        // 🔥 PAGE EXIT ANIMATION
+        document.querySelector(".dashboard").classList.add("page-exit")
+
+        setTimeout(() => {
+            window.location.href = "student-dashboard.html"
+        }, 500)
+
+    }, 900)
 }
 
-/* -------- Go Back -------- */
+
+/* -------- NAV -------- */
 
 function goBack() {
     window.location.href = "student-dashboard.html"
