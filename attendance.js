@@ -18,10 +18,9 @@ setText("sem", sem)
 setText("section", section)
 
 
-/* -------- NAVIGATION FIX (🔥 ADDED) -------- */
+/* -------- NAVIGATION -------- */
 
 function viewAttendance() {
-    // 👉 change file name if different
     window.location.href = "edit-attendance.html"
 }
 
@@ -62,8 +61,8 @@ function formatTo12Hour(time24) {
 
 function updateTimeRange() {
 
-    const startTime = document.getElementById("classTime").value
-    const numClasses = parseInt(document.getElementById("numClasses").value)
+    const startTime = document.getElementById("classTime")?.value
+    const numClasses = parseInt(document.getElementById("numClasses")?.value)
 
     if (!startTime || !numClasses) return
 
@@ -75,8 +74,7 @@ function updateTimeRange() {
         `${String(endHour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`
     )
 
-    document.getElementById("timeRange").innerText =
-        `${startFormatted} - ${endFormatted}`
+    setText("timeRange", `${startFormatted} - ${endFormatted}`)
 }
 
 
@@ -94,7 +92,7 @@ function updateCurrentTime() {
 
     const timeString = `${hours}:${String(minutes).padStart(2, "0")} ${ampm}`
 
-    document.getElementById("currentTime").innerText = timeString
+    setText("currentTime", timeString)
 }
 
 
@@ -173,7 +171,6 @@ function loadStudents() {
 /* -------- Row Styling -------- */
 
 function updateRowStyle(row, percent, isPresent) {
-
     row.style.borderLeft = percent < 75 ? "5px solid red" : "none"
     row.style.background = isPresent ? "#dcfce7" : "#fee2e2"
 }
@@ -225,9 +222,9 @@ function submitAttendance() {
 
     const btn = document.getElementById("submitBtn")
 
-    const date = document.getElementById("date").value
-    const startTime = document.getElementById("classTime").value
-    const numClasses = parseInt(document.getElementById("numClasses").value)
+    const date = document.getElementById("date")?.value
+    const startTime = document.getElementById("classTime")?.value
+    const numClasses = parseInt(document.getElementById("numClasses")?.value)
 
     if (!date || !startTime) {
         showMessage("Fill date & time properly ❌", "error")
@@ -291,6 +288,29 @@ function showMessage(text, type) {
     setTimeout(() => {
         box.style.display = "none"
     }, 2500)
+}
+
+
+/* -------- CHECK SUBMISSION (🔥 FIXED) -------- */
+
+function checkSubmissionStatus() {
+
+    const btn = document.getElementById("submitBtn")
+
+    const date = document.getElementById("date")?.value
+    const startTime = document.getElementById("classTime")?.value
+
+    if (!date || !startTime) return
+
+    const key = `${getBaseKey()}_${date}_${startTime}`
+
+    if (localStorage.getItem(key)) {
+        btn.innerText = "Already Submitted ✅"
+        btn.disabled = true
+    } else {
+        btn.innerText = "Submit Attendance"
+        btn.disabled = false
+    }
 }
 
 
