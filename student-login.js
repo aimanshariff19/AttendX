@@ -1,139 +1,202 @@
-/* -------- STUDENT LOGIN -------- */
+/* -------- 💧 RIPPLE -------- */
 
-function studentLogin() {
+document.addEventListener("click", function (e) {
+    const btn = e.target.closest("button")
+    if (!btn) return
 
-    const idInput = document.getElementById("studentId")
-    const passInput = document.getElementById("password")
-    const error = document.getElementById("error")
-    const btn = document.getElementById("loginBtn")
-    const card = document.querySelector(".login-container")
+    const circle = document.createElement("span")
+    circle.classList.add("ripple")
 
-    const studentId = idInput.value.trim()
-    const password = passInput.value.trim()
+    const rect = btn.getBoundingClientRect()
+    circle.style.left = (e.clientX - rect.left) + "px"
+    circle.style.top = (e.clientY - rect.top) + "px"
 
-    error.innerText = ""
-
-    // 🔹 Validation
-    if (!studentId || !password) {
-        showError("Please fill all fields")
-        return
-    }
-
-    let foundStudent = null
-    let studentClassKey = null
-
-    // 🔥 LOOP THROUGH ALL GROUPS
-    for (let key in students) {
-
-        const group = students[key]
-
-        const match = group.find(s =>
-            s.usn === studentId && s.password === password
-        )
-
-        if (match) {
-            foundStudent = match
-            studentClassKey = key
-
-            const [department, program, sem, section] = key.split("_")
-
-            localStorage.setItem("branch", program)
-            localStorage.setItem("sem", sem)
-            localStorage.setItem("section", section)
-
-            break
-        }
-    }
-
-    // 🔥 SUCCESS LOGIN
-    if (foundStudent) {
-
-        btn.classList.add("loading")
-        btn.innerText = ""
-
-        setTimeout(() => {
-
-            localStorage.setItem("role", "student")
-            localStorage.setItem("studentUSN", foundStudent.usn)
-            localStorage.setItem("studentName", foundStudent.name)
-            localStorage.setItem("studentClass", studentClassKey)
-
-            card.classList.add("page-exit")
-
-            setTimeout(() => {
-                window.location.href = "student-dashboard.html"
-            }, 400)
-
-        }, 700)
-
-    } else {
-        showError("Invalid Student ID or Password ❌")
-    }
-
-    /* -------- ERROR HANDLER -------- */
-
-    function showError(msg) {
-
-        error.innerText = msg
-
-        card.style.animation = "shake 0.4s"
-
-        idInput.classList.add("input-error")
-        passInput.classList.add("input-error")
-
-        passInput.value = ""
-
-        setTimeout(() => {
-            card.style.animation = ""
-            idInput.classList.remove("input-error")
-            passInput.classList.remove("input-error")
-        }, 500)
-    }
-}
+    btn.appendChild(circle)
+    setTimeout(() => circle.remove(), 600)
+})
 
 
-/* -------- DOM READY -------- */
+/* -------- INIT -------- */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    /* 👁 PASSWORD TOGGLE (FINAL FIX) */
+    const usn = localStorage.getItem("studentUSN")
+    const classKey = localStorage.getItem("studentClass")
 
-    const eyeIcon = document.getElementById("eyeIcon")
-    const passwordInput = document.getElementById("password")
-
-    if (eyeIcon && passwordInput) {
-
-        eyeIcon.onclick = function () {
-
-            if (passwordInput.type === "password") {
-                passwordInput.type = "text"
-                eyeIcon.className = "fa-solid fa-eye-slash eye"
-            } else {
-                passwordInput.type = "password"
-                eyeIcon.className = "fa-solid fa-eye eye"
-            }
-
-        }
-
+    if (!usn || !classKey) {
+        window.location.href = "student-login.html"
+        return
     }
 
-    /* 💧 RIPPLE EFFECT */
+    document.getElementById("studentUSN").innerText = usn
 
-    document.addEventListener("click", function (e) {
+    const [department, program, sem, section] = classKey.split("_")
 
-        const btn = e.target.closest("button")
-        if (!btn) return
+    document.getElementById("department").innerText = department
+    document.getElementById("program").innerText = program
+    document.getElementById("sem").innerText = sem
+    document.getElementById("section").innerText = section
 
-        const circle = document.createElement("span")
-        circle.classList.add("ripple")
+    const table = document.getElementById("subjectRows")
+    if (!table || typeof courses === "undefined") return
 
-        const rect = btn.getBoundingClientRect()
-        circle.style.left = (e.clientX - rect.left) + "px"
-        circle.style.top = (e.clientY - rect.top) + "px"
+    /* -------- 🔥 FIX: FETCH ALL SUBJECTS -------- */
 
-        btn.appendChild(circle)
+    const rawSubjects = courses.filter(c =>
+        c.department === department &&
+        c.sem.toString() === sem &&
+        c.section === section
+    )
 
-        setTimeout(() => circle.remove(), 600)
+    /* -------- REMOVE DUPLICATES -------- */
+
+    const classSubjects = []
+
+    rawSubjects.forEach(c => {
+        if (!classSubjects.find(s => s.subject === c.subject)) {
+            classSubjects.push(c)
+        }
     })
 
+    /* -------- CALCULATE -------- */
+
+    function calculateAttendance(subject) {
+
+        let present = 0
+        let total = 0
+
+        for (let i = 0; i < localStorage.length; i++) {
+
+            let key = localStorage.key(i)
+
+            if (key && key.startsWith(`${subject}_${department}_${program}_${sem}_${section}_`)) {
+
+                let data = JSON.parse(localStorage.getItem(key) || "[]")
+
+                let record = data.find(r => r.usn === usn)
+
+                if (record) {
+                    total++
+                    if (record.status === "Present") present++
+                }
+            }
+        }
+
+        return {
+            conducted: total,
+            present,
+            absent: total - present,
+            percent: total === 0 ? 0 : Math.round((present / total) * 100)
+        }
+    }
+
+    /* -------- COLOR -------- */
+
+    function getColor(percent) {
+        if (percent >= 85) return "#22c55e"
+        if (percent >= 75) return "#f59e0b"
+        return "#ef4444"
+    }
+
+    /* -------- LOAD TABLE -------- */
+
+    table.innerHTML = ""
+
+    let totalPercent = 0
+
+    classSubjects.forEach((sub, index) => {
+
+        const stats = calculateAttendance(sub.subject)
+        totalPercent += stats.percent
+
+        const row = document.createElement("tr")
+        row.style.animation = `fadeUp ${0.3 + index * 0.08}s ease`
+
+        row.innerHTML = `
+<td>${sub.subject}</td>
+<td>${sub.subjectCode || "-"}</td>
+<td>${stats.conducted}</td>
+<td>${stats.present}</td>
+<td>${stats.absent}</td>
+<td style="font-weight:600;color:${getColor(stats.percent)}">
+    ${stats.percent}%
+</td>
+`
+
+        table.appendChild(row)
+    })
+
+    /* -------- 🔥 OVERALL ATTENDANCE -------- */
+
+    const overall = classSubjects.length > 0
+        ? Math.round(totalPercent / classSubjects.length)
+        : 0
+
+    let overallBox = document.getElementById("overallBox")
+
+    if (!overallBox) {
+        overallBox = document.createElement("div")
+        overallBox.id = "overallBox"
+        overallBox.className = "card"
+        document.querySelector(".dashboard").prepend(overallBox)
+    }
+
+    overallBox.innerHTML = `
+<p><strong>Overall Attendance:</strong> 
+<span style="color:${getColor(overall)}">${overall}%</span></p>
+<p id="warningText" style="font-weight:600;"></p>
+`
+
+    /* -------- ⚠ WARNING -------- */
+
+    const warning = document.getElementById("warningText")
+
+    if (overall < 75) {
+        warning.innerText = "⚠ Low Attendance! Improve immediately"
+        warning.style.color = "#dc2626"
+    } else if (overall < 85) {
+        warning.innerText = "⚠ Average Attendance"
+        warning.style.color = "#f59e0b"
+    } else {
+        warning.innerText = "✅ Good Attendance"
+        warning.style.color = "#16a34a"
+    }
+
 })
+
+
+/* -------- LOGOUT -------- */
+
+function studentLogout() {
+
+    const btn = document.querySelector(".logout-btn")
+
+    btn.classList.add("loading")
+    btn.innerText = ""
+
+    setTimeout(() => {
+
+        localStorage.removeItem("studentUSN")
+        localStorage.removeItem("studentClass")
+        localStorage.removeItem("studentName")
+
+        document.querySelector(".dashboard").classList.add("page-exit")
+
+        setTimeout(() => {
+            window.location.href = "student-login.html"
+        }, 400)
+
+    }, 700)
+}
+
+
+/* -------- CHANGE PASSWORD -------- */
+
+function openChangePassword() {
+
+    document.querySelector(".dashboard").classList.add("page-exit")
+
+    setTimeout(() => {
+        window.location.href = "change-password.html"
+    }, 400)
+}
