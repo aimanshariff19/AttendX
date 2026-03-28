@@ -309,3 +309,7 @@ window.onload = function () {
     document.getElementById("numClasses")?.addEventListener("input", updateTimeRange)
 }
 
+/* -------- BACK BUTTON -------- */
+function goBack() {
+    window.history.back()
+}
