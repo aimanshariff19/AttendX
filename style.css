@@ -206,6 +206,39 @@ body.login-page button:active {
     transform: scale(0.97);
 }
 
+/* ===== BACKGROUND DEPTH FIX ===== */
+
+body.login-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #4f46e5, #9333ea);
+    position: relative;
+    overflow: hidden;
+}
+
+/* TOP GLOW */
+body.login-page::before {
+    content: "";
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    top: -120px;
+    left: -120px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent);
+    filter: blur(100px);
+}
+
+/* BOTTOM GLOW (THIS FIXES YOUR ISSUE 🔥) */
+body.login-page::after {
+    content: "";
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    bottom: -120px;
+    right: -120px;
+    background: radial-gradient(circle, rgba(236, 72, 153, 0.25), transparent);
+    filter: blur(120px);
+}
+
 /* ================= DASHBOARD (UNCHANGED) ================= */
 
 /* KEEP EVERYTHING BELOW EXACTLY SAME */
