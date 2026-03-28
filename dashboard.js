@@ -8,10 +8,8 @@ const faculty = localStorage.getItem("faculty") || facultyName
 /* -------- Session Check -------- */
 
 if (!faculty) {
-
     alert("Session expired. Please login again.")
     window.location.href = "html/index.html"
-
 }
 
 /* -------- Display Faculty Info -------- */
@@ -47,11 +45,9 @@ if (sectionCountEl) sectionCountEl.innerText = sections.length
 let totalStudents = 0
 
 sections.forEach(sec => {
-
     if (students[sec]) {
         totalStudents += students[sec].length
     }
-
 })
 
 const studentCountEl = document.getElementById("studentCount")
@@ -70,7 +66,7 @@ if (container) {
         const today = new Date().toISOString().split("T")[0]
 
         const attendanceKey =
-        `${course.subject}_${course.department}_${course.program}_${course.sem}_${course.section}_${today}`
+            `${course.subject}_${course.department}_${course.program}_${course.sem}_${course.section}_${today}`
 
         const takenToday = localStorage.getItem(attendanceKey)
 
@@ -125,8 +121,10 @@ function takeAttendance(subject, department, program, sem, section, time) {
     localStorage.setItem("section", section)
     localStorage.setItem("classTime", time)
 
-    window.location.href = "attendance.html"
+    /* 🔥 FIX ADDED HERE */
+    localStorage.setItem("prevPage", "dashboard.html")
 
+    window.location.href = "attendance.html"
 }
 
 /* -------- Faculty Timetable -------- */
@@ -149,11 +147,11 @@ if (scheduleBox) {
 
     } else {
 
-        todayClasses.forEach((cls,index) => {
+        todayClasses.forEach((cls, index) => {
 
             let status = "Upcoming"
 
-            if(index === 0) status = "Next"
+            if (index === 0) status = "Next"
 
             let row = document.createElement("p")
 
@@ -189,11 +187,11 @@ setInterval(() => {
             if (typeof showMessage === "function") {
 
                 showMessage(
-`🔔 Class Reminder
+                    `🔔 Class Reminder
 ${cls.subject}
 Sem ${cls.sem}${cls.section}
 Room ${cls.room}`,
-"success"
+                    "success"
                 )
 
             }
