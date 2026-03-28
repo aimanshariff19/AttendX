@@ -1,210 +1,83 @@
-/* -------- Class details -------- */
-
-const subject = localStorage.getItem("subject")
-const department = localStorage.getItem("department")
-const program = localStorage.getItem("program")
-const sem = localStorage.getItem("sem")
-const section = localStorage.getItem("section")
+/* -------- SAFE TEXT -------- */
 
 function setText(id, value) {
     const el = document.getElementById(id)
     if (el) el.innerText = value || "-"
 }
 
-setText("subject", subject)
-setText("department", department)
-setText("program", program)
-setText("sem", sem)
-setText("section", section)
+
+/* -------- GET LOGGED FACULTY -------- */
+
+const faculty = localStorage.getItem("faculty")
 
 
-/* -------- Students -------- */
+/* -------- FACULTY DETAILS -------- */
 
-// ❗ FIXED template string
-const classKey = `${department}_${program}_${sem}_${section}`
+function loadFacultyDetails() {
 
-// ❗ SAFE students check
-const studentList = (typeof students !== "undefined" && students[classKey])
-    ? students[classKey]
-    : []
+    setText("facultyName", faculty || "Faculty")
+    setText("facultyDept", "Department: CSE")
 
-const table = document.getElementById("studentRows")
+    // simple stats
+    const myCourses = courses.filter(c => c.faculty === faculty)
 
+    setText("facultyId", faculty)
+    setText("courseCount", myCourses.length)
 
-/* -------- Calculate % -------- */
+    const sections = new Set(myCourses.map(c => c.section))
+    setText("sectionCount", sections.size)
 
-function calculatePercentage(usn, currentStatus = null) {
+    let totalStudents = 0
+    myCourses.forEach(c => {
+        const key = `${c.department}_${c.program}_${c.sem}_${c.section}`
+        if (students[key]) totalStudents += students[key].length
+    })
 
-    let present = 0
-    let total = 0
-
-    for (let i = 0; i < localStorage.length; i++) {
-
-        let key = localStorage.key(i)
-
-        if (key && key.includes(subject)) {
-
-            let stored = JSON.parse(localStorage.getItem(key) || "{}")
-            let records = stored.data || stored
-
-            let record = records.find(r => r.usn === usn)
-
-            if (record) {
-                total++
-                if (record.status === "Present") present++
-            }
-        }
-    }
-
-    if (currentStatus !== null) {
-        total++
-        if (currentStatus === "Present") present++
-    }
-
-    return total === 0 ? 0 : Math.round((present / total) * 100)
+    setText("studentCount", totalStudents)
 }
 
 
-/* -------- Load Students -------- */
+/* -------- TODAY SCHEDULE (NO TIME) -------- */
 
-function loadStudents() {
+function loadTodaySchedule() {
 
-    if (!table) return   // ✅ prevents crash
+    const box = document.getElementById("todaySchedule")
+    if (!box) return
 
-    table.innerHTML = ""
+    const today = new Date().toLocaleString('en-US', { weekday: 'long' })
 
-    studentList.forEach(student => {
+    const todayClasses = timetable.filter(t =>
+        t.faculty === faculty &&
+        t.day.toLowerCase() === today.toLowerCase()
+    )
 
-        let percent = calculatePercentage(student.usn)
+    if (todayClasses.length === 0) {
+        box.innerHTML = "<p>No classes today</p>"
+        return
+    }
 
-        let row = document.createElement("tr")
+    box.innerHTML = ""
 
-        // ❗ FIXED HTML template
-        row.innerHTML = `
-            <td>${student.usn}</td>
-            <td>${student.name}</td>
-            <td class="percent">${percent}%</td>
-            <td>
-                <label class="toggle-switch">
-                    <input type="checkbox" data-usn="${student.usn}" checked>
-                    <span class="slider"></span>
-                </label>
-            </td>
+    todayClasses.forEach(cls => {
+
+        const div = document.createElement("div")
+        div.className = "card"
+        div.style.marginBottom = "10px"
+
+        // ❌ NO TIME HERE
+        div.innerHTML = `
+            <p><strong>${cls.subject}</strong></p>
+            <p>${cls.program} - Sem ${cls.sem}</p>
+            <p>Section ${cls.section}</p>
+            <p>Room ${cls.room}</p>
         `
 
-        updateRowStyle(row, percent, true)
-
-        table.appendChild(row)
-    })
-
-    document.querySelectorAll(".toggle-switch input").forEach(input => {
-        input.addEventListener("change", updateLivePercentage)
+        box.appendChild(div)
     })
 }
 
 
-/* -------- Row Styling -------- */
-
-function updateRowStyle(row, percent, isPresent) {
-
-    if (percent < 75) {
-        row.style.borderLeft = "5px solid red"
-    } else {
-        row.style.borderLeft = "none"
-    }
-
-    row.style.background = isPresent ? "#dcfce7" : "#fee2e2"
-}
-
-
-/* -------- Live Update -------- */
-
-function updateLivePercentage() {
-
-    document.querySelectorAll("#studentRows tr").forEach(row => {
-
-        const input = row.querySelector("input")
-        const usn = input.dataset.usn
-        const percentCell = row.querySelector(".percent")
-
-        const status = input.checked ? "Present" : "Absent"
-
-        let percent = calculatePercentage(usn, status)
-
-        percentCell.innerText = percent + "%"
-
-        updateRowStyle(row, percent, input.checked)
-    })
-}
-
-
-/* -------- Submit Attendance -------- */
-
-function submitAttendance() {
-
-    const btn = document.getElementById("submitBtn")
-
-    const date = new Date().toISOString().split("T")[0]
-
-    // ❗ FIXED template string
-    const key = `${subject}_${department}_${program}_${sem}_${section}_${date}`
-
-    if (localStorage.getItem(key)) {
-        showMessage("Already submitted for today ❌", "error")
-        return
-    }
-
-    let data = []
-
-    document.querySelectorAll(".toggle-switch input").forEach(input => {
-        data.push({
-            usn: input.dataset.usn,
-            status: input.checked ? "Present" : "Absent"
-        })
-    })
-
-    localStorage.setItem(key, JSON.stringify({ data }))
-
-    if (btn) {
-        btn.innerText = "Submitted ✅"
-        btn.disabled = true
-    }
-
-    showMessage("Attendance Submitted ✅", "success")
-}
-
-
-/* -------- Message -------- */
-
-function showMessage(text, type) {
-
-    let box = document.getElementById("messageBox")
-
-    if (!box) {
-        alert(text)
-        return
-    }
-
-    box.innerText = text
-    box.style.display = "block"
-
-    if (type === "success") {
-        box.style.background = "#dcfce7"
-        box.style.color = "#166534"
-    } else {
-        box.style.background = "#fee2e2"
-        box.style.color = "#991b1b"
-    }
-
-    setTimeout(() => {
-        box.style.display = "none"
-    }, 2500)
-}
-
-
-/* -------- INIT -------- */
-
-document.addEventListener("DOMContentLoaded", loadStudents)
+/* -------- COURSE CARDS (NO TIME) -------- */
 
 function loadCourseCards() {
 
@@ -213,19 +86,16 @@ function loadCourseCards() {
 
     container.innerHTML = ""
 
-    if (typeof timetable === "undefined") {
-        container.innerHTML = "<p>No data available</p>"
-        return
-    }
+    const myCourses = courses.filter(c => c.faculty === faculty)
 
     const unique = []
 
-    timetable.forEach(cls => {
+    myCourses.forEach(c => {
 
-        const key = `${cls.subject}_${cls.program}_${cls.sem}_${cls.section}`
+        const key = `${c.subject}_${c.program}_${c.sem}_${c.section}`
 
         if (!unique.find(u => u.key === key)) {
-            unique.push({ ...cls, key })
+            unique.push({ ...c, key })
         }
     })
 
@@ -234,6 +104,7 @@ function loadCourseCards() {
         const card = document.createElement("div")
         card.className = "card"
 
+        // ❌ NO TIME HERE
         card.innerHTML = `
             <p><strong>Subject:</strong> ${course.subject}</p>
             <p><strong>Branch:</strong> ${course.program}</p>
@@ -249,7 +120,11 @@ function loadCourseCards() {
     })
 }
 
+
+/* -------- OPEN COURSE -------- */
+
 function openCourse(subject, program, sem, section) {
+
     localStorage.setItem("subject", subject)
     localStorage.setItem("program", program)
     localStorage.setItem("sem", sem)
@@ -258,4 +133,17 @@ function openCourse(subject, program, sem, section) {
     window.location.href = "attendance.html"
 }
 
-document.addEventListener("DOMContentLoaded", loadCourseCards)
+
+/* -------- INIT -------- */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    if (!faculty) {
+        alert("No faculty logged in ❌")
+        return
+    }
+
+    loadFacultyDetails()
+    loadTodaySchedule()
+    loadCourseCards()
+})
