@@ -32,9 +32,16 @@ function getAttendanceRecords(key) {
     return stored.data || []
 }
 
-/* -------- STUDENTS -------- */
+/* -------- SAFE STUDENTS LOAD -------- */
+let studentList = []
 const classKey = `${department}_${program}_${sem}_${section}`
-const studentList = students[classKey] || []
+
+function initStudents() {
+    if (typeof students !== "undefined") {
+        studentList = students[classKey] || []
+    }
+}
+
 const table = document.getElementById("studentRows")
 
 /* -------- CALCULATE % -------- */
@@ -72,9 +79,11 @@ function calculatePercentage(usn, currentStatus = null) {
 /* -------- LOAD STUDENTS -------- */
 function loadStudents() {
 
-    if (!table) return
+    if (!table || typeof students === "undefined") return
 
     table.innerHTML = ""
+
+    if (studentList.length === 0) return
 
     studentList.forEach((student, index) => {
 
@@ -291,25 +300,27 @@ window.onload = function () {
     const today = new Date().toISOString().split("T")[0]
     document.getElementById("date").value = today
 
-    loadStudents()
-
     updateCurrentTime()
     setInterval(updateCurrentTime, 1000)
 
-    // 🔥 INITIAL LOAD FIX
     updateDisplayTime()
     updateTimeRange()
 
-    // 🔥 EVENT LISTENERS
     document.getElementById("classTime")?.addEventListener("change", () => {
         updateDisplayTime()
         updateTimeRange()
     })
 
     document.getElementById("numClasses")?.addEventListener("input", updateTimeRange)
+
+    // 🔥 WAIT FOR DATA
+    setTimeout(() => {
+        initStudents()
+        loadStudents()
+    }, 100)
 }
 
-/* -------- BACK BUTTON -------- */
+/* -------- BACK BUTTON (FIXED) -------- */
 function goBack() {
-    window.history.back()
+    window.location.href = "dashboard.html"
 }
