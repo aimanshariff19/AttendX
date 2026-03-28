@@ -10,7 +10,7 @@ function showMessage(text, type) {
 
     setTimeout(() => {
         box.style.display = "none"
-    }, 3000)
+    }, 2500)
 }
 
 /* -------- Class details -------- */
@@ -135,7 +135,7 @@ function loadStudents() {
         </td>
         `
 
-        // 🔥 LOW ATTENDANCE HIGHLIGHT
+        // LOW ATTENDANCE highlight
         if (percent < 75) {
             row.style.borderLeft = "5px solid red"
         }
@@ -191,11 +191,7 @@ function updateStats() {
 
 function submitAttendance() {
 
-    if (!confirm("Are you sure you want to submit attendance?")) return
-
     const btn = document.getElementById("submitBtn")
-    btn.innerText = "Submitting..."
-    btn.disabled = true
 
     const date = document.getElementById("date").value
     const time = document.getElementById("classTime").value
@@ -203,20 +199,19 @@ function submitAttendance() {
     const timeData = updateTimeRange()
 
     if (!date || !time || !timeData) {
-        showMessage("Select date & time properly", "error")
-        btn.innerText = "Submit Attendance"
-        btn.disabled = false
+        showMessage("⚠️ Select date & time properly", "error")
         return
     }
 
     let key = `${subject}_${department}_${program}_${sem}_${section}_${date}`
 
     if (localStorage.getItem(key)) {
-        showMessage("Already submitted", "error")
-        btn.innerText = "Submit Attendance"
-        btn.disabled = false
+        showMessage("❌ Already submitted for this date", "error")
         return
     }
+
+    btn.innerText = "Submitting..."
+    btn.disabled = true
 
     let attendanceData = []
 
@@ -236,7 +231,7 @@ function submitAttendance() {
 
     btn.innerText = "Submitted ✅"
 
-    showMessage("Attendance submitted successfully 🎉", "success")
+    showMessage("🎉 Attendance submitted successfully", "success")
 }
 
 /* -------- INIT -------- */
@@ -245,7 +240,8 @@ window.onload = function () {
 
     loadStudents()
 
-    document.getElementById("submitBtn").disabled = false // 🔥 FIX
+    const btn = document.getElementById("submitBtn")
+    btn.disabled = false
 
     document.getElementById("date").value =
         new Date().toISOString().split("T")[0]
