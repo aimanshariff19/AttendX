@@ -25,19 +25,22 @@ body.login-page.student {
 
 /* ===== LOGIN CONTAINER ===== */
 .login-container {
-    width: 300px; /* reduced */
-    padding: 20px; /* reduced */
+    width: 300px;
+    /* reduced */
+    padding: 20px;
+    /* reduced */
     border-radius: 14px;
 
-    background: rgba(255,255,255,0.10);
+    background: rgba(255, 255, 255, 0.10);
     backdrop-filter: blur(18px);
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 
     display: flex;
     flex-direction: column;
-    gap: 10px; /* tighter */
+    gap: 10px;
+    /* tighter */
 
-    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
 }
 
 /* ===== LOGO ===== */
@@ -57,7 +60,7 @@ body.login-page.student {
 .college-status {
     text-align: center;
     font-size: 10px;
-    color: rgba(255,255,255,0.75);
+    color: rgba(255, 255, 255, 0.75);
 }
 
 .system-title {
@@ -80,7 +83,8 @@ body.login-page.student {
     border: none;
     font-size: 13px;
 
-    background: rgba(255,255,255,0.20); /* improved */
+    background: rgba(255, 255, 255, 0.20);
+    /* improved */
     color: #111;
 }
 
@@ -97,9 +101,9 @@ body.login-page.student {
     transform: translateY(-50%);
 
     font-size: 11px;
-    color: rgba(0,0,0,0.5);
+    color: rgba(0, 0, 0, 0.5);
 
-    background: rgba(255,255,255,0.7);
+    background: rgba(255, 255, 255, 0.7);
     padding: 2px 5px;
     border-radius: 5px;
 
@@ -107,8 +111,8 @@ body.login-page.student {
 }
 
 /* FLOAT */
-.input-group input:focus + label,
-.input-group input:not(:placeholder-shown) + label {
+.input-group input:focus+label,
+.input-group input:not(:placeholder-shown)+label {
     top: -7px;
     font-size: 9px;
 }
@@ -116,7 +120,7 @@ body.login-page.student {
 /* FOCUS */
 .input-group input:focus {
     outline: none;
-    box-shadow: 0 0 0 2px rgba(124,58,237,0.5);
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.5);
 }
 
 /* ===== PASSWORD ===== */
@@ -135,7 +139,7 @@ body.login-page.student {
     top: 50%;
     transform: translateY(-50%);
     font-size: 13px;
-    color: rgba(0,0,0,0.6);
+    color: rgba(0, 0, 0, 0.6);
 }
 
 /* ===== BUTTON ===== */
@@ -162,4 +166,162 @@ button:hover {
     text-align: center;
     font-size: 11px;
     color: #fecaca;
+}
+
+/* ============================= */
+/* ===== DASHBOARD / ATTEND ===== */
+/* ============================= */
+
+body:not(.login-page) {
+    background: linear-gradient(135deg, #5f5cff, #7c3aed);
+    font-family: 'Inter', sans-serif;
+}
+
+/* MAIN WRAPPER */
+.dashboard {
+    width: 95%;
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.10);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    color: white;
+    animation: fadeUp 0.4s ease;
+}
+
+/* HEADER */
+.header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.header-actions h1 {
+    font-size: 18px;
+}
+
+/* CARD */
+.card {
+    background: rgba(255, 255, 255, 0.12);
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+/* FORM */
+.form-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+/* INPUTS */
+.input-group label {
+    font-size: 11px;
+    margin-bottom: 3px;
+}
+
+.input-group input {
+    background: rgba(255, 255, 255, 0.9);
+    color: #111;
+}
+
+/* ANALYTICS */
+.cards {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.course-card {
+    flex: 1;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.course-card h3 {
+    margin-top: 4px;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+th,
+td {
+    padding: 8px;
+    font-size: 12px;
+}
+
+tbody tr {
+    background: rgba(255, 255, 255, 0.08);
+    transition: 0.2s;
+}
+
+tbody tr:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* MESSAGE */
+.message-box {
+    text-align: center;
+    font-size: 12px;
+    margin: 6px 0;
+}
+
+/* SUCCESS OVERLAY */
+#successOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+#successOverlay.show {
+    display: flex;
+}
+
+.success-box {
+    background: white;
+    color: #111;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.tick {
+    font-size: 24px;
+    color: green;
+}
+
+/* ANIMATION */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
