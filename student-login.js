@@ -110,3 +110,11 @@ function studentLogin() {
         window.location.href = "student-dashboard.html"
     }, 800)
 }
+
+const btn = document.getElementById("loginBtn")
+
+btn.classList.add("loading")
+
+setTimeout(() => {
+    btn.classList.remove("loading")
+}, 1500)
