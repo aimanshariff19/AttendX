@@ -84,6 +84,6 @@ function studentLogin() {
     btn.innerText = ""
 
     setTimeout(() => {
-        window.location.href = "dashboard.html"
+        window.location.href = "student-dashboard.html"
     }, 800)
 }
