@@ -22,25 +22,30 @@
 
         <h3 class="system-title">AttendX Student Portal</h3>
 
-        <!-- STUDENT ID -->
-        <div class="input-group">
-            <input type="text" id="studentId" placeholder=" " required>
-            <label>Student ID</label>
-        </div>
+        <!-- ✅ ADD FORM (SAFE) -->
+        <form id="studentForm" onsubmit="return false;">
 
-        <!-- PASSWORD (FIXED) -->
-        <div class="input-group password-field">
-            <input type="password" id="password" placeholder=" " required>
-            <label>Password</label>
-            <i id="eyeIcon" class="fa-solid fa-eye eye"></i>
-        </div>
+            <div class="input-group">
+                <input type="text" id="studentId" placeholder=" " required>
+                <label>Student ID</label>
+            </div>
 
-        <button id="loginBtn" type="button">Login</button>
+            <div class="input-group password-field">
+                <input type="password" id="password" placeholder=" " required>
+                <label>Password</label>
+                <i id="eyeIcon" class="fa-solid fa-eye eye"></i>
+            </div>
+
+            <button id="loginBtn" type="button">Login</button>
+
+        </form>
 
         <p id="error" class="error-text"></p>
 
     </div>
 
+    <!-- 🔥 IMPORTANT ORDER -->
+    <script src="mockData.js"></script>
     <script src="student-login.js"></script>
 
 </body>
