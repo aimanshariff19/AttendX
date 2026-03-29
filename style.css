@@ -595,3 +595,41 @@ td {
         opacity: 1;
     }
 }
+
+/* ===== 🔥 FORCE PREMIUM INPUT FIX ===== */
+.login-container input {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: white !important;
+}
+
+/* fix placeholder ghost */
+.login-container input::placeholder {
+    color: transparent;
+}
+
+/* label visibility */
+.input-group label {
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+}
+
+/* stronger float */
+.input-group input:focus+label,
+.input-group input:valid+label {
+    color: #e0e7ff;
+}
+
+/* ===== 🔥 BUTTON FULL WIDTH ===== */
+.login-container button {
+    width: 100%;
+}
+
+/* ===== 🔥 LOGO FIX (IMPORTANT) ===== */
+.college-logo {
+    filter: brightness(0) invert(1);
+}
+
+/* ===== 🔥 INPUT TEXT VISIBILITY ===== */
+.login-container input {
+    font-size: 14px;
+}
