@@ -5,12 +5,11 @@ if (window.__LOGIN_RUNNING__) {
 window.__LOGIN_RUNNING__ = true
 
 
-/* -------- 💧 RIPPLE -------- */
+/* -------- RIPPLE EFFECT -------- */
 document.addEventListener("click", function (e) {
+
     const btn = e.target.closest("button")
     if (!btn) return
-
-    if (btn.querySelector(".ripple")) return
 
     const circle = document.createElement("span")
     circle.classList.add("ripple")
@@ -20,55 +19,33 @@ document.addEventListener("click", function (e) {
     circle.style.top = (e.clientY - rect.top) + "px"
 
     btn.appendChild(circle)
+
     setTimeout(() => circle.remove(), 600)
 })
 
 
-/* -------- INIT -------- */
-document.addEventListener("DOMContentLoaded", () => {
-
-    console.log("✅ Login Page Loaded")
-
-    const btn = document.getElementById("loginBtn")
-    if (btn) {
-        btn.addEventListener("click", studentLogin)
-    }
-
-    /* -------- 👁 TOGGLE PASSWORD -------- */
-    const eye = document.getElementById("eyeIcon")
-    const password = document.getElementById("password")
-
-    if (eye && password) {
-        eye.addEventListener("click", () => {
-
-            if (password.type === "password") {
-                password.type = "text"
-                eye.classList.remove("fa-eye")
-                eye.classList.add("fa-eye-slash")
-            } else {
-                password.type = "password"
-                eye.classList.remove("fa-eye-slash")
-                eye.classList.add("fa-eye")
-            }
-
-        })
-    }
-})
-
-
-/* -------- LOGIN -------- */
+/* -------- LOGIN FUNCTION -------- */
 function studentLogin() {
 
-    const id = document.getElementById("studentId").value.trim()
-    const pass = document.getElementById("password").value.trim()
+    const idInput = document.getElementById("studentId")
+    const passInput = document.getElementById("password")
     const error = document.getElementById("error")
     const btn = document.getElementById("loginBtn")
+    const card = document.querySelector(".login-container")
 
+    const id = idInput.value.trim()
+    const pass = passInput.value.trim()
+
+    error.innerText = ""
+
+    /* EMPTY */
     if (!id || !pass) {
         error.innerText = "⚠ Enter ID & Password"
+        shake()
         return
     }
 
+    /* DATA CHECK */
     if (typeof students === "undefined") {
         error.innerText = "❌ Data not loaded"
         return
@@ -76,7 +53,6 @@ function studentLogin() {
 
     let foundStudent = null
 
-    // 🔥 SEARCH IN ALL CLASSES
     for (let key in students) {
         const student = students[key].find(
             s => s.usn === id && s.password === pass
@@ -91,30 +67,65 @@ function studentLogin() {
 
     if (!foundStudent) {
         error.innerText = "❌ Invalid credentials"
+        shake()
         return
     }
 
-    /* -------- SAVE -------- */
+    /* SAVE */
     localStorage.setItem("studentUSN", foundStudent.usn)
     localStorage.setItem("studentName", foundStudent.name)
     localStorage.setItem("studentClass", foundStudent.classKey)
 
     console.log("✅ Login success", foundStudent)
 
-    /* -------- LOADING -------- */
+    /* LOADING */
     btn.classList.add("loading")
-    btn.innerText = ""
 
     setTimeout(() => {
-        // 🔥 IMPORTANT: match your actual file name
         window.location.href = "student-dashboard.html"
     }, 800)
+
+
+    /* SHAKE FUNCTION */
+    function shake() {
+        card.classList.add("shake")
+        setTimeout(() => card.classList.remove("shake"), 400)
+    }
 }
 
-const btn = document.getElementById("loginBtn")
 
-btn.classList.add("loading")
+/* -------- INIT -------- */
+document.addEventListener("DOMContentLoaded", () => {
 
-setTimeout(() => {
-    btn.classList.remove("loading")
-}, 1500)
+    console.log("✅ Login Page Loaded")
+
+    const btn = document.getElementById("loginBtn")
+    const password = document.getElementById("password")
+    const eye = document.getElementById("eyeIcon")
+
+    /* CLICK */
+    if (btn) {
+        btn.addEventListener("click", studentLogin)
+    }
+
+    /* ENTER KEY */
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") studentLogin()
+    })
+
+    /* PASSWORD TOGGLE */
+    if (eye && password) {
+        eye.addEventListener("click", () => {
+
+            if (password.type === "password") {
+                password.type = "text"
+                eye.classList.replace("fa-eye", "fa-eye-slash")
+            } else {
+                password.type = "password"
+                eye.classList.replace("fa-eye-slash", "fa-eye")
+            }
+
+        })
+    }
+
+})
