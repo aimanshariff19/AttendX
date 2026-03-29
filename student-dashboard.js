@@ -1,7 +1,16 @@
+/* -------- 🛑 STOP DUPLICATE -------- */
+if (window.__DASHBOARD_RUNNING__) {
+    throw new Error("Duplicate dashboard JS blocked")
+}
+window.__DASHBOARD_RUNNING__ = true
+
+
 /* -------- 💧 RIPPLE -------- */
 document.addEventListener("click", function (e) {
     const btn = e.target.closest("button")
     if (!btn) return
+
+    if (btn.querySelector(".ripple")) return
 
     const circle = document.createElement("span")
     circle.classList.add("ripple")
@@ -14,21 +23,14 @@ document.addEventListener("click", function (e) {
     setTimeout(() => circle.remove(), 600)
 })
 
-/* -------- 🔥 NORMALIZE -------- */
-function normalize(str) {
-    return (str || "").toString().toLowerCase().replace(/\s+/g, "")
-}
-
-/* -------- UNIVERSAL GET -------- */
-function getAttendanceRecords(key) {
-    let stored = JSON.parse(localStorage.getItem(key) || "{}")
-    return stored.data || []
-}
 
 /* -------- INIT -------- */
 document.addEventListener("DOMContentLoaded", () => {
 
+    console.log("✅ Dashboard Loaded")
+
     const usn = localStorage.getItem("studentUSN")
+    const name = localStorage.getItem("studentName")
     const classKey = localStorage.getItem("studentClass")
 
     if (!usn || !classKey) {
@@ -36,7 +38,9 @@ document.addEventListener("DOMContentLoaded", () => {
         return
     }
 
+    /* -------- DISPLAY BASIC -------- */
     document.getElementById("studentUSN").innerText = usn
+    document.getElementById("studentName").innerText = name
 
     const [department, program, sem, section] = classKey.split("_")
 
@@ -46,59 +50,52 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("section").innerText = section
 
     const table = document.getElementById("subjectRows")
-    if (!table || typeof courses === "undefined") return
 
-    /* -------- FETCH SUBJECTS -------- */
-    const rawSubjects = courses.filter(c =>
-        c.department === department &&
-        c.sem.toString() === sem &&
-        c.section === section
-    )
+    if (!table || typeof courses === "undefined") {
+        console.error("❌ Missing data")
+        return
+    }
 
+    /* -------- SUBJECT FILTER -------- */
     const classSubjects = []
-    rawSubjects.forEach(c => {
-        if (!classSubjects.find(s => s.subject === c.subject)) {
+
+    courses.forEach(c => {
+        if (
+            c.department === department &&
+            c.sem.toString() === sem &&
+            c.section === section &&
+            !classSubjects.find(s => s.subject === c.subject)
+        ) {
             classSubjects.push(c)
         }
     })
 
-    /* -------- FIXED CALCULATE -------- */
+    /* -------- LOAD STORAGE -------- */
+    let attendanceData = {}
+
+    try {
+        attendanceData = JSON.parse(localStorage.getItem("attendanceData")) || {}
+    } catch {
+        attendanceData = {}
+    }
+
+    /* -------- CALCULATE -------- */
     function calculateAttendance(subject) {
+
+        const key = `${subject}_${department}_${program}_${sem}_${section}`
+        const records = attendanceData[key] || []
 
         let present = 0
         let total = 0
 
-        const base = `${normalize(subject)}_${normalize(department)}_${normalize(program)}_${sem}_${normalize(section)}`
-
-        for (let i = 0; i < localStorage.length; i++) {
-
-            let key = localStorage.key(i)
-
-            if (key && key.toLowerCase().startsWith(base)) {
-
-                let records = getAttendanceRecords(key)
-                let record = records.find(r => r.usn === usn)
-
-                if (record) {
-                    total++
-                    if (record.status === "Present") present++
-                }
+        records.forEach(r => {
+            if (r.usn === usn) {
+                total++
+                if (r.status === "Present") present++
             }
-        }
+        })
 
-        return {
-            conducted: total,
-            present,
-            absent: total - present,
-            percent: total === 0 ? 0 : Math.round((present / total) * 100)
-        }
-    }
-
-    /* -------- COLOR -------- */
-    function getColor(percent) {
-        if (percent >= 85) return "#22c55e"
-        if (percent >= 75) return "#f59e0b"
-        return "#ef4444"
+        return total === 0 ? 0 : Math.round((present / total) * 100)
     }
 
     /* -------- LOAD TABLE -------- */
@@ -106,96 +103,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let totalPercent = 0
 
-    if (classSubjects.length === 0) {
-        table.innerHTML = `<tr><td colspan="6">No subjects found ⚠️</td></tr>`
-        return
-    }
+    classSubjects.forEach(sub => {
 
-    classSubjects.forEach((sub, index) => {
-
-        const stats = calculateAttendance(sub.subject)
-        totalPercent += stats.percent
+        const percent = calculateAttendance(sub.subject)
+        totalPercent += percent
 
         const row = document.createElement("tr")
-
-        row.style.animation = `fadeUp ${0.3 + index * 0.08}s ease`
 
         row.innerHTML = `
 <td>${sub.subject}</td>
 <td>${sub.subjectCode || "-"}</td>
-<td>${stats.conducted}</td>
-<td>${stats.present}</td>
-<td>${stats.absent}</td>
-<td style="font-weight:600;color:${getColor(stats.percent)}">
-    ${stats.percent}%
-</td>
+<td colspan="3">--</td>
+<td style="font-weight:600">${percent}%</td>
 `
 
         table.appendChild(row)
     })
 
     /* -------- OVERALL -------- */
-    const overall = Math.round(totalPercent / classSubjects.length)
+    const overall = classSubjects.length
+        ? Math.round(totalPercent / classSubjects.length)
+        : 0
 
-    const overallBox = document.createElement("div")
-    overallBox.className = "card"
-    overallBox.style.marginBottom = "15px"
-
-    overallBox.innerHTML = `
-<p><strong>Overall Attendance:</strong> 
-<span style="color:${getColor(overall)}">${overall}%</span></p>
-<p id="warningText" style="font-weight:600;"></p>
-`
-
-    document.querySelector(".dashboard").insertBefore(
-        overallBox,
-        document.querySelector("table")
-    )
-
-    const warning = overallBox.querySelector("#warningText")
-
-    if (overall < 75) {
-        warning.innerText = "⚠ Low Attendance! Improve immediately"
-        warning.style.color = "#dc2626"
-    } else if (overall < 85) {
-        warning.innerText = "⚠ Average Attendance"
-        warning.style.color = "#f59e0b"
-    } else {
-        warning.innerText = "✅ Good Attendance"
-        warning.style.color = "#16a34a"
-    }
-
+    document.getElementById("overall").innerText = overall + "%"
 })
+
 
 /* -------- LOGOUT -------- */
 function studentLogout() {
-
-    const btn = document.querySelector(".logout-btn")
-
-    btn.classList.add("loading")
-    btn.innerText = ""
-
-    setTimeout(() => {
-
-        localStorage.removeItem("studentUSN")
-        localStorage.removeItem("studentClass")
-        localStorage.removeItem("studentName")
-
-        document.querySelector(".dashboard").classList.add("page-exit")
-
-        setTimeout(() => {
-            window.location.href = "student-login.html"
-        }, 400)
-
-    }, 700)
-}
-
-/* -------- CHANGE PASSWORD -------- */
-function openChangePassword() {
-
-    document.querySelector(".dashboard").classList.add("page-exit")
-
-    setTimeout(() => {
-        window.location.href = "change-password.html"
-    }, 400)
+    localStorage.clear()
+    window.location.href = "student-login.html"
 }
