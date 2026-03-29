@@ -13,52 +13,57 @@
         const loginCard = document.querySelector(".login-container")
         const error = document.getElementById("error")
         const btn = document.getElementById("loginBtn")
+        const success = document.getElementById("successCheck")
 
         error.innerText = ""
 
         const user = username.value.trim()
         const pass = password.value.trim()
 
-        /* -------- EMPTY -------- */
-        if (!user) {
-            error.innerText = "⚠ Enter Faculty ID"
+        /* -------- VALIDATION -------- */
+        if (!user || !pass) {
+            error.innerText = "⚠ Please fill all fields"
             shake()
             return
         }
 
-        /* -------- LOADING STATE -------- */
+        /* -------- LOADING -------- */
         btn.classList.add("loading")
-        btn.innerHTML = `<div class="spinner"></div>`
+
+        /* -------- SHAKE -------- */
+        function shake() {
+            loginCard.classList.add("shake")
+            setTimeout(() => loginCard.classList.remove("shake"), 500)
+        }
 
         /* -------- SUCCESS -------- */
         function successLogin(data, redirectPage) {
 
             setTimeout(() => {
 
+                /* SAVE SESSION */
                 localStorage.clear()
                 Object.keys(data).forEach(key => {
                     localStorage.setItem(key, data[key])
                 })
 
-                /* 🔥 EXIT ANIMATION */
-                loginCard.style.transform = "scale(0.9)"
-                loginCard.style.opacity = "0"
+                /* SHOW SUCCESS ✔ */
+                success.style.display = "block"
+
+                /* EXIT ANIMATION */
+                setTimeout(() => {
+                    loginCard.style.transform = "scale(0.9)"
+                    loginCard.style.opacity = "0"
+                }, 300)
 
                 setTimeout(() => {
                     window.location.href = redirectPage
-                }, 600)
+                }, 900)
 
-            }, 1000)
-        }
-
-        /* -------- SHAKE -------- */
-        function shake() {
-            loginCard.classList.add("shake")
-            setTimeout(() => loginCard.classList.remove("shake"), 400)
+            }, 800)
         }
 
         /* -------- LOGIN LOGIC -------- */
-
         setTimeout(() => {
 
             if (typeof facultyList !== "undefined") {
@@ -92,12 +97,11 @@
                 }
             }
 
-            /* ❌ ERROR */
+            /* -------- ERROR -------- */
             error.innerText = "❌ Invalid Credentials"
             shake()
 
             btn.classList.remove("loading")
-            btn.innerHTML = `<span class="btn-text">Login</span>`
 
         }, 1200)
 
