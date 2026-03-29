@@ -1,326 +1,165 @@
-/* ===== 🎨 DESIGN SYSTEM ===== */
-:root {
-    --primary: #6366f1;
-    --accent: #7c3aed;
-
-    --bg-gradient: linear-gradient(135deg, #5f5cff, #7c3aed);
-
-    --glass: rgba(255, 255, 255, 0.08);
-    --glass-border: rgba(255, 255, 255, 0.2);
-
-    --text-main: #ffffff;
-    --text-muted: rgba(255, 255, 255, 0.7);
-
-    --success: #22c55e;
-    --error: #ef4444;
-}
-
-/* ===== 🌌 BASE ===== */
-body {
+/* ===== RESET ===== */
+* {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
-    background: var(--bg-gradient);
-    color: white;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* ===== 🔥 ANIMATION ===== */
-@keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes spin {
-    to {
-        transform: translate(-50%, -50%) rotate(360deg);
-    }
-}
-
-/* ===== 🔘 BUTTON ===== */
-button {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    border: none;
-    background: linear-gradient(135deg, var(--primary), var(--accent));
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-    transition: 0.25s;
-    position: relative;
-}
-
-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.4);
-}
-
-button:active {
-    transform: scale(0.96);
-}
-
-/* LOADING */
-button.loading {
-    pointer-events: none;
-    color: transparent;
-}
-
-button.loading::after {
-    content: "";
-    width: 16px;
-    height: 16px;
-    border: 3px solid white;
-    border-top: 3px solid transparent;
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation: spin 0.7s linear infinite;
-}
-
-/* ===== LOGIN PAGE ===== */
-.login-page {
+/* ===== BODY ===== */
+body {
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    padding: 20px;
 }
 
-/* THEMES */
+/* ===== BACKGROUND ===== */
 body.login-page.faculty {
-    background: radial-gradient(circle at 20% 20%, #6366f1, #4f46e5 60%);
+    background: linear-gradient(135deg, #5f5cff, #7c3aed);
 }
 
 body.login-page.student {
-    background: radial-gradient(circle at 20% 20%, #7c3aed, #9333ea 60%);
+    background: linear-gradient(135deg, #7c3aed, #9333ea);
 }
 
 /* ===== LOGIN CONTAINER ===== */
 .login-container {
-    width: 330px;
-    padding: 24px;
-    border-radius: 18px;
+    width: 300px; /* reduced */
+    padding: 20px; /* reduced */
+    border-radius: 14px;
 
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(25px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255,255,255,0.10);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,0.2);
 
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px; /* tighter */
 
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-    animation: fadeUp 0.5s ease;
-
-    position: relative;
-    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
 }
 
-/* GLOW */
-.login-container::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    opacity: 0;
-    transition: 0.5s;
-}
-
-.login-container:hover::before {
-    opacity: 1;
-}
-
-/* LOGO */
+/* ===== LOGO ===== */
 .college-logo {
-    width: 55px;
-    margin: auto;
+    width: 50px;
+    margin: 0 auto 6px;
 }
 
-/* TEXT */
+/* ===== TEXT ===== */
 .college-name {
     text-align: center;
-    font-size: 16px;
+    font-size: 15px;
+    font-weight: 600;
 }
 
 .college-location,
 .college-status {
     text-align: center;
-    font-size: 11px;
-    color: var(--text-muted);
+    font-size: 10px;
+    color: rgba(255,255,255,0.75);
 }
 
 .system-title {
     text-align: center;
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 600;
     margin-top: 4px;
 }
 
-/* ===== INPUT ===== */
+/* ===== INPUT GROUP ===== */
 .input-group {
     position: relative;
 }
 
+/* INPUT */
 .input-group input {
     width: 100%;
-    padding: 13px 12px;
-    border-radius: 12px;
+    padding: 11px;
+    border-radius: 10px;
     border: none;
-    background: rgba(255, 255, 255, 0.12);
-    color: white;
     font-size: 13px;
+
+    background: rgba(255,255,255,0.20); /* improved */
+    color: #111;
 }
 
+/* HIDE PLACEHOLDER */
 .input-group input::placeholder {
     color: transparent;
 }
 
+/* LABEL */
 .input-group label {
     position: absolute;
-    left: 12px;
+    left: 10px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.6);
-    transition: 0.25s;
+
+    font-size: 11px;
+    color: rgba(0,0,0,0.5);
+
+    background: rgba(255,255,255,0.7);
+    padding: 2px 5px;
+    border-radius: 5px;
+
+    transition: 0.2s;
 }
 
-.input-group input:focus+label,
-.input-group input:not(:placeholder-shown)+label {
+/* FLOAT */
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
     top: -7px;
-    font-size: 10px;
-    color: #e0e7ff;
+    font-size: 9px;
 }
 
+/* FOCUS */
 .input-group input:focus {
     outline: none;
-    background: rgba(255, 255, 255, 0.18);
-    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.6);
+    box-shadow: 0 0 0 2px rgba(124,58,237,0.5);
 }
 
-/* PASSWORD */
+/* ===== PASSWORD ===== */
 .password-field {
     position: relative;
 }
 
-.eye {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
+.password-field input {
+    padding-right: 32px;
 }
 
-/* ERROR */
+/* EYE */
+.eye {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    color: rgba(0,0,0,0.6);
+}
+
+/* ===== BUTTON ===== */
+button {
+    margin-top: 4px;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+
+    background: linear-gradient(135deg, #6366f1, #9333ea);
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+/* ===== ERROR ===== */
 #error,
 .error-text {
     text-align: center;
-    font-size: 12px;
+    font-size: 11px;
     color: #fecaca;
-}
-
-/* SUCCESS POP */
-.success-pop {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(12px);
-    opacity: 0;
-    pointer-events: none;
-    transition: 0.3s;
-}
-
-.success-pop.show {
-    opacity: 1;
-    pointer-events: all;
-}
-
-.success-box {
-    background: white;
-    padding: 24px;
-    border-radius: 14px;
-    color: black;
-}
-
-/* ===== DASHBOARD BASE ===== */
-.dashboard {
-    max-width: 1100px;
-    margin: 30px auto;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-}
-
-/* HEADER */
-.header-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    background: rgba(255, 255, 255, 0.08);
-    padding: 14px 18px;
-    border-radius: 14px;
-    backdrop-filter: blur(15px);
-}
-
-/* GRID */
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 18px;
-}
-
-/* COURSE CARD */
-.course-card {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(20px);
-
-    padding: 16px;
-    border-radius: 14px;
-
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-
-    transition: 0.3s;
-}
-
-.course-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-}
-
-/* TABLE */
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th {
-    background: var(--primary);
-    color: white;
-}
-
-td {
-    background: white;
-    color: black;
-}
-
-th,
-td {
-    padding: 8px;
-    text-align: center;
 }
