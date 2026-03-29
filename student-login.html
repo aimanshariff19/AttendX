@@ -2,16 +2,12 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>AttendX Students Login</title>
+    <title>AttendX Student Login</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-
-
 </head>
 
 <body class="login-page student">
@@ -26,25 +22,24 @@
 
         <h3 class="system-title">AttendX Student Portal</h3>
 
+        <!-- STUDENT ID -->
         <div class="input-group">
             <input type="text" id="studentId" placeholder=" " required>
             <label>Student ID</label>
         </div>
 
-        <div class="password-field">
-            <input type="password" id="password" placeholder="Password">
+        <!-- PASSWORD (FIXED) -->
+        <div class="input-group password-field">
+            <input type="password" id="password" placeholder=" " required>
+            <label>Password</label>
             <i id="eyeIcon" class="fa-solid fa-eye eye"></i>
         </div>
 
         <button id="loginBtn">Login</button>
 
-        <p id="error"></p>
+        <p id="error" class="error-text"></p>
 
     </div>
-
-    <script src="mockData.js"></script>
-    <script src="student-login.js"></script>
-    <script src="utils.js"></script>
 
 </body>
 
