@@ -24,12 +24,24 @@ body {
     color: white;
 }
 
+/* ===== 🔥 ANIMATION ===== */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* ===== 📦 DASHBOARD ===== */
 .dashboard {
     max-width: 1200px;
     margin: 40px auto;
     padding: 10px;
-
     display: flex;
     flex-direction: column;
     gap: 24px;
@@ -52,11 +64,44 @@ button {
     cursor: pointer;
     font-weight: 500;
     transition: 0.25s;
+    position: relative;
 }
 
 button:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+}
+
+button:active {
+    transform: scale(0.96);
+}
+
+/* ===== BUTTON LOADING ===== */
+button.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+button.loading::after {
+    content: "";
+    width: 18px;
+    height: 18px;
+
+    border: 3px solid white;
+    border-top: 3px solid transparent;
+    border-radius: 50%;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
 }
 
 /* ===== 📦 CARD ===== */
@@ -120,10 +165,6 @@ button:hover {
     color: var(--text-muted);
 }
 
-.course-card button {
-    margin-top: 16px;
-}
-
 /* ===== 🧾 FORM ===== */
 .form-container {
     max-width: 900px;
@@ -141,32 +182,60 @@ button:hover {
     gap: 16px;
 }
 
-/* ===== INPUT ===== */
+/* ===== FLOATING INPUT ===== */
 .input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+    position: relative;
 }
 
-label {
-    font-size: 13px;
-    color: var(--text-muted);
-}
+.input-group input {
+    width: 100%;
+    padding: 16px 14px;
+    border-radius: 12px;
+    border: none;
 
-input,
-select {
-    padding: 14px;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
     color: white;
 }
 
-input:focus,
-select:focus {
-    border-color: white;
-    background: rgba(255, 255, 255, 0.15);
-    outline: none;
+.input-group label {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    transition: 0.25s;
+    pointer-events: none;
+}
+
+.input-group input:focus+label,
+.input-group input:valid+label {
+    top: -8px;
+    font-size: 11px;
+    color: #c7d2fe;
+}
+
+.input-group input:focus {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.4);
+}
+
+/* ===== PASSWORD ===== */
+.password-field {
+    position: relative;
+}
+
+.eye {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.eye:hover {
+    opacity: 1;
 }
 
 /* ===== 📊 TABLE ===== */
@@ -193,7 +262,7 @@ td {
     text-align: center;
 }
 
-/* ===== 🎯 TOGGLE SWITCH ===== */
+/* ===== 🎯 TOGGLE ===== */
 .toggle-switch {
     position: relative;
     width: 42px;
@@ -232,83 +301,19 @@ td {
     transform: translateX(20px);
 }
 
-/* ===== LOGIN CENTER ===== */
-body.login-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-
-/* ===== LOGIN CARD ===== */
-.login-container {
-    width: 380px;
-    max-width: 90%;
-
-    padding: 28px;
-    border-radius: 18px;
-
-    background: var(--glass);
-    backdrop-filter: blur(20px);
-
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-/* ===== LOGO ===== */
-.logo {
-    width: 100%;
-    max-height: 120px;
-    object-fit: cover;
-    border-radius: 12px;
-}
-
-/* ===== SUCCESS ===== */
-#successOverlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    opacity: 0;
-    pointer-events: none;
-    transition: 0.3s;
-}
-
-#successOverlay.show {
-    opacity: 1;
-    pointer-events: all;
-}
-
-.success-box {
-    background: white;
-    padding: 30px;
-    border-radius: 16px;
-    text-align: center;
-}
-
-.tick {
-    font-size: 36px;
-    color: #22c55e;
-}
-
-/* ===== LOGIN PAGE BACKGROUND ===== */
+/* ===== LOGIN PAGE ===== */
 .login-page {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-
     background: radial-gradient(circle at top, #7c3aed, #4f46e5);
 }
 
 /* ===== LOGIN CARD ===== */
 .login-container {
     width: 360px;
+    max-width: 90%;
     padding: 32px;
     border-radius: 20px;
 
@@ -326,11 +331,11 @@ body.login-page {
 
 /* ===== LOGO ===== */
 .college-logo {
-    width: 70px;
+    width: 80px;
     margin: 0 auto;
 }
 
-/* ===== COLLEGE TEXT ===== */
+/* ===== TEXT ===== */
 .college-name {
     text-align: center;
     font-size: 18px;
@@ -344,7 +349,6 @@ body.login-page {
     color: rgba(255, 255, 255, 0.7);
 }
 
-/* ===== SYSTEM TITLE ===== */
 .system-title {
     text-align: center;
     margin-top: 10px;
@@ -352,88 +356,37 @@ body.login-page {
     color: #e0e7ff;
 }
 
-/* ===== INPUT GROUP ===== */
-.input-group {
-    position: relative;
-}
-
-/* ===== INPUT ===== */
-.login-container input {
-    width: 100%;
-    padding: 14px;
-    border-radius: 12px;
-    border: none;
-
-    background: rgba(255, 255, 255, 0.15);
-    color: white;
-
-    transition: 0.3s;
-}
-
-/* ===== INPUT FOCUS ===== */
-.login-container input:focus {
-    outline: none;
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
-}
-
-/* ===== PASSWORD FIELD ===== */
-.password-field {
-    position: relative;
-}
-
-/* ===== EYE ICON ===== */
-.eye {
-    position: absolute;
-    right: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    opacity: 0.7;
-}
-
-.eye:hover {
-    opacity: 1;
-}
-
-/* ===== BUTTON ===== */
-.login-container button {
-    padding: 14px;
-    border-radius: 12px;
-    font-weight: 600;
-
-    background: linear-gradient(135deg, #6366f1, #7c3aed);
-
-    transition: 0.3s;
-}
-
-/* ===== BUTTON HOVER ===== */
-.login-container button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(124, 58, 237, 0.5);
-}
-
-/* ===== BUTTON CLICK ===== */
-.login-container button:active {
-    transform: scale(0.96);
-}
-
-/* ===== ERROR TEXT ===== */
+/* ===== ERROR ===== */
 .error-text {
     text-align: center;
     font-size: 12px;
     color: #fecaca;
 }
 
-/* ===== ANIMATION ===== */
-@keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(25px);
-    }
+/* ===== SUCCESS POP ===== */
+.success-pop {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s;
+}
+
+.success-pop.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.success-box {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    text-align: center;
 }
