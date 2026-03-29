@@ -10,11 +10,11 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    
+
 
 </head>
 
-<body class="login-page">
+<body class="login-page student">
 
     <div class="login-container">
 
@@ -26,7 +26,10 @@
 
         <h3 class="system-title">AttendX Student Portal</h3>
 
-        <input type="text" id="studentId" placeholder="Student ID">
+        <div class="input-group">
+            <input type="text" id="studentId" placeholder=" " required>
+            <label>Student ID</label>
+        </div>
 
         <div class="password-field">
             <input type="password" id="password" placeholder="Password">
