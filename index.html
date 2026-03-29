@@ -18,40 +18,47 @@
     <div class="login-container">
 
         <!-- LOGO -->
-        <img src="assets/logo.png" class="college-logo">
+        <img src="assets/logo.png" class="college-logo" alt="Atria Logo">
 
         <!-- COLLEGE INFO -->
-        <h2 class="college-name">Atria Institute of Technology</h2>
-        <p class="college-location">Hebbal, Bengaluru</p>
-        <p class="college-status">(Autonomous Institution)</p>
+        <div class="college-info">
+            <h2 class="college-name">Atria Institute of Technology</h2>
+            <p class="college-location">Hebbal, Bengaluru</p>
+            <p class="college-status">(Autonomous Institution)</p>
+        </div>
 
         <!-- SYSTEM TITLE -->
         <h3 class="system-title">AttendX Faculty Portal</h3>
 
-        <!-- USERNAME -->
-        <div class="input-group">
-            <input type="text" id="username" required>
-            <label>Faculty ID</label>
-        </div>
+        <!-- FORM -->
+        <form onsubmit="login(); return false;">
 
-        <!-- PASSWORD -->
-        <div class="input-group password-field">
-            <input type="password" id="password" required>
-            <label>Password</label>
-            <i id="eyeIcon" class="fa-solid fa-eye eye"></i>
-        </div>
+            <!-- USERNAME -->
+            <div class="input-group">
+                <input type="text" id="username" required autocomplete="username">
+                <label for="username">Faculty ID</label>
+            </div>
 
-        <!-- LOGIN BUTTON -->
-        <button id="loginBtn" onclick="login()">
-            <span class="btn-text">Login</span>
-        </button>
+            <!-- PASSWORD -->
+            <div class="input-group password-field">
+                <input type="password" id="password" required autocomplete="current-password">
+                <label for="password">Password</label>
+                <i id="eyeIcon" class="fa-solid fa-eye eye"></i>
+            </div>
+
+            <!-- LOGIN BUTTON -->
+            <button id="loginBtn" type="submit">
+                <span class="btn-text">Login</span>
+            </button>
+
+        </form>
 
         <!-- ERROR -->
         <p id="error" class="error-text"></p>
 
     </div>
 
-    <!-- SUCCESS POP (OPTIONAL READY) -->
+    <!-- SUCCESS POP -->
     <div id="successPop" class="success-pop">
         <div class="success-box">
             <h3>✅ Login Successful</h3>
