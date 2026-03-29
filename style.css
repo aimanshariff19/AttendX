@@ -287,39 +287,17 @@ button.loading .btn-loader {
     }
 }
 
-/* ===== BUTTON BASE ===== */
-button {
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-
-    background: linear-gradient(135deg, #ff7bff, #6a5cff);
-    color: white;
-    font-size: 14px;
-    font-weight: 600;
-
-    cursor: pointer;
-    transition: all 0.4s ease;
-
-    position: relative;
-    overflow: hidden;
-}
-
-/* ===== LOADING TRANSFORM ===== */
+/* ===== BUTTON MORPH ANIMATION ===== */
 button.loading {
     width: 45px;
     height: 45px;
     border-radius: 50%;
     padding: 0;
     margin: 0 auto;
+    transition: all 0.4s ease;
 }
 
-/* TEXT HIDE */
-button.loading .btn-text {
-    opacity: 0;
-}
-
-/* CENTER LOADER */
+/* CENTER SPINNER */
 button.loading .btn-loader {
     position: absolute;
     top: 50%;
@@ -327,18 +305,23 @@ button.loading .btn-loader {
     transform: translate(-50%, -50%);
 }
 
-/* ===== ERROR FIX ===== */
-.error-text {
-    text-align: center;
-    font-size: 12px;
-    color: #ffb3b3;
-
-    margin-top: 10px;
-    /* 🔥 spacing fix */
-    min-height: 18px;
+/* HIDE TEXT SMOOTH */
+button.loading .btn-text {
+    opacity: 0;
 }
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+
+/* ===== SUCCESS ANIMATION ===== */
+button.success {
+    background: #00c896;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    padding: 0;
+}
+
+/* ===== LOGIN CARD EXIT ===== */
+.login-container.exit {
+    transform: scale(0.9);
+    opacity: 0;
+    transition: all 0.4s ease;
 }
