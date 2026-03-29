@@ -151,3 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })
 
 })
+
+function loginbtn{
+    window.location.href = "dashboard.html"
+}
