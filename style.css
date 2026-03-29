@@ -21,9 +21,10 @@ body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
     background: var(--bg-gradient);
+    padding: 20px;
 }
 
-/* ===== ✨ GLOBAL ANIMATION ===== */
+/* ===== ✨ ANIMATION ===== */
 @keyframes fadeUp {
     from {
         opacity: 0;
@@ -45,7 +46,7 @@ button {
     color: white;
     cursor: pointer;
     font-weight: 500;
-    transition: all 0.25s ease;
+    transition: 0.25s;
     position: relative;
     overflow: hidden;
 }
@@ -101,15 +102,55 @@ button.loading::after {
     }
 }
 
+/* ===== 📦 DASHBOARD ===== */
+.dashboard {
+    max-width: 1100px;
+    margin: 40px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: fadeUp 0.6s ease;
+}
+
+/* ===== 🔝 HEADER ===== */
+.header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h1 {
+    color: white;
+    font-size: 26px;
+    margin: 0;
+}
+
+/* ===== 👤 PROFILE PANEL ===== */
+.faculty-panel {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    padding: 20px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: white;
+}
+
 /* ===== 📦 CARD ===== */
 .card {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+
     background: var(--glass);
     backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
+
     padding: 24px;
     border-radius: 18px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-    animation: fadeUp 0.6s ease;
 
     display: flex;
     flex-direction: column;
@@ -125,7 +166,6 @@ select {
     border: 1px solid rgba(255, 255, 255, 0.25);
     background: rgba(255, 255, 255, 0.1);
     color: white;
-    transition: 0.25s;
 }
 
 input:focus,
@@ -251,10 +291,9 @@ tbody tr:hover {
     padding: 30px;
     border-radius: 16px;
     text-align: center;
-    animation: fadeUp 0.4s ease;
 }
 
-/* ===== 🏫 LOGIN PAGE LAYOUT ===== */
+/* ===== 🏫 LOGIN ===== */
 .login-page {
     min-height: 100vh;
     display: flex;
@@ -262,7 +301,6 @@ tbody tr:hover {
     align-items: center;
 }
 
-/* ===== 📦 LOGIN CARD ===== */
 .login-container {
     width: 340px;
     padding: 28px;
@@ -274,7 +312,6 @@ tbody tr:hover {
     border: 1px solid var(--glass-border);
 
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-    animation: fadeUp 0.6s ease;
 }
 
 /* ===== 🖼 LOGO ===== */
@@ -283,32 +320,20 @@ tbody tr:hover {
     margin-bottom: 10px;
 }
 
-/* ===== 🏫 COLLEGE NAME ===== */
 .college-name {
     font-size: 18px;
     font-weight: 600;
     color: white;
-    margin: 5px 0;
 }
 
-/* ===== 📍 SUB TEXT ===== */
 .college-location,
 .college-status {
     font-size: 12px;
     color: var(--text-muted);
 }
 
-/* ===== ⚙ SYSTEM TITLE ===== */
 .system-title {
     margin: 14px 0;
     font-size: 14px;
     color: #e0e7ff;
-    font-weight: 500;
-}
-.password-field {
-    position: relative;
-}
-
-input {
-    margin: 10px 0;
 }
