@@ -4,9 +4,6 @@ document.addEventListener("click", function (e) {
     const btn = e.target.closest("button")
     if (!btn) return
 
-    // prevent too many ripples
-    if (btn.querySelector(".ripple")) return
-
     const circle = document.createElement("span")
     circle.classList.add("ripple")
 
@@ -22,8 +19,6 @@ document.addEventListener("click", function (e) {
 /* -------- INIT -------- */
 
 document.addEventListener("DOMContentLoaded", () => {
-
-    console.log("Student Dashboard Loaded ✅")
 
     const usn = localStorage.getItem("studentUSN")
     const classKey = localStorage.getItem("studentClass")
@@ -43,26 +38,17 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("section").innerText = section
 
     const table = document.getElementById("subjectRows")
+    if (!table || typeof courses === "undefined") return
 
-    if (!table) {
-        console.error("Table not found ❌")
-        return
-    }
-
-    if (typeof courses === "undefined") {
-        console.error("Courses not loaded ❌")
-        return
-    }
-
-    console.log("Courses Loaded ✅", courses)
-
-    /* -------- FILTER SUBJECTS -------- */
+    /* -------- 🔥 FIX: FETCH ALL SUBJECTS -------- */
 
     const rawSubjects = courses.filter(c =>
         c.department === department &&
         c.sem.toString() === sem &&
         c.section === section
     )
+
+    /* -------- REMOVE DUPLICATES -------- */
 
     const classSubjects = []
 
@@ -72,33 +58,29 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
-    /* -------- GET ATTENDANCE DATA -------- */
-
-    let attendanceData = {}
-
-    try {
-        attendanceData = JSON.parse(localStorage.getItem("attendanceData")) || {}
-    } catch (e) {
-        console.error("Corrupted attendance data ❌")
-        attendanceData = {}
-    }
-
     /* -------- CALCULATE -------- */
 
     function calculateAttendance(subject) {
 
-        const key = `${subject}_${department}_${program}_${sem}_${section}`
-        const records = attendanceData[key] || []
-
         let present = 0
         let total = 0
 
-        records.forEach(r => {
-            if (r.usn === usn) {
-                total++
-                if (r.status === "Present") present++
+        for (let i = 0; i < localStorage.length; i++) {
+
+            let key = localStorage.key(i)
+
+            if (key && key.startsWith(`${subject}_${department}_${program}_${sem}_${section}_`)) {
+
+                let data = JSON.parse(localStorage.getItem(key) || "[]")
+
+                let record = data.find(r => r.usn === usn)
+
+                if (record) {
+                    total++
+                    if (record.status === "Present") present++
+                }
             }
-        })
+        }
 
         return {
             conducted: total,
@@ -144,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
         table.appendChild(row)
     })
 
-    /* -------- OVERALL ATTENDANCE -------- */
+    /* -------- 🔥 OVERALL ATTENDANCE -------- */
 
     const overall = classSubjects.length > 0
         ? Math.round(totalPercent / classSubjects.length)
@@ -165,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <p id="warningText" style="font-weight:600;"></p>
 `
 
-    /* -------- WARNING -------- */
+    /* -------- ⚠ WARNING -------- */
 
     const warning = document.getElementById("warningText")
 
@@ -188,8 +170,6 @@ document.addEventListener("DOMContentLoaded", () => {
 function studentLogout() {
 
     const btn = document.querySelector(".logout-btn")
-
-    if (!btn) return
 
     btn.classList.add("loading")
     btn.innerText = ""

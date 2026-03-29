@@ -26,22 +26,13 @@ function getBaseKey() {
     return `${normalize(subject)}_${normalize(department)}_${normalize(program)}_${sem}_${normalize(section)}`
 }
 
-/* -------- GLOBAL STORAGE -------- */
-let attendanceData = {}
-
-function loadStorage() {
-    try {
-        attendanceData = JSON.parse(localStorage.getItem("attendanceData")) || {}
-    } catch {
-        attendanceData = {}
-    }
+/* -------- UNIVERSAL GET -------- */
+function getAttendanceRecords(key) {
+    let stored = JSON.parse(localStorage.getItem(key) || "{}")
+    return stored.data || []
 }
 
-function saveStorage() {
-    localStorage.setItem("attendanceData", JSON.stringify(attendanceData))
-}
-
-/* -------- STUDENTS -------- */
+/* -------- SAFE STUDENTS LOAD -------- */
 let studentList = []
 const classKey = `${department}_${program}_${sem}_${section}`
 
@@ -56,18 +47,26 @@ const table = document.getElementById("studentRows")
 /* -------- CALCULATE % -------- */
 function calculatePercentage(usn, currentStatus = null) {
 
-    const base = getBaseKey()
-    const records = attendanceData[base] || []
-
     let present = 0
     let total = 0
 
-    records.forEach(r => {
-        if (r.usn === usn) {
-            total++
-            if (r.status === "Present") present++
+    const base = getBaseKey()
+
+    for (let i = 0; i < localStorage.length; i++) {
+
+        let key = localStorage.key(i)
+
+        if (key && key.toLowerCase().startsWith(base)) {
+
+            let records = getAttendanceRecords(key)
+            let record = records.find(r => r.usn === usn)
+
+            if (record) {
+                total++
+                if (record.status === "Present") present++
+            }
         }
-    })
+    }
 
     if (currentStatus !== null) {
         total++
@@ -83,6 +82,8 @@ function loadStudents() {
     if (!table || typeof students === "undefined") return
 
     table.innerHTML = ""
+
+    if (studentList.length === 0) return
 
     studentList.forEach((student, index) => {
 
@@ -156,16 +157,90 @@ function updateStats() {
     setText("absentCount", total - present)
 }
 
+/* -------- 💧 RIPPLE -------- */
+document.addEventListener("click", function (e) {
+    const btn = e.target.closest("button")
+    if (!btn) return
+
+    const circle = document.createElement("span")
+    circle.classList.add("ripple")
+
+    const rect = btn.getBoundingClientRect()
+    circle.style.left = (e.clientX - rect.left) + "px"
+    circle.style.top = (e.clientY - rect.top) + "px"
+
+    btn.appendChild(circle)
+    setTimeout(() => circle.remove(), 600)
+})
+
+/* -------- 🕒 CURRENT TIME -------- */
+function updateCurrentTime() {
+
+    const now = new Date()
+
+    let hours = now.getHours()
+    let minutes = now.getMinutes()
+
+    let ampm = hours >= 12 ? "PM" : "AM"
+    hours = hours % 12 || 12
+
+    const timeString = `${hours}:${String(minutes).padStart(2, "0")} ${ampm}`
+
+    const el = document.getElementById("currentTime")
+    if (el) el.innerText = timeString
+}
+
+/* -------- 🕒 DISPLAY TIME -------- */
+function updateDisplayTime() {
+
+    const time = document.getElementById("classTime")?.value
+    if (!time) return
+
+    let [hour, minute] = time.split(":").map(Number)
+
+    let ampm = hour >= 12 ? "PM" : "AM"
+    hour = hour % 12 || 12
+
+    const formatted = `${hour}:${String(minute).padStart(2, "0")} ${ampm}`
+
+    const el = document.getElementById("displayTime")
+    if (el) el.innerText = formatted
+}
+
+/* -------- ⏱ TIME RANGE -------- */
+function updateTimeRange() {
+
+    const startTime = document.getElementById("classTime")?.value
+    const numClasses = parseInt(document.getElementById("numClasses")?.value)
+
+    if (!startTime || !numClasses) return
+
+    let [hour, minute] = startTime.split(":").map(Number)
+    let endHour = hour + numClasses
+
+    function format(h, m) {
+        let ampm = h >= 12 ? "PM" : "AM"
+        h = h % 12 || 12
+        return `${h}:${String(m).padStart(2, "0")} ${ampm}`
+    }
+
+    const range = `${format(hour, minute)} - ${format(endHour, minute)}`
+
+    const el = document.getElementById("timeRange")
+    if (el) el.innerText = range
+}
+
 /* -------- 🚀 SUBMIT ATTENDANCE -------- */
 function submitAttendance() {
 
     const btn = document.getElementById("submitBtn")
 
     const date = document.getElementById("date")?.value
+    const startTime = document.getElementById("classTime")?.value
     const numClasses = parseInt(document.getElementById("numClasses")?.value)
 
-    if (!date) {
-        showMessage("⚠️ Fill date properly", "error")
+    if (!date || !startTime) {
+        showMessage("⚠️ Fill date & time properly", "error")
         return
     }
 
@@ -174,21 +249,26 @@ function submitAttendance() {
 
     setTimeout(() => {
 
+        let [hour, minute] = startTime.split(":").map(Number)
         const base = getBaseKey()
 
-        if (!attendanceData[base]) {
-            attendanceData[base] = []
-        }
+        for (let i = 0; i < numClasses; i++) {
 
-        document.querySelectorAll(".toggle-switch input").forEach(input => {
-            attendanceData[base].push({
-                usn: input.dataset.usn,
-                status: input.checked ? "Present" : "Absent",
-                date
+            const currentTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`
+            const key = `${base}_${date}_${currentTime}`
+
+            let data = []
+
+            document.querySelectorAll(".toggle-switch input").forEach(input => {
+                data.push({
+                    usn: input.dataset.usn,
+                    status: input.checked ? "Present" : "Absent"
+                })
             })
-        })
 
-        saveStorage()
+            localStorage.setItem(key, JSON.stringify({ data }))
+            hour++
+        }
 
         showMessage("✅ Attendance Saved", "success")
 
@@ -196,21 +276,7 @@ function submitAttendance() {
             window.location.href = "dashboard.html"
         }, 600)
 
-    }, 600)
-}
-
-/* -------- INIT -------- */
-window.onload = function () {
-
-    loadStorage()
-
-    const today = new Date().toISOString().split("T")[0]
-    document.getElementById("date").value = today
-
-    setTimeout(() => {
-        initStudents()
-        loadStudents()
-    }, 100)
+    }, 800)
 }
 
 /* -------- MESSAGE -------- */
@@ -228,7 +294,34 @@ function showMessage(text, type) {
     }, 2500)
 }
 
+/* -------- INIT -------- */
+window.onload = function () {
+
+    const today = new Date().toISOString().split("T")[0]
+    document.getElementById("date").value = today
+
+    updateCurrentTime()
+    setInterval(updateCurrentTime, 1000)
+
+    updateDisplayTime()
+    updateTimeRange()
+
+    document.getElementById("classTime")?.addEventListener("change", () => {
+        updateDisplayTime()
+        updateTimeRange()
+    })
+
+    document.getElementById("numClasses")?.addEventListener("input", updateTimeRange)
+
+    // 🔥 WAIT FOR DATA
+    setTimeout(() => {
+        initStudents()
+        loadStudents()
+    }, 100)
+}
+
 /* -------- BACK -------- */
+
 function goBack() {
     window.location.href = "dashboard.html"
 }
