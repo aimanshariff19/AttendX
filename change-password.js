@@ -5,6 +5,15 @@ if (window.__CHANGE_PASS_RUNNING__) {
 window.__CHANGE_PASS_RUNNING__ = true
 
 
+/* -------- USER -------- */
+const usn = localStorage.getItem("studentUSN")
+
+if (!usn) {
+    console.warn("⚠ No user found, redirecting...")
+    window.location.href = "student-login.html"
+}
+
+
 /* -------- INIT -------- */
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -15,16 +24,56 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (updateBtn) updateBtn.addEventListener("click", updatePassword)
     if (backBtn) backBtn.addEventListener("click", goBack)
+
+    /* 👁 TOGGLE PASSWORD */
+    function toggleEye(inputId, eyeId) {
+        const input = document.getElementById(inputId)
+        const eye = document.getElementById(eyeId)
+
+        if (!input || !eye) return
+
+        eye.addEventListener("click", () => {
+            input.type = input.type === "password" ? "text" : "password"
+        })
+    }
+
+    toggleEye("newPass", "eyeNew")
+    toggleEye("confirmPass", "eyeConfirm")
+
+    /* 📊 PASSWORD STRENGTH */
+    const newPass = document.getElementById("newPass")
+    const fill = document.getElementById("strengthFill")
+    const text = document.getElementById("strengthText")
+
+    if (newPass) {
+        newPass.addEventListener("input", () => {
+
+            let val = newPass.value
+            let score = 0
+
+            if (val.length >= 4) score++
+            if (/[A-Z]/.test(val)) score++
+            if (/[0-9]/.test(val)) score++
+            if (/[^A-Za-z0-9]/.test(val)) score++
+
+            const widths = ["0%", "25%", "50%", "75%", "100%"]
+            if (fill) fill.style.width = widths[score]
+
+            if (!text || !fill) return
+
+            if (score <= 1) {
+                fill.style.background = "#ef4444"
+                text.innerText = "Weak"
+            } else if (score === 2) {
+                fill.style.background = "#f59e0b"
+                text.innerText = "Medium"
+            } else {
+                fill.style.background = "#22c55e"
+                text.innerText = "Strong"
+            }
+        })
+    }
 })
-
-
-/* -------- USER -------- */
-const usn = localStorage.getItem("studentUSN")
-
-if (!usn) {
-    console.warn("⚠ No user found, redirecting...")
-    window.location.href = "student-login.html"
-}
 
 
 /* -------- MESSAGE -------- */
