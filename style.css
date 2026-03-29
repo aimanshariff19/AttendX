@@ -305,3 +305,10 @@ tbody tr:hover {
     color: #e0e7ff;
     font-weight: 500;
 }
+.password-field {
+    position: relative;
+}
+
+input {
+    margin: 10px 0;
+}
