@@ -32,7 +32,7 @@ function getAttendanceRecords(key) {
     return stored.data || []
 }
 
-/* -------- SAFE STUDENTS LOAD -------- */
+/* -------- STUDENTS -------- */
 let studentList = []
 const classKey = `${department}_${program}_${sem}_${section}`
 
@@ -78,12 +78,9 @@ function calculatePercentage(usn, currentStatus = null) {
 
 /* -------- LOAD STUDENTS -------- */
 function loadStudents() {
-
     if (!table || typeof students === "undefined") return
 
     table.innerHTML = ""
-
-    if (studentList.length === 0) return
 
     studentList.forEach((student, index) => {
 
@@ -92,18 +89,21 @@ function loadStudents() {
         let row = document.createElement("tr")
 
         row.innerHTML = `
-<td>${student.usn}</td>
-<td>${student.name}</td>
-<td class="percent">${percent}%</td>
-<td>
-<label class="toggle-switch">
-<input type="checkbox" data-usn="${student.usn}" checked>
-<span class="slider"></span>
-</label>
-</td>
-`
+        <td>${student.usn}</td>
+        <td>${student.name}</td>
+        <td class="percent">${percent}%</td>
+        <td>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <label class="toggle-switch">
+                    <input type="checkbox" data-usn="${student.usn}" checked>
+                    <span class="slider"></span>
+                </label>
+                <span class="status-text" style="font-size:12px;color:#22c55e;">Present</span>
+            </div>
+        </td>
+    `
 
-        row.style.animation = `fadeUp ${0.4 + index * 0.05}s ease`
+        row.style.animation = `fadeUp 0.4s ease ${index * 0.05}s both`
 
         updateRowStyle(row, percent, true)
         table.appendChild(row)
@@ -113,7 +113,9 @@ function loadStudents() {
         .forEach(input => input.addEventListener("change", updateLivePercentage))
 
     updateStats()
+
 }
+
 
 /* -------- ROW STYLE -------- */
 function updateRowStyle(row, percent, isPresent) {
@@ -123,18 +125,21 @@ function updateRowStyle(row, percent, isPresent) {
 
 /* -------- LIVE UPDATE -------- */
 function updateLivePercentage() {
-
     document.querySelectorAll("#studentRows tr").forEach(row => {
 
         const input = row.querySelector("input")
         const usn = input.dataset.usn
         const percentCell = row.querySelector(".percent")
+        const statusText = row.querySelector(".status-text")
 
         const status = input.checked ? "Present" : "Absent"
 
         let percent = calculatePercentage(usn, status)
 
         percentCell.innerText = percent + "%"
+        statusText.innerText = status
+        statusText.style.color = input.checked ? "#22c55e" : "#ef4444"
+
         updateRowStyle(row, percent, input.checked)
     })
 
@@ -143,7 +148,6 @@ function updateLivePercentage() {
 
 /* -------- STATS -------- */
 function updateStats() {
-
     let total = 0
     let present = 0
 
@@ -155,6 +159,7 @@ function updateStats() {
     setText("totalCount", total)
     setText("presentCount", present)
     setText("absentCount", total - present)
+
 }
 
 /* -------- 💧 RIPPLE -------- */
@@ -190,47 +195,7 @@ function updateCurrentTime() {
     if (el) el.innerText = timeString
 }
 
-/* -------- 🕒 DISPLAY TIME -------- */
-function updateDisplayTime() {
-
-    const time = document.getElementById("classTime")?.value
-    if (!time) return
-
-    let [hour, minute] = time.split(":").map(Number)
-
-    let ampm = hour >= 12 ? "PM" : "AM"
-    hour = hour % 12 || 12
-
-    const formatted = `${hour}:${String(minute).padStart(2, "0")} ${ampm}`
-
-    const el = document.getElementById("displayTime")
-    if (el) el.innerText = formatted
-}
-
-/* -------- ⏱ TIME RANGE -------- */
-function updateTimeRange() {
-
-    const startTime = document.getElementById("classTime")?.value
-    const numClasses = parseInt(document.getElementById("numClasses")?.value)
-
-    if (!startTime || !numClasses) return
-
-    let [hour, minute] = startTime.split(":").map(Number)
-    let endHour = hour + numClasses
-
-    function format(h, m) {
-        let ampm = h >= 12 ? "PM" : "AM"
-        h = h % 12 || 12
-        return `${h}:${String(m).padStart(2, "0")} ${ampm}`
-    }
-
-    const range = `${format(hour, minute)} - ${format(endHour, minute)}`
-
-    const el = document.getElementById("timeRange")
-    if (el) el.innerText = range
-}
-
-/* -------- 🚀 SUBMIT ATTENDANCE -------- */
+/* -------- 🚀 SUBMIT -------- */
 function submitAttendance() {
 
     const btn = document.getElementById("submitBtn")
@@ -245,7 +210,6 @@ function submitAttendance() {
     }
 
     btn.classList.add("loading")
-    btn.innerText = ""
 
     setTimeout(() => {
 
@@ -270,17 +234,11 @@ function submitAttendance() {
             hour++
         }
 
-        /* ✅ SUCCESS OVERLAY */
         const overlay = document.getElementById("successOverlay")
-        if (overlay) {
-            overlay.classList.add("show")
-        }
+        if (overlay) overlay.classList.add("show")
 
-        /* ✅ RESET BUTTON */
         btn.classList.remove("loading")
-        btn.innerText = "Submit Attendance"
 
-        /* ✅ REDIRECT */
         setTimeout(() => {
             window.location.href = "dashboard.html"
         }, 1200)
@@ -306,31 +264,22 @@ function showMessage(text, type) {
 /* -------- INIT -------- */
 window.onload = function () {
 
+
     const today = new Date().toISOString().split("T")[0]
     document.getElementById("date").value = today
 
     updateCurrentTime()
     setInterval(updateCurrentTime, 1000)
 
-    updateDisplayTime()
-    updateTimeRange()
-
-    document.getElementById("classTime")?.addEventListener("change", () => {
-        updateDisplayTime()
-        updateTimeRange()
-    })
-
-    document.getElementById("numClasses")?.addEventListener("input", updateTimeRange)
-
-    // 🔥 WAIT FOR DATA
     setTimeout(() => {
         initStudents()
         loadStudents()
     }, 100)
+
+
 }
 
 /* -------- BACK -------- */
-
 function goBack() {
     window.location.href = "dashboard.html"
 }
