@@ -1,13 +1,12 @@
 /* ===== 🎨 DESIGN SYSTEM ===== */
 :root {
     --primary: #6366f1;
-    --primary-dark: #4f46e5;
     --accent: #7c3aed;
 
     --bg-gradient: linear-gradient(135deg, #5f5cff, #7c3aed);
 
-    --glass: rgba(255, 255, 255, 0.12);
-    --glass-border: rgba(255, 255, 255, 0.25);
+    --glass: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.2);
 
     --text-main: #ffffff;
     --text-muted: rgba(255, 255, 255, 0.7);
@@ -37,21 +36,17 @@ body {
     }
 }
 
-/* ===== 📦 DASHBOARD ===== */
-.dashboard {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
 }
 
-/* ===== 🔝 HEADER ===== */
-.header-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+@keyframes spin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
 }
 
 /* ===== 🔘 BUTTON ===== */
@@ -59,7 +54,7 @@ button {
     padding: 12px;
     border-radius: 12px;
     border: none;
-    background: linear-gradient(135deg, var(--primary-dark), var(--accent));
+    background: linear-gradient(135deg, var(--primary), var(--accent));
     color: white;
     cursor: pointer;
     font-weight: 500;
@@ -69,28 +64,26 @@ button {
 
 button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);
 }
 
 button:active {
     transform: scale(0.96);
 }
 
-/* ===== BUTTON LOADING ===== */
+/* LOADING */
 button.loading {
     pointer-events: none;
-    opacity: 0.7;
+    color: transparent;
 }
 
 button.loading::after {
     content: "";
     width: 18px;
     height: 18px;
-
     border: 3px solid white;
     border-top: 3px solid transparent;
     border-radius: 50%;
-
     position: absolute;
     top: 50%;
     left: 50%;
@@ -98,31 +91,8 @@ button.loading::after {
     animation: spin 0.7s linear infinite;
 }
 
-@keyframes spin {
-    to {
-        transform: translate(-50%, -50%) rotate(360deg);
-    }
-}
-
 /* ===== 📦 CARD ===== */
 .card {
-    width: 100%;
-    min-height: 120px;
-
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(20px);
-
-    padding: 24px;
-    border-radius: 18px;
-
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-/* ===== 👤 PROFILE ===== */
-.faculty-panel {
     background: var(--glass);
     border: 1px solid var(--glass-border);
     backdrop-filter: blur(20px);
@@ -130,56 +100,55 @@ button.loading::after {
     border-radius: 16px;
 }
 
-/* ===== 📊 GRID ===== */
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
+/* ===== LOGIN PAGE ===== */
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: radial-gradient(circle at 20% 20%, #8b5cf6, #4f46e5 60%);
 }
 
-/* ===== 🎯 COURSE CARD ===== */
-.course-card {
-    min-height: 200px;
+.login-container {
+    width: 380px;
+    padding: 34px;
+    border-radius: 22px;
 
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(20px);
-
-    padding: 20px;
-    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    gap: 18px;
 
-    transition: 0.25s;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+    animation: fadeUp 0.6s ease;
 }
 
-.course-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+/* LOGO */
+.college-logo {
+    width: 70px;
+    margin: auto;
+    filter: brightness(0) invert(1);
 }
 
-.course-card p {
-    font-size: 13px;
+/* TEXT */
+.college-name {
+    text-align: center;
+    font-size: 18px;
+}
+
+.college-location,
+.college-status {
+    text-align: center;
+    font-size: 12px;
     color: var(--text-muted);
 }
 
-/* ===== 🧾 FORM ===== */
-.form-container {
-    max-width: 900px;
-    margin: 20px auto;
-
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(20px);
-
-    padding: 24px;
-    border-radius: 18px;
-
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+.system-title {
+    text-align: center;
+    color: #c7d2fe;
 }
 
 /* ===== FLOATING INPUT ===== */
@@ -189,12 +158,17 @@ button.loading::after {
 
 .input-group input {
     width: 100%;
-    padding: 16px 14px;
-    border-radius: 12px;
+    padding: 18px 14px;
+    border-radius: 14px;
     border: none;
 
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.12);
     color: white;
+    font-size: 14px;
+}
+
+.input-group input::placeholder {
+    color: transparent;
 }
 
 .input-group label {
@@ -205,22 +179,21 @@ button.loading::after {
     font-size: 13px;
     color: rgba(255, 255, 255, 0.6);
     transition: 0.25s;
-    pointer-events: none;
 }
 
 .input-group input:focus+label,
-.input-group input:valid+label {
+.input-group input:not(:placeholder-shown)+label {
     top: -8px;
     font-size: 11px;
-    color: #c7d2fe;
+    color: #e0e7ff;
 }
 
 .input-group input:focus {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.4);
+    background: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.6);
 }
 
-/* ===== PASSWORD ===== */
+/* PASSWORD */
 .password-field {
     position: relative;
 }
@@ -231,19 +204,89 @@ button.loading::after {
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    opacity: 0.7;
 }
 
-.eye:hover {
+/* ===== ERROR ===== */
+.error-text {
+    text-align: center;
+    font-size: 12px;
+    color: #fecaca;
+}
+
+/* ===== SUCCESS POP ===== */
+.success-pop {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s;
+}
+
+.success-pop.show {
     opacity: 1;
+    pointer-events: all;
 }
 
-/* ===== 📊 TABLE ===== */
+.success-box {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    color: black;
+}
+
+/* ===== DASHBOARD ===== */
+.dashboard {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* HEADER */
+.header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* GRID */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+/* COURSE CARD */
+.course-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+
+    padding: 20px;
+    border-radius: 16px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    transition: 0.25s;
+}
+
+.course-card:hover {
+    transform: translateY(-5px);
+}
+
+/* TABLE */
 table {
     width: 100%;
     border-collapse: collapse;
-    border-radius: 12px;
-    overflow: hidden;
 }
 
 th {
@@ -258,378 +301,6 @@ td {
 
 th,
 td {
-    padding: 12px;
+    padding: 10px;
     text-align: center;
-}
-
-/* ===== 🎯 TOGGLE ===== */
-.toggle-switch {
-    position: relative;
-    width: 42px;
-    height: 22px;
-}
-
-.toggle-switch input {
-    opacity: 0;
-}
-
-.slider {
-    position: absolute;
-    inset: 0;
-    background: #ef4444;
-    border-radius: 20px;
-    transition: 0.3s;
-}
-
-.slider::before {
-    content: "";
-    position: absolute;
-    height: 18px;
-    width: 18px;
-    left: 2px;
-    top: 2px;
-    background: white;
-    border-radius: 50%;
-    transition: 0.3s;
-}
-
-.toggle-switch input:checked+.slider {
-    background: #22c55e;
-}
-
-.toggle-switch input:checked+.slider::before {
-    transform: translateX(20px);
-}
-
-/* ===== LOGIN PAGE ===== */
-.login-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: radial-gradient(circle at top, #7c3aed, #4f46e5);
-}
-
-/* ===== LOGIN CARD ===== */
-.login-container {
-    width: 360px;
-    max-width: 90%;
-    padding: 32px;
-    border-radius: 20px;
-
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(25px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    animation: fadeUp 0.6s ease;
-}
-
-/* ===== LOGO ===== */
-.college-logo {
-    width: 80px;
-    margin: 0 auto;
-}
-
-/* ===== TEXT ===== */
-.college-name {
-    text-align: center;
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.college-location,
-.college-status {
-    text-align: center;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.system-title {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 14px;
-    color: #e0e7ff;
-}
-
-/* ===== ERROR ===== */
-.error-text {
-    text-align: center;
-    font-size: 12px;
-    color: #fecaca;
-}
-
-/* ===== SUCCESS POP ===== */
-.success-pop {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(10px);
-
-    opacity: 0;
-    pointer-events: none;
-    transition: 0.3s;
-}
-
-.success-pop.show {
-    opacity: 1;
-    pointer-events: all;
-}
-
-.success-box {
-    background: white;
-    padding: 30px;
-    border-radius: 16px;
-    text-align: center;
-}
-
-/* ===== 🔥 ULTRA PREMIUM LOGIN ===== */
-
-/* background depth */
-.login-page {
-    background: radial-gradient(circle at 20% 20%, #8b5cf6, #4f46e5 60%);
-}
-
-/* card */
-.login-container {
-    width: 380px;
-    max-width: 90%;
-    padding: 34px;
-    border-radius: 22px;
-
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(30px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-
-    box-shadow:
-        0 25px 60px rgba(0, 0, 0, 0.35),
-        inset 0 0 20px rgba(255, 255, 255, 0.05);
-
-    animation: fadeUp 0.6s ease;
-}
-
-/* logo */
-.college-logo {
-    width: 75px;
-    margin: 0 auto;
-    filter: brightness(0) invert(1);
-    opacity: 0.9;
-}
-
-/* text */
-.college-name {
-    text-align: center;
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.college-location,
-.college-status {
-    text-align: center;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.system-title {
-    text-align: center;
-    font-size: 14px;
-    color: #c7d2fe;
-    margin-top: 8px;
-}
-
-/* ===== FLOATING INPUT ===== */
-.input-group {
-    position: relative;
-}
-
-/* input */
-.input-group input {
-    width: 100%;
-    padding: 16px 14px;
-    border-radius: 14px;
-    border: none;
-
-    background: rgba(255, 255, 255, 0.12);
-    color: white;
-
-    font-size: 14px;
-    transition: 0.3s;
-}
-
-/* label */
-.input-group label {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.6);
-
-    transition: 0.25s;
-    pointer-events: none;
-}
-
-/* float */
-.input-group input:focus+label,
-.input-group input:valid+label {
-    top: -8px;
-    font-size: 11px;
-    color: #c7d2fe;
-}
-
-/* glow */
-.input-group input:focus {
-    background: rgba(255, 255, 255, 0.18);
-    box-shadow:
-        0 0 0 2px rgba(124, 58, 237, 0.6),
-        0 0 25px rgba(124, 58, 237, 0.3);
-}
-
-/* ===== PASSWORD ICON ===== */
-.password-field {
-    position: relative;
-}
-
-.eye {
-    position: absolute;
-    right: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    opacity: 0.7;
-    transition: 0.2s;
-}
-
-.eye:hover {
-    opacity: 1;
-    transform: translateY(-50%) scale(1.1);
-}
-
-/* ===== BUTTON ===== */
-.login-container button {
-    padding: 14px;
-    border-radius: 14px;
-    font-weight: 600;
-
-    background: linear-gradient(135deg, #6366f1, #7c3aed);
-
-    box-shadow:
-        0 10px 30px rgba(124, 58, 237, 0.5),
-        inset 0 0 10px rgba(255, 255, 255, 0.1);
-
-    transition: 0.3s;
-}
-
-/* hover */
-.login-container button:hover {
-    transform: translateY(-3px);
-    box-shadow:
-        0 15px 40px rgba(124, 58, 237, 0.6),
-        inset 0 0 12px rgba(255, 255, 255, 0.15);
-}
-
-/* click */
-.login-container button:active {
-    transform: scale(0.95);
-}
-
-/* ===== ERROR ===== */
-.error-text {
-    text-align: center;
-    font-size: 12px;
-    color: #fecaca;
-}
-
-/* ===== SUCCESS POP ===== */
-.success-pop {
-    position: fixed;
-    inset: 0;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(12px);
-
-    opacity: 0;
-    pointer-events: none;
-    transition: 0.3s;
-}
-
-.success-pop.show {
-    opacity: 1;
-    pointer-events: all;
-}
-
-.success-box {
-    background: white;
-    padding: 30px;
-    border-radius: 16px;
-    text-align: center;
-
-    animation: pop 0.4s ease;
-}
-
-@keyframes pop {
-    from {
-        transform: scale(0.8);
-        opacity: 0;
-    }
-
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-/* ===== 🔥 FORCE PREMIUM INPUT FIX ===== */
-.login-container input {
-    background: rgba(255, 255, 255, 0.12) !important;
-    color: white !important;
-}
-
-/* fix placeholder ghost */
-.login-container input::placeholder {
-    color: transparent;
-}
-
-/* label visibility */
-.input-group label {
-    color: rgba(255, 255, 255, 0.7);
-    font-weight: 500;
-}
-
-/* stronger float */
-.input-group input:focus+label,
-.input-group input:valid+label {
-    color: #e0e7ff;
-}
-
-/* ===== 🔥 BUTTON FULL WIDTH ===== */
-.login-container button {
-    width: 100%;
-}
-
-/* ===== 🔥 LOGO FIX (IMPORTANT) ===== */
-.college-logo {
-    filter: brightness(0) invert(1);
-}
-
-/* ===== 🔥 INPUT TEXT VISIBILITY ===== */
-.login-container input {
-    font-size: 14px;
 }
