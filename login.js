@@ -10,15 +10,20 @@
 
         const username = document.getElementById("username")
         const password = document.getElementById("password")
-        const loginCard = document.querySelector(".login-container")
+        const loginCard = document.querySelector(".login-container") // ✅ FIXED
         const error = document.getElementById("error")
         const btn = document.getElementById("loginBtn")
-        const success = document.getElementById("successCheck")
 
         error.innerText = ""
 
         const user = username.value.trim()
         const pass = password.value.trim()
+
+        /* -------- SHAKE -------- */
+        function shake() {
+            loginCard.classList.add("shake")
+            setTimeout(() => loginCard.classList.remove("shake"), 500)
+        }
 
         /* -------- VALIDATION -------- */
         if (!user || !pass) {
@@ -27,14 +32,8 @@
             return
         }
 
-        /* -------- LOADING -------- */
+        /* -------- LOADING (BUTTON MORPH) -------- */
         btn.classList.add("loading")
-
-        /* -------- SHAKE -------- */
-        function shake() {
-            loginCard.classList.add("shake")
-            setTimeout(() => loginCard.classList.remove("shake"), 500)
-        }
 
         /* -------- SUCCESS -------- */
         function successLogin(data, redirectPage) {
@@ -47,18 +46,19 @@
                     localStorage.setItem(key, data[key])
                 })
 
-                /* SHOW SUCCESS ✔ */
-                success.style.display = "block"
+                /* BUTTON SUCCESS ✔ */
+                btn.classList.remove("loading")
+                btn.classList.add("success")
+                btn.innerHTML = "✔"
 
                 /* EXIT ANIMATION */
                 setTimeout(() => {
-                    loginCard.style.transform = "scale(0.9)"
-                    loginCard.style.opacity = "0"
+                    loginCard.classList.add("exit")
                 }, 300)
 
                 setTimeout(() => {
                     window.location.href = redirectPage
-                }, 900)
+                }, 800)
 
             }, 800)
         }
