@@ -217,72 +217,142 @@ body:not(.login-page) {
     font-family: 'Inter', sans-serif;
 }
 
-/* MAIN */
+/* ===== MAIN ===== */
 .dashboard {
-    width: 95%;
-    max-width: 1000px;
-    margin: 20px auto;
-    padding: 20px;
+    width: 92%;
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 25px;
 
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.10);
-    backdrop-filter: blur(18px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
 
     color: white;
-    animation: fadeUp 0.4s ease;
+    animation: fadeUp 0.5s ease;
 }
 
-/* HEADER */
+/* ===== HEADER ===== */
 .header-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 25px;
 }
 
 .header-actions h1 {
-    font-size: 18px;
+    font-size: 22px;
+    font-weight: 600;
 }
 
-/* CARD */
-.card {
-    background: rgba(255, 255, 255, 0.12);
-    padding: 12px;
-    border-radius: 12px;
-    margin-bottom: 12px;
+/* ===== PROFILE TEXT ===== */
+.dashboard h2 {
+    font-size: 24px;
+    margin-bottom: 8px;
 }
 
-/* FORM */
-.form-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 10px;
-    margin-bottom: 10px;
+.dashboard p {
+    font-size: 14px;
+    opacity: 0.85;
 }
 
-/* INPUT */
-.dashboard .input-group input {
-    background: rgba(255, 255, 255, 0.9);
-    color: #111;
-}
-
-/* ANALYTICS */
+/* ===== STATS (FIXED YOUR .cards) ===== */
 .cards {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
 }
 
 .course-card {
-    flex: 1;
+    background: rgba(255, 255, 255, 0.12);
+    padding: 15px;
+    border-radius: 14px;
     text-align: center;
-    background: rgba(255, 255, 255, 0.15);
-    padding: 10px;
-    border-radius: 10px;
+
+    transition: 0.3s;
 }
 
-/* TABLE */
+.course-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.course-card h3 {
+    font-size: 22px;
+}
+
+.course-card p {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* ===== CARD (SCHEDULE) ===== */
+.card {
+    background: rgba(255, 255, 255, 0.12);
+    padding: 15px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+}
+
+/* ===== SUBJECT GRID (NEW FIX) ===== */
+.subjects {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+}
+
+/* SUBJECT CARD */
+.subject-card {
+    background: rgba(255, 255, 255, 0.12);
+    padding: 18px;
+    border-radius: 16px;
+
+    transition: 0.3s;
+}
+
+.subject-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.subject-card h4 {
+    margin-bottom: 8px;
+}
+
+.subject-card p {
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+/* ===== BUTTON ===== */
+.subject-card button,
+button {
+    margin-top: 12px;
+    padding: 10px;
+    width: 100%;
+    border-radius: 10px;
+    border: none;
+
+    background: linear-gradient(135deg, #ff7bff, #6a5cff);
+    color: white;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.subject-card button:hover,
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== TABLE ===== */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -294,8 +364,8 @@ thead {
 
 th,
 td {
-    padding: 8px;
-    font-size: 12px;
+    padding: 10px;
+    font-size: 13px;
 }
 
 tbody tr {
@@ -307,7 +377,7 @@ tbody tr:hover {
     background: rgba(255, 255, 255, 0.2);
 }
 
-/* SUCCESS OVERLAY */
+/* ===== SUCCESS OVERLAY ===== */
 #successOverlay {
     position: fixed;
     top: 0;
@@ -338,51 +408,10 @@ tbody tr:hover {
 }
 
 /* ===== ANIMATIONS ===== */
-@keyframes ripple {
-    to {
-        transform: scale(4);
-        opacity: 0;
-    }
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes shake {
-
-    0%,
-    100% {
-        transform: translateX(0);
-    }
-
-    25% {
-        transform: translateX(-5px);
-    }
-
-    75% {
-        transform: translateX(5px);
-    }
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 @keyframes fadeUp {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(15px);
     }
 
     to {
