@@ -26,7 +26,7 @@ function getBaseKey() {
     return `${normalize(subject)}_${normalize(department)}_${normalize(program)}_${sem}_${normalize(section)}`
 }
 
-/* -------- UNIVERSAL GET -------- */
+/* -------- STORAGE -------- */
 function getAttendanceRecords(key) {
     let stored = JSON.parse(localStorage.getItem(key) || "{}")
     return stored.data || []
@@ -44,7 +44,8 @@ function initStudents() {
 
 const table = document.getElementById("studentRows")
 
-/* -------- CALCULATE % -------- */
+
+/* -------- % CALC -------- */
 function calculatePercentage(usn, currentStatus = null) {
 
     let present = 0
@@ -74,11 +75,12 @@ function calculatePercentage(usn, currentStatus = null) {
     }
 
     return total === 0 ? 0 : Math.round((present / total) * 100)
+
 }
 
-/* -------- LOAD STUDENTS -------- */
+/* -------- LOAD -------- */
 function loadStudents() {
-    if (!table || typeof students === "undefined") return
+    if (!table || studentList.length === 0) return
 
     table.innerHTML = ""
 
@@ -93,7 +95,7 @@ function loadStudents() {
         <td>${student.name}</td>
         <td class="percent">${percent}%</td>
         <td>
-            <div style="display:flex;align-items:center;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;">
                 <label class="toggle-switch">
                     <input type="checkbox" data-usn="${student.usn}" checked>
                     <span class="slider"></span>
@@ -106,48 +108,54 @@ function loadStudents() {
         row.style.animation = `fadeUp 0.4s ease ${index * 0.05}s both`
 
         updateRowStyle(row, percent, true)
+
+        /* ✅ attach event PER ROW */
+        const input = row.querySelector("input")
+        input.addEventListener("change", () => updateSingleRow(row, input))
+
         table.appendChild(row)
     })
 
-    document.querySelectorAll(".toggle-switch input")
-        .forEach(input => input.addEventListener("change", updateLivePercentage))
-
     updateStats()
 
 }
 
+/* -------- SINGLE ROW UPDATE (🔥 FIXED) -------- */
+function updateSingleRow(row, input) {
+
+    if (!row || !input) return
+
+    const usn = input.dataset.usn
+    const percentCell = row.querySelector(".percent")
+    const statusText = row.querySelector(".status-text")
+
+    const status = input.checked ? "Present" : "Absent"
+
+    let percent = calculatePercentage(usn, status)
+
+    percentCell.innerText = percent + "%"
+    statusText.innerText = status
+    statusText.style.color = input.checked ? "#22c55e" : "#ef4444"
+
+    updateRowStyle(row, percent, input.checked)
+
+    updateStats()
+
+}
 
 /* -------- ROW STYLE -------- */
 function updateRowStyle(row, percent, isPresent) {
-    row.style.borderLeft = percent < 75 ? "5px solid red" : "none"
-    row.style.background = isPresent ? "#dcfce7" : "#fee2e2"
-}
 
-/* -------- LIVE UPDATE -------- */
-function updateLivePercentage() {
-    document.querySelectorAll("#studentRows tr").forEach(row => {
+    row.style.borderLeft = percent < 75 ? "4px solid #ef4444" : "4px solid transparent"
 
-        const input = row.querySelector("input")
-        const usn = input.dataset.usn
-        const percentCell = row.querySelector(".percent")
-        const statusText = row.querySelector(".status-text")
+    /* lighter colors (premium UI) */
+    row.style.background = isPresent ? "#f0fdf4" : "#fef2f2"
 
-        const status = input.checked ? "Present" : "Absent"
-
-        let percent = calculatePercentage(usn, status)
-
-        percentCell.innerText = percent + "%"
-        statusText.innerText = status
-        statusText.style.color = input.checked ? "#22c55e" : "#ef4444"
-
-        updateRowStyle(row, percent, input.checked)
-    })
-
-    updateStats()
 }
 
 /* -------- STATS -------- */
 function updateStats() {
+
     let total = 0
     let present = 0
 
@@ -162,7 +170,7 @@ function updateStats() {
 
 }
 
-/* -------- 💧 RIPPLE -------- */
+/* -------- RIPPLE -------- */
 document.addEventListener("click", function (e) {
     const btn = e.target.closest("button")
     if (!btn) return
@@ -176,9 +184,10 @@ document.addEventListener("click", function (e) {
 
     btn.appendChild(circle)
     setTimeout(() => circle.remove(), 600)
+
 })
 
-/* -------- 🕒 CURRENT TIME -------- */
+/* -------- TIME -------- */
 function updateCurrentTime() {
 
     const now = new Date()
@@ -193,9 +202,10 @@ function updateCurrentTime() {
 
     const el = document.getElementById("currentTime")
     if (el) el.innerText = timeString
+
 }
 
-/* -------- 🚀 SUBMIT -------- */
+/* -------- SUBMIT -------- */
 function submitAttendance() {
 
     const btn = document.getElementById("submitBtn")
@@ -241,14 +251,13 @@ function submitAttendance() {
 
         setTimeout(() => {
             window.location.href = "dashboard.html"
-        }, 1200)
+        }, 1000)
 
-    }, 800)
+    }, 600)
 }
 
 /* -------- MESSAGE -------- */
 function showMessage(text, type) {
-
     let box = document.getElementById("messageBox")
     if (!box) return
 
@@ -259,11 +268,11 @@ function showMessage(text, type) {
     setTimeout(() => {
         box.style.display = "none"
     }, 2500)
+
 }
 
 /* -------- INIT -------- */
 window.onload = function () {
-
 
     const today = new Date().toISOString().split("T")[0]
     document.getElementById("date").value = today
@@ -275,7 +284,6 @@ window.onload = function () {
         initStudents()
         loadStudents()
     }, 100)
-
 
 }
 
