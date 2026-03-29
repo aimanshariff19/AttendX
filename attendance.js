@@ -12,7 +12,7 @@ const section = localStorage.getItem("section")
 
 function setText(id, value) {
     const el = document.getElementById(id)
-    if (el) el.innerHTML = value || "-"
+    if (el) el.innerText = value || "-"
 }
 
 setText("subject", subject)
@@ -44,21 +44,17 @@ function initStudents() {
 
 const table = document.getElementById("studentRows")
 
-
 /* -------- % CALC -------- */
 function calculatePercentage(usn, currentStatus = null) {
 
     let present = 0
     let total = 0
-
     const base = getBaseKey()
 
     for (let i = 0; i < localStorage.length; i++) {
-
         let key = localStorage.key(i)
 
         if (key && key.toLowerCase().startsWith(base)) {
-
             let records = getAttendanceRecords(key)
             let record = records.find(r => r.usn === usn)
 
@@ -75,10 +71,9 @@ function calculatePercentage(usn, currentStatus = null) {
     }
 
     return total === 0 ? 0 : Math.round((present / total) * 100)
-
 }
 
-/* -------- LOAD -------- */
+/* -------- LOAD STUDENTS -------- */
 function loadStudents() {
     if (!table || studentList.length === 0) return
 
@@ -103,13 +98,12 @@ function loadStudents() {
                 <span class="status-text" style="font-size:12px;color:#22c55e;">Present</span>
             </div>
         </td>
-    `
+        `
 
         row.style.animation = `fadeUp 0.4s ease ${index * 0.05}s both`
 
         updateRowStyle(row, percent, true)
 
-        /* ✅ attach event PER ROW */
         const input = row.querySelector("input")
         input.addEventListener("change", () => updateSingleRow(row, input))
 
@@ -117,13 +111,10 @@ function loadStudents() {
     })
 
     updateStats()
-
 }
 
-/* -------- SINGLE ROW UPDATE (🔥 FIXED) -------- */
+/* -------- UPDATE SINGLE ROW -------- */
 function updateSingleRow(row, input) {
-
-    if (!row || !input) return
 
     const usn = input.dataset.usn
     const percentCell = row.querySelector(".percent")
@@ -138,19 +129,13 @@ function updateSingleRow(row, input) {
     statusText.style.color = input.checked ? "#22c55e" : "#ef4444"
 
     updateRowStyle(row, percent, input.checked)
-
     updateStats()
-
 }
 
 /* -------- ROW STYLE -------- */
 function updateRowStyle(row, percent, isPresent) {
-
     row.style.borderLeft = percent < 75 ? "4px solid #ef4444" : "4px solid transparent"
-
-    /* lighter colors (premium UI) */
     row.style.background = isPresent ? "#f0fdf4" : "#fef2f2"
-
 }
 
 /* -------- STATS -------- */
@@ -167,27 +152,40 @@ function updateStats() {
     setText("totalCount", total)
     setText("presentCount", present)
     setText("absentCount", total - present)
-
 }
 
-/* -------- RIPPLE -------- */
-document.addEventListener("click", function (e) {
-    const btn = e.target.closest("button")
-    if (!btn) return
+/* -------- TIME RANGE (🔥 FIXED) -------- */
+function calculateTimeRange() {
 
-    const circle = document.createElement("span")
-    circle.classList.add("ripple")
+    const startTime = document.getElementById("classTime")?.value
+    const numClasses = parseInt(document.getElementById("numClasses")?.value)
 
-    const rect = btn.getBoundingClientRect()
-    circle.style.left = (e.clientX - rect.left) + "px"
-    circle.style.top = (e.clientY - rect.top) + "px"
+    if (!startTime || !numClasses) return
 
-    btn.appendChild(circle)
-    setTimeout(() => circle.remove(), 600)
+    let [hour, minute] = startTime.split(":").map(Number)
 
-})
+    let start = new Date()
+    start.setHours(hour, minute)
 
-/* -------- TIME -------- */
+    let end = new Date(start)
+    end.setHours(start.getHours() + numClasses)
+
+    function format12(date) {
+        let h = date.getHours()
+        let m = date.getMinutes()
+        let ampm = h >= 12 ? "PM" : "AM"
+        h = h % 12 || 12
+        return `${h}:${String(m).padStart(2, "0")} ${ampm}`
+    }
+
+    const startStr = format12(start)
+    const endStr = format12(end)
+
+    document.getElementById("timeRange").innerText = `${startStr} - ${endStr}`
+    document.getElementById("displayTime").innerText = startStr
+}
+
+/* -------- CURRENT TIME -------- */
 function updateCurrentTime() {
 
     const now = new Date()
@@ -202,7 +200,6 @@ function updateCurrentTime() {
 
     const el = document.getElementById("currentTime")
     if (el) el.innerText = timeString
-
 }
 
 /* -------- SUBMIT -------- */
@@ -228,8 +225,15 @@ function submitAttendance() {
 
         for (let i = 0; i < numClasses; i++) {
 
-            const currentTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`
-            const key = `${base}_${date}_${currentTime}`
+            let timeObj = new Date()
+            timeObj.setHours(hour + i, minute)
+
+            let h = timeObj.getHours()
+            let m = timeObj.getMinutes()
+
+            const formattedTime = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`
+
+            const key = `${base}_${date}_${formattedTime}`
 
             let data = []
 
@@ -241,7 +245,6 @@ function submitAttendance() {
             })
 
             localStorage.setItem(key, JSON.stringify({ data }))
-            hour++
         }
 
         const overlay = document.getElementById("successOverlay")
@@ -268,7 +271,6 @@ function showMessage(text, type) {
     setTimeout(() => {
         box.style.display = "none"
     }, 2500)
-
 }
 
 /* -------- INIT -------- */
@@ -280,11 +282,13 @@ window.onload = function () {
     updateCurrentTime()
     setInterval(updateCurrentTime, 1000)
 
+    document.getElementById("classTime")?.addEventListener("change", calculateTimeRange)
+    document.getElementById("numClasses")?.addEventListener("change", calculateTimeRange)
+
     setTimeout(() => {
         initStudents()
         loadStudents()
     }, 100)
-
 }
 
 /* -------- BACK -------- */
