@@ -230,3 +230,53 @@ function getUserRole() {
     return "guest"
 }
 
+function studentLogin() {
+
+    const id = document.getElementById("studentId").value.trim()
+    const pass = document.getElementById("password").value.trim()
+    const error = document.getElementById("error")
+    const btn = document.getElementById("loginBtn")
+
+    if (!id || !pass) {
+        error.innerText = "⚠ Enter ID & Password"
+        return
+    }
+
+    if (typeof students === "undefined") {
+        error.innerText = "❌ Data not loaded"
+        return
+    }
+
+    let foundStudent = null
+
+    // 🔥 SEARCH IN ALL CLASSES
+    for (let key in students) {
+        const student = students[key].find(
+            s => s.usn === id && s.password === pass
+        )
+
+        if (student) {
+            foundStudent = student
+            foundStudent.classKey = key
+            break
+        }
+    }
+
+    if (!foundStudent) {
+        error.innerText = "❌ Invalid credentials"
+        return
+    }
+
+    /* -------- SAVE -------- */
+    localStorage.setItem("studentUSN", foundStudent.usn)
+    localStorage.setItem("studentName", foundStudent.name)
+    localStorage.setItem("studentClass", foundStudent.classKey)
+
+    /* -------- LOADING -------- */
+    btn.classList.add("loading")
+    btn.innerText = ""
+
+    setTimeout(() => {
+        window.location.href = "dashboard.html"
+    }, 800)
+}
