@@ -10,7 +10,7 @@
 
         const username = document.getElementById("username")
         const password = document.getElementById("password")
-        const loginCard = document.querySelector(".login-container") // ✅ FIXED
+        const loginCard = document.querySelector(".login-container")
         const error = document.getElementById("error")
         const btn = document.getElementById("loginBtn")
 
@@ -22,7 +22,7 @@
         /* -------- SHAKE -------- */
         function shake() {
             loginCard.classList.add("shake")
-            setTimeout(() => loginCard.classList.remove("shake"), 500)
+            setTimeout(() => loginCard.classList.remove("shake"), 400)
         }
 
         /* -------- VALIDATION -------- */
@@ -32,33 +32,31 @@
             return
         }
 
-        /* -------- LOADING (BUTTON MORPH) -------- */
+        /* -------- PREVENT DOUBLE CLICK -------- */
+        if (btn.classList.contains("loading")) return
+
+        /* -------- LOADING -------- */
         btn.classList.add("loading")
 
         /* -------- SUCCESS -------- */
         function successLogin(data, redirectPage) {
 
+            /* SAVE SESSION */
+            localStorage.clear()
+            Object.keys(data).forEach(key => {
+                localStorage.setItem(key, data[key])
+            })
+
+            /* SMOOTH DELAY BEFORE REDIRECT */
             setTimeout(() => {
-
-                /* SAVE SESSION */
-                localStorage.clear()
-                Object.keys(data).forEach(key => {
-                    localStorage.setItem(key, data[key])
-                })
-
-                /* KEEP BUTTON AS LOADING (NO TICK) */
-
-                /* OPTIONAL SMALL DELAY */
-                setTimeout(() => {
-                    window.location.href = redirectPage
-                }, 400)
-
-            }, 800)
+                window.location.href = redirectPage
+            }, 500)
         }
 
         /* -------- LOGIN LOGIC -------- */
         setTimeout(() => {
 
+            /* FACULTY LOGIN */
             if (typeof facultyList !== "undefined") {
 
                 const faculty = facultyList.find(f => f.id === user)
@@ -74,6 +72,7 @@
                 }
             }
 
+            /* HOD LOGIN */
             if (typeof hods !== "undefined") {
 
                 const hod = hods.find(
@@ -96,7 +95,7 @@
 
             btn.classList.remove("loading")
 
-        }, 1200)
+        }, 1000)
 
     }
 
@@ -107,8 +106,10 @@
         const password = document.getElementById("password")
         const eye = document.getElementById("eyeIcon")
 
+        /* CLICK LOGIN */
         if (btn) btn.onclick = login
 
+        /* SUBMIT */
         if (form) {
             form.onsubmit = function (e) {
                 e.preventDefault()
@@ -116,6 +117,7 @@
             }
         }
 
+        /* ENTER KEY */
         document.addEventListener("keydown", (e) => {
             if (e.key === "Enter") login(e)
         })
