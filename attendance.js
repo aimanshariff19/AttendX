@@ -51,6 +51,7 @@ function calculatePercentage(usn, currentStatus = null) {
     let total = 0
     const base = getBaseKey()
 
+    /* 🔥 PREVIOUS RECORDS */
     for (let i = 0; i < localStorage.length; i++) {
         let key = localStorage.key(i)
 
@@ -65,12 +66,13 @@ function calculatePercentage(usn, currentStatus = null) {
         }
     }
 
-    if (currentStatus !== null) {
-        total++
-        if (currentStatus === "Present") present++
+    /* 🔥 CURRENT SESSION (DEFAULT PRESENT) */
+    total++
+    if (currentStatus === null || currentStatus === "Present") {
+        present++
     }
 
-    return total === 0 ? 0 : Math.round((present / total) * 100)
+    return Math.round((present / total) * 100)
 }
 
 /* -------- LOAD STUDENTS -------- */
@@ -81,7 +83,7 @@ function loadStudents() {
 
     studentList.forEach((student, index) => {
 
-        let percent = calculatePercentage(student.usn)
+        let percent = calculatePercentage(student.usn, "Present")
 
         let row = document.createElement("tr")
 
