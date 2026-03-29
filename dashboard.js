@@ -6,9 +6,9 @@ function setText(id, value) {
 }
 
 
-/* -------- USER -------- */
+/* -------- USER (🔥 FIXED) -------- */
 
-const faculty = localStorage.getItem("faculty")
+const faculty = localStorage.getItem("user")   // ✅ FIXED
 
 
 /* -------- 💧 RIPPLE EFFECT -------- */
@@ -161,7 +161,6 @@ function loadCourseCards() {
 
 function openCourse(subject, program, sem, section) {
 
-    // 🔥 PAGE EXIT
     document.querySelector(".dashboard").classList.add("page-exit")
 
     setTimeout(() => {
@@ -177,19 +176,18 @@ function openCourse(subject, program, sem, section) {
 }
 
 
-/* -------- 🚪 LOGOUT -------- */
+/* -------- 🚪 LOGOUT (🔥 FIXED) -------- */
 
 function logout() {
 
     const btn = event.target
 
-    // 🔥 LOADING EFFECT
     btn.classList.add("loading")
     btn.innerText = ""
 
     setTimeout(() => {
 
-        localStorage.removeItem("faculty")
+        localStorage.clear()   // ✅ FIXED
 
         document.querySelector(".dashboard").classList.add("page-exit")
 
