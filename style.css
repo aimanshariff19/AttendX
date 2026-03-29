@@ -12,21 +12,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-
-    /* 🔥 CHANGED TO WHITE */
     background: #f5f7ff;
 }
-
-/* ❌ REMOVE OLD PURPLE BACKGROUND */
-/*
-body.login-page.faculty {
-    background: linear-gradient(135deg, #5f5cff, #7c3aed);
-}
-
-body.login-page.student {
-    background: linear-gradient(135deg, #7c3aed, #9333ea);
-}
-*/
 
 /* ===== LOGIN CONTAINER ===== */
 .login-container {
@@ -34,7 +21,6 @@ body.login-page.student {
     padding: 40px 30px;
     border-radius: 18px;
 
-    /* 🔥 KEEP PURPLE GLASS LOOK */
     background: linear-gradient(135deg, #5f5cff, #7c3aed);
 
     display: flex;
@@ -78,38 +64,42 @@ form {
     text-align: center;
     font-size: 15px;
     font-weight: 600;
-    margin-top: 6px;
 }
 
-/* ===== INPUT ===== */
+/* ===== INPUT GROUP ===== */
 .input-group {
     position: relative;
 }
 
+/* INPUT */
 .input-group input {
     width: 100%;
-    padding: 12px;
+    padding: 14px 12px;
     border-radius: 10px;
     border: none;
     font-size: 14px;
 
     background: rgba(255, 255, 255, 0.2);
     color: white;
+
+    outline: none;
+    -webkit-text-fill-color: white;
 }
 
 /* LABEL */
 .input-group label {
     position: absolute;
     left: 12px;
-    top: 12px;
+    top: 14px;
     font-size: 12px;
     color: rgba(255, 255, 255, 0.8);
-    transition: 0.3s;
+    transition: 0.25s ease;
+    pointer-events: none;
 }
 
-/* FLOAT FIX */
+/* FLOAT EFFECT (CORRECT) */
 .input-group input:focus+label,
-.input-group input:valid+label {
+.input-group input:not(:placeholder-shown)+label {
     top: -8px;
     font-size: 10px;
     color: white;
@@ -150,7 +140,7 @@ form {
     text-decoration: none;
 }
 
-/* ===== BUTTON (SAME PURPLE) ===== */
+/* ===== BUTTON ===== */
 button {
     width: 100%;
     height: 45px;
@@ -191,9 +181,8 @@ button:hover {
     animation: spin 0.6s linear infinite;
 }
 
-/* ===== LOADING ===== */
+/* ===== LOADING STATE ===== */
 button.loading {
-    width: 100%;
     border-radius: 45px;
 }
 
