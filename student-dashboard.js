@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return
     }
 
+    /* -------- DISPLAY -------- */
     document.getElementById("studentUSN").innerText = usn
     document.getElementById("studentName").innerText = name
 
@@ -47,6 +48,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("program").innerText = program
     document.getElementById("sem").innerText = sem
     document.getElementById("section").innerText = section
+
+    /* -------- 🔥 BUTTON EVENTS -------- */
+    document.getElementById("changePasswordBtn")?.addEventListener("click", openChangePassword)
+    document.getElementById("logoutBtn")?.addEventListener("click", studentLogout)
 
     const table = document.getElementById("subjectRows")
     if (!table || typeof courses === "undefined") return
@@ -65,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
-    /* -------- 🔥 FAST STORAGE -------- */
+    /* -------- FAST STORAGE -------- */
     let attendanceData = {}
 
     try {
@@ -110,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let totalPercent = 0
 
-    classSubjects.forEach((sub, index) => {
+    classSubjects.forEach(sub => {
 
         const stats = calculateAttendance(sub.subject)
         totalPercent += stats.percent
@@ -165,6 +170,12 @@ ${stats.percent}%
     }
 
 })
+
+
+/* -------- NAV -------- */
+function openChangePassword() {
+    window.location.href = "change-password.html"
+}
 
 
 /* -------- LOGOUT -------- */
