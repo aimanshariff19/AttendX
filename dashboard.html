@@ -6,78 +6,231 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AttendX Dashboard</title>
 
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ===== BODY ===== */
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #5f5cff, #7c3aed);
+            color: white;
+        }
+
+        /* ===== DASHBOARD ===== */
+        .dashboard {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 25px;
+
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+        }
+
+        /* ===== HEADER ===== */
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header-actions h1 {
+            font-size: 22px;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+
+            background: linear-gradient(135deg, #ff7bff, #6a5cff);
+            color: white;
+
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ===== PROFILE ===== */
+        .faculty-panel h2 {
+            font-size: 24px;
+        }
+
+        .dept {
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+
+        /* ===== STATS ===== */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .course-card {
+            background: rgba(255, 255, 255, 0.12);
+            padding: 15px;
+            border-radius: 14px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .course-card h3 {
+            font-size: 22px;
+        }
+
+        .course-card p {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        /* ===== SCHEDULE ===== */
+        .card {
+            background: rgba(255, 255, 255, 0.12);
+            padding: 15px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* ===== SUBJECTS ===== */
+        .subjects {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .subject-card {
+            background: rgba(255, 255, 255, 0.12);
+            padding: 18px;
+            border-radius: 16px;
+            transition: 0.3s;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .subject-card h4 {
+            margin-bottom: 8px;
+        }
+
+        .subject-card p {
+            font-size: 13px;
+            opacity: 0.85;
+        }
+
+        /* ===== BUTTON ===== */
+        button {
+            margin-top: 12px;
+            padding: 10px;
+            width: 100%;
+            border-radius: 10px;
+            border: none;
+
+            background: linear-gradient(135deg, #ff7bff, #6a5cff);
+            color: white;
+            font-weight: 600;
+
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ===== ANIMATION ===== */
+        .dashboard {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 
 <body>
 
     <div class="dashboard">
 
-        <!-- 🔝 HEADER -->
+        <!-- HEADER -->
         <div class="header-actions">
             <h1>AttendX / Faculty Dashboard</h1>
             <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
 
-        <!-- 👤 PROFILE SECTION -->
+        <!-- PROFILE -->
         <div class="faculty-panel">
-
-            <div class="profile-left">
-                <h2 id="facultyName">Dr. Kumar</h2>
-                <p id="facultyDept" class="dept">Department: CSE</p>
-            </div>
-
-            <!-- 📊 STATS GRID -->
-            <div class="cards faculty-stats">
-                <div class="course-card">
-                    <h3 id="courseCount">3</h3>
-                    <p>Courses</p>
-                </div>
-
-                <div class="course-card">
-                    <h3 id="sectionCount">2</h3>
-                    <p>Sections</p>
-                </div>
-
-                <div class="course-card">
-                    <h3 id="studentCount">7</h3>
-                    <p>Students</p>
-                </div>
-
-                <div class="course-card">
-                    <h3 id="facultyId">faculty1</h3>
-                    <p>Faculty ID</p>
-                </div>
-            </div>
-
+            <h2 id="facultyName">Dr. Kumar</h2>
+            <p id="facultyDept" class="dept">Department: CSE</p>
         </div>
 
-        <!-- 🔔 MESSAGE -->
-        <div id="messageBox" class="message-box"></div>
+        <!-- STATS -->
+        <div class="cards faculty-stats">
+            <div class="course-card">
+                <h3 id="courseCount">3</h3>
+                <p>Courses</p>
+            </div>
 
-        <!-- 📅 TODAY SCHEDULE -->
-        <div class="card timetable-card">
+            <div class="course-card">
+                <h3 id="sectionCount">2</h3>
+                <p>Sections</p>
+            </div>
+
+            <div class="course-card">
+                <h3 id="studentCount">7</h3>
+                <p>Students</p>
+            </div>
+
+            <div class="course-card">
+                <h3 id="facultyId">faculty1</h3>
+                <p>Faculty ID</p>
+            </div>
+        </div>
+
+        <!-- SCHEDULE -->
+        <div class="card">
             <h3>Today's Schedule</h3>
             <div id="todaySchedule">No classes today</div>
         </div>
 
-        <!-- 📚 SUBJECT SECTION -->
-        <h3 style="margin: 10px 0;">Your Courses</h3>
+        <!-- SUBJECTS -->
+        <h3 style="margin-bottom:10px;">Your Courses</h3>
 
-        <div class="cards subjects" id="courseCards">
-
-            <!-- SAMPLE (JS will replace) -->
-            <div class="course-card subject-card">
+        <div class="subjects" id="courseCards">
+            <div class="subject-card">
                 <h4>Data Structures</h4>
                 <p>CSE • Sem 3 • Sec A</p>
                 <button>Take Attendance</button>
             </div>
-
         </div>
 
     </div>
 
-    <!-- JS FILES -->
     <script src="mockData.js"></script>
     <script src="utils.js"></script>
     <script src="dashboard.js"></script>
