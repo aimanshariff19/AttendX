@@ -338,33 +338,59 @@ tbody tr:hover {
     color: #e0e7ff;
 }
 
-/* ===== 📊 DASHBOARD GRID ===== */
+/* ===== 📊 COURSE GRID ===== */
 .cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
 }
 
-/* ===== 📈 STATS CARD ===== */
-.stat-card {
+/* ===== 🎯 COURSE CARD ===== */
+.course-card {
     background: var(--glass);
     border: 1px solid var(--glass-border);
     backdrop-filter: blur(20px);
-    padding: 20px;
+
+    padding: 18px;
     border-radius: 16px;
-    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
     color: white;
-    transition: 0.3s;
+    transition: 0.25s;
+    animation: fadeUp 0.5s ease;
 }
 
-.stat-card:hover {
+/* hover */
+.course-card:hover {
     transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
 }
 
-/* ===== 🔥 BIG NUMBER ===== */
-.stat-card span {
-    display: block;
-    font-size: 28px;
-    font-weight: 700;
-    margin-top: 8px;
+/* ===== 📚 TITLE ===== */
+.course-card h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* ===== 📄 DETAILS ===== */
+.course-card p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* ===== 🔘 BUTTON ===== */
+.course-card button {
+    margin-top: 12px;
+}
+
+/* ===== ✨ SMALL POLISH ===== */
+.faculty-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
 }
