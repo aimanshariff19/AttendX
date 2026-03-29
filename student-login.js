@@ -1,8 +1,17 @@
-/* -------- 💧 RIPPLE -------- */
+/* -------- 🛑 STOP DUPLICATE EXECUTION -------- */
+if (window.__ATTENDX_RUNNING__) {
+    console.warn("⚠️ Script already running. Stopping duplicate execution.")
+    throw new Error("Duplicate JS execution blocked")
+}
+window.__ATTENDX_RUNNING__ = true
 
+
+/* -------- 💧 RIPPLE -------- */
 document.addEventListener("click", function (e) {
     const btn = e.target.closest("button")
     if (!btn) return
+
+    if (btn.querySelector(".ripple")) return
 
     const circle = document.createElement("span")
     circle.classList.add("ripple")
@@ -17,14 +26,17 @@ document.addEventListener("click", function (e) {
 
 
 /* -------- INIT -------- */
-
 document.addEventListener("DOMContentLoaded", () => {
+
+    console.log("✅ Dashboard Loaded")
 
     const usn = localStorage.getItem("studentUSN")
     const classKey = localStorage.getItem("studentClass")
 
     if (!usn || !classKey) {
-        window.location.href = "student-login.html"
+        if (!window.location.pathname.includes("student-login.html")) {
+            window.location.href = "student-login.html"
+        }
         return
     }
 
@@ -38,49 +50,51 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("section").innerText = section
 
     const table = document.getElementById("subjectRows")
-    if (!table || typeof courses === "undefined") return
 
-    /* -------- 🔥 FIX: FETCH ALL SUBJECTS -------- */
+    if (!table || typeof courses === "undefined") {
+        console.error("❌ Table or courses missing")
+        return
+    }
 
-    const rawSubjects = courses.filter(c =>
-        c.department === department &&
-        c.sem.toString() === sem &&
-        c.section === section
-    )
-
-    /* -------- REMOVE DUPLICATES -------- */
-
+    /* -------- SUBJECT FILTER -------- */
     const classSubjects = []
 
-    rawSubjects.forEach(c => {
-        if (!classSubjects.find(s => s.subject === c.subject)) {
+    courses.forEach(c => {
+        if (
+            c.department === department &&
+            c.sem.toString() === sem &&
+            c.section === section &&
+            !classSubjects.find(s => s.subject === c.subject)
+        ) {
             classSubjects.push(c)
         }
     })
 
-    /* -------- CALCULATE -------- */
+    /* -------- LOAD STORAGE -------- */
+    let attendanceData = {}
 
+    try {
+        attendanceData = JSON.parse(localStorage.getItem("attendanceData")) || {}
+    } catch (e) {
+        console.error("❌ Corrupted storage")
+        attendanceData = {}
+    }
+
+    /* -------- CALCULATE -------- */
     function calculateAttendance(subject) {
+
+        const key = `${subject}_${department}_${program}_${sem}_${section}`
+        const records = attendanceData[key] || []
 
         let present = 0
         let total = 0
 
-        for (let i = 0; i < localStorage.length; i++) {
-
-            let key = localStorage.key(i)
-
-            if (key && key.startsWith(`${subject}_${department}_${program}_${sem}_${section}_`)) {
-
-                let data = JSON.parse(localStorage.getItem(key) || "[]")
-
-                let record = data.find(r => r.usn === usn)
-
-                if (record) {
-                    total++
-                    if (record.status === "Present") present++
-                }
+        records.forEach(r => {
+            if (r.usn === usn) {
+                total++
+                if (r.status === "Present") present++
             }
-        }
+        })
 
         return {
             conducted: total,
@@ -91,7 +105,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* -------- COLOR -------- */
-
     function getColor(percent) {
         if (percent >= 85) return "#22c55e"
         if (percent >= 75) return "#f59e0b"
@@ -99,7 +112,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* -------- LOAD TABLE -------- */
-
     table.innerHTML = ""
 
     let totalPercent = 0
@@ -110,7 +122,6 @@ document.addEventListener("DOMContentLoaded", () => {
         totalPercent += stats.percent
 
         const row = document.createElement("tr")
-        row.style.animation = `fadeUp ${0.3 + index * 0.08}s ease`
 
         row.innerHTML = `
 <td>${sub.subject}</td>
@@ -119,15 +130,14 @@ document.addEventListener("DOMContentLoaded", () => {
 <td>${stats.present}</td>
 <td>${stats.absent}</td>
 <td style="font-weight:600;color:${getColor(stats.percent)}">
-    ${stats.percent}%
+${stats.percent}%
 </td>
 `
 
         table.appendChild(row)
     })
 
-    /* -------- 🔥 OVERALL ATTENDANCE -------- */
-
+    /* -------- OVERALL -------- */
     const overall = classSubjects.length > 0
         ? Math.round(totalPercent / classSubjects.length)
         : 0
@@ -147,12 +157,10 @@ document.addEventListener("DOMContentLoaded", () => {
 <p id="warningText" style="font-weight:600;"></p>
 `
 
-    /* -------- ⚠ WARNING -------- */
-
     const warning = document.getElementById("warningText")
 
     if (overall < 75) {
-        warning.innerText = "⚠ Low Attendance! Improve immediately"
+        warning.innerText = "⚠ Low Attendance!"
         warning.style.color = "#dc2626"
     } else if (overall < 85) {
         warning.innerText = "⚠ Average Attendance"
@@ -166,10 +174,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 /* -------- LOGOUT -------- */
-
 function studentLogout() {
 
     const btn = document.querySelector(".logout-btn")
+    if (!btn) return
 
     btn.classList.add("loading")
     btn.innerText = ""
@@ -186,17 +194,38 @@ function studentLogout() {
             window.location.href = "student-login.html"
         }, 400)
 
-    }, 700)
+    }, 600)
 }
 
 
 /* -------- CHANGE PASSWORD -------- */
-
 function openChangePassword() {
-
     document.querySelector(".dashboard").classList.add("page-exit")
-
     setTimeout(() => {
         window.location.href = "change-password.html"
     }, 400)
+}
+
+
+/* -------- BACK -------- */
+function goBack() {
+    localStorage.removeItem("subject")
+    window.history.back()
+}
+
+
+/* -------- GLOBAL LOGOUT -------- */
+function logout() {
+
+    localStorage.clear()
+    window.location.href = "index.html"
+}
+
+
+/* -------- ROLE -------- */
+function getUserRole() {
+    if (localStorage.getItem("studentUSN")) return "student"
+    if (localStorage.getItem("faculty")) return "faculty"
+    if (localStorage.getItem("hodName")) return "hod"
+    return "guest"
 }
