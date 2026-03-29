@@ -46,19 +46,12 @@
                     localStorage.setItem(key, data[key])
                 })
 
-                /* BUTTON SUCCESS ✔ */
-                btn.classList.remove("loading")
-                btn.classList.add("success")
-                btn.innerHTML = "✔"
+                /* KEEP BUTTON AS LOADING (NO TICK) */
 
-                /* EXIT ANIMATION */
-                setTimeout(() => {
-                    loginCard.classList.add("exit")
-                }, 300)
-
+                /* OPTIONAL SMALL DELAY */
                 setTimeout(() => {
                     window.location.href = redirectPage
-                }, 800)
+                }, 400)
 
             }, 800)
         }
