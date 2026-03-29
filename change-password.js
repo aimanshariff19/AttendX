@@ -73,6 +73,51 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         })
     }
+
+    /* -------- ✔ PASSWORD MATCH (NEW) -------- */
+    const confirmPass = document.getElementById("confirmPass")
+    const matchText = document.getElementById("matchText")
+
+    if (newPass && confirmPass && matchText) {
+
+        function checkMatch() {
+            if (!confirmPass.value) {
+                matchText.innerText = ""
+                return
+            }
+
+            if (newPass.value === confirmPass.value) {
+                matchText.innerText = "✔ Passwords match"
+                matchText.className = "match ok"
+            } else {
+                matchText.innerText = "❌ Passwords do not match"
+                matchText.className = "match no"
+            }
+        }
+
+        newPass.addEventListener("input", checkMatch)
+        confirmPass.addEventListener("input", checkMatch)
+    }
+
+    /* -------- 🌊 RIPPLE EFFECT (NEW) -------- */
+    document.addEventListener("click", function (e) {
+        const btn = e.target.closest("button")
+        if (!btn) return
+
+        const circle = document.createElement("span")
+        const diameter = Math.max(btn.clientWidth, btn.clientHeight)
+
+        circle.style.width = circle.style.height = diameter + "px"
+        circle.style.left = e.clientX - btn.offsetLeft - diameter / 2 + "px"
+        circle.style.top = e.clientY - btn.offsetTop - diameter / 2 + "px"
+        circle.classList.add("ripple")
+
+        const ripple = btn.querySelector(".ripple")
+        if (ripple) ripple.remove()
+
+        btn.appendChild(circle)
+    })
+
 })
 
 
@@ -141,9 +186,10 @@ function updatePassword() {
         return
     }
 
-    /* -------- LOADING -------- */
+    /* -------- 🔄 LOADING (UPGRADED) -------- */
     if (btn) {
         btn.classList.add("loading")
+        btn.dataset.originalText = btn.innerText
         btn.innerText = ""
     }
 
@@ -151,7 +197,7 @@ function updatePassword() {
 
         localStorage.setItem("password_" + usn, newPass)
 
-        showMessage("✅ Password updated")
+        showMessage("✅ Password updated", "success")
 
         document.querySelector(".dashboard")?.classList.add("page-exit")
 
