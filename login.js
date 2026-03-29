@@ -175,3 +175,7 @@
     }
 
 })();
+
+document.getElementById("loginBtn").onclick = function () {
+    window.location.href = "dashboard.html"
+}
