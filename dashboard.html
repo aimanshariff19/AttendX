@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AttendX Dashboard</title>
+
+    <!-- ✅ CSS LINK -->
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -12,38 +14,52 @@
 
     <div class="dashboard">
 
+        <!-- 🔝 HEADER -->
         <div class="header-actions">
             <h1>AttendX / Faculty Dashboard</h1>
-            <div>
-                <button onclick="logout()">Logout</button>
-            </div>
+            <button onclick="logout()">Logout</button>
         </div>
 
+        <!-- 👤 FACULTY PANEL -->
         <div class="faculty-panel">
             <h2 id="facultyName"></h2>
             <div id="facultyDept" class="dept"></div>
 
             <div class="faculty-stats">
                 <p><strong>Faculty ID:</strong> <span id="facultyId"></span></p>
-                <p><strong>Courses Handling:</strong> <span id="courseCount"></span></p>
-                <p><strong>Sections Teaching:</strong> <span id="sectionCount"></span></p>
-                <p><strong>Total Students:</strong> <span id="studentCount"></span></p>
+                <p><strong>Courses:</strong> <span id="courseCount"></span></p>
+                <p><strong>Sections:</strong> <span id="sectionCount"></span></p>
+                <p><strong>Students:</strong> <span id="studentCount"></span></p>
             </div>
         </div>
 
+        <!-- 🔔 MESSAGE -->
         <div id="messageBox" class="message-box"></div>
 
-        <br>
-
+        <!-- 📅 TODAY SCHEDULE -->
         <div class="card timetable-card">
             <h3>Today's Schedule</h3>
             <div id="todaySchedule"></div>
         </div>
 
-        <div class="cards" id="courseCards"></div>
+        <!-- 📊 COURSE CARDS -->
+        <div class="cards" id="courseCards">
+
+            <!-- 🔥 SAMPLE CARD (JS will replace this) -->
+            <div class="course-card">
+                <h3>Data Structures</h3>
+                <p><strong>Branch:</strong> CSE</p>
+                <p><strong>Semester:</strong> 3</p>
+                <p><strong>Section:</strong> A</p>
+
+                <button>Take Attendance</button>
+            </div>
+
+        </div>
 
     </div>
 
+    <!-- JS FILES -->
     <script src="mockData.js"></script>
     <script src="utils.js"></script>
     <script src="dashboard.js"></script>

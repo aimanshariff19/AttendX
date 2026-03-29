@@ -337,3 +337,34 @@ tbody tr:hover {
     font-size: 14px;
     color: #e0e7ff;
 }
+
+/* ===== 📊 DASHBOARD GRID ===== */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* ===== 📈 STATS CARD ===== */
+.stat-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    padding: 20px;
+    border-radius: 16px;
+    text-align: center;
+    color: white;
+    transition: 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-6px);
+}
+
+/* ===== 🔥 BIG NUMBER ===== */
+.stat-card span {
+    display: block;
+    font-size: 28px;
+    font-weight: 700;
+    margin-top: 8px;
+}
