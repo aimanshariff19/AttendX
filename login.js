@@ -1,4 +1,4 @@
-/* -------- AUTO INIT (NO DEPENDENCY ON HTML FIXES) -------- */
+/* -------- AUTO INIT (FINAL MERGED VERSION) -------- */
 
 (function () {
 
@@ -6,7 +6,7 @@
 
     function login(e) {
 
-        if (e) e.preventDefault() // 🔥 stops form submit
+        if (e) e.preventDefault()
 
         const username = document.getElementById("username")
         const password = document.getElementById("password")
@@ -31,7 +31,7 @@
             return
         }
 
-        /* -------- SUCCESS HANDLER -------- */
+        /* -------- SUCCESS -------- */
         function successLogin(data, redirectPage) {
 
             btn.classList.add("loading")
@@ -100,8 +100,11 @@
         shake()
     }
 
-    /* -------- AUTO BIND -------- */
+
+    /* -------- INIT -------- */
     function init() {
+
+        console.log("✅ JS Bound")
 
         const btn = document.getElementById("loginBtn")
         const form = document.getElementById("loginForm")
@@ -113,19 +116,25 @@
             btn.onclick = login
         }
 
-        /* 🔥 FORM SUBMIT SAFE */
+        /* 🔥 FORM SUBMIT BLOCK */
         if (form) {
-            form.onsubmit = login
+            form.onsubmit = function (e) {
+                e.preventDefault()
+                login(e)
+            }
         }
 
         /* 🔥 ENTER KEY */
         document.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") login(e)
+            if (e.key === "Enter") {
+                e.preventDefault()
+                login(e)
+            }
         })
 
-        /* 🔥 PASSWORD TOGGLE */
+        /* 👁 PASSWORD TOGGLE */
         if (eye && password) {
-            eye.onclick = () => {
+            eye.onclick = function () {
                 if (password.type === "password") {
                     password.type = "text"
                     eye.className = "fa-solid fa-eye-slash eye"
@@ -136,7 +145,7 @@
             }
         }
 
-        /* 🔥 RIPPLE */
+        /* 💧 RIPPLE */
         document.addEventListener("click", function (e) {
             const btn = e.target.closest("button")
             if (!btn) return
@@ -153,11 +162,12 @@
         })
     }
 
-    /* -------- RUN -------- */
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", init)
-    } else {
+
+    /* -------- RUN (SAFE LOAD) -------- */
+    if (document.readyState === "complete") {
         init()
+    } else {
+        window.addEventListener("load", init)
     }
 
 })();
