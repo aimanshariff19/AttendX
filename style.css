@@ -127,7 +127,7 @@ form {
 .eye {
     position: absolute;
     right: 14px; /* slightly right */
-    top: 50%; /* PERFECT vertical center */
+    top: 68%; /* PERFECT vertical center */
     transform: translateY(-50%);
 
     cursor: pointer;
