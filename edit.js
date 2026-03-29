@@ -333,4 +333,11 @@ function updateAttendance() {
 
 dateDropdown.addEventListener("change", loadTimesForDate)
 
+function markAllEdit(status) {
+    document.querySelectorAll(".toggle-switch input").forEach(input => {
+        input.checked = (status === "Present")
 
+        const row = input.closest("tr")
+        updateSingleRow(row, input)
+    })
+}
