@@ -30,21 +30,33 @@
 
         <!-- USERNAME -->
         <div class="input-group">
-            <input type="text" id="username" placeholder="Enter Faculty ID">
+            <input type="text" id="username" required>
+            <label>Faculty ID</label>
         </div>
 
         <!-- PASSWORD -->
         <div class="input-group password-field">
-            <input type="password" id="password" placeholder="Enter Password">
+            <input type="password" id="password" required>
+            <label>Password</label>
             <i id="eyeIcon" class="fa-solid fa-eye eye"></i>
         </div>
 
         <!-- LOGIN BUTTON -->
-        <button id="loginBtn" onclick="login()">Login</button>
+        <button id="loginBtn" onclick="login()">
+            <span class="btn-text">Login</span>
+        </button>
 
         <!-- ERROR -->
         <p id="error" class="error-text"></p>
 
+    </div>
+
+    <!-- SUCCESS POP (OPTIONAL READY) -->
+    <div id="successPop" class="success-pop">
+        <div class="success-box">
+            <h3>✅ Login Successful</h3>
+            <p>Redirecting...</p>
+        </div>
     </div>
 
     <!-- JS -->
