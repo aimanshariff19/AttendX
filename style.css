@@ -326,3 +326,14 @@ button.loading .btn-loader {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+/* ===== ERROR FIX ===== */
+.error-text {
+    text-align: center;
+    font-size: 12px;
+    color: #ffb3b3;
+
+    margin-top: 10px;
+    /* 🔥 spacing fix */
+    min-height: 18px;
+}
