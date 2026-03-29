@@ -79,11 +79,14 @@ function studentLogin() {
     localStorage.setItem("studentName", foundStudent.name)
     localStorage.setItem("studentClass", foundStudent.classKey)
 
+    console.log("✅ Login success", foundStudent)
+
     /* -------- LOADING -------- */
     btn.classList.add("loading")
     btn.innerText = ""
 
     setTimeout(() => {
+        // 🔥 IMPORTANT: match your actual file name
         window.location.href = "student-dashboard.html"
     }, 800)
 }
