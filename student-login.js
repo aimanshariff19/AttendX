@@ -229,3 +229,7 @@ function getUserRole() {
     if (localStorage.getItem("hodName")) return "hod"
     return "guest"
 }
+
+function studentLogin() {
+    window.location.href = "student-dashboard.html"
+}
