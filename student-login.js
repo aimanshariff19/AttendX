@@ -1,10 +1,3 @@
-/* -------- 🛑 STOP DUPLICATE -------- */
-if (window.__LOGIN_RUNNING__) {
-    throw new Error("Duplicate login JS blocked")
-}
-window.__LOGIN_RUNNING__ = true
-
-
 /* -------- RIPPLE EFFECT -------- */
 document.addEventListener("click", function (e) {
 
@@ -19,19 +12,22 @@ document.addEventListener("click", function (e) {
     circle.style.top = (e.clientY - rect.top) + "px"
 
     btn.appendChild(circle)
-
     setTimeout(() => circle.remove(), 600)
 })
 
 
 /* -------- LOGIN FUNCTION -------- */
-function studentLogin() {
+function studentLogin(e) {
+
+    if (e) e.preventDefault()
 
     const idInput = document.getElementById("studentId")
     const passInput = document.getElementById("password")
     const error = document.getElementById("error")
     const btn = document.getElementById("loginBtn")
     const card = document.querySelector(".login-container")
+
+    if (!idInput || !passInput || !btn) return
 
     const id = idInput.value.trim()
     const pass = passInput.value.trim()
@@ -71,7 +67,8 @@ function studentLogin() {
         return
     }
 
-    /* SAVE */
+    /* SAVE (🔥 CLEAR OLD DATA) */
+    localStorage.clear()
     localStorage.setItem("studentUSN", foundStudent.usn)
     localStorage.setItem("studentName", foundStudent.name)
     localStorage.setItem("studentClass", foundStudent.classKey)
@@ -86,8 +83,8 @@ function studentLogin() {
     }, 800)
 
 
-    /* SHAKE FUNCTION */
     function shake() {
+        if (!card) return
         card.classList.add("shake")
         setTimeout(() => card.classList.remove("shake"), 400)
     }
@@ -95,37 +92,37 @@ function studentLogin() {
 
 
 /* -------- INIT -------- */
-document.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("load", () => {
 
-    console.log("✅ Login Page Loaded")
+    console.log("✅ Student Login Loaded")
 
     const btn = document.getElementById("loginBtn")
+    const form = document.getElementById("studentForm")
     const password = document.getElementById("password")
     const eye = document.getElementById("eyeIcon")
 
     /* CLICK */
-    if (btn) {
-        btn.addEventListener("click", studentLogin)
+    if (btn) btn.onclick = studentLogin
+
+    /* FORM SUBMIT */
+    if (form) {
+        form.onsubmit = studentLogin
     }
 
-    /* ENTER KEY */
+    /* ENTER (ONLY IF INPUT FOCUSED) */
     document.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") studentLogin()
+        if (e.key === "Enter" && document.activeElement.tagName === "INPUT") {
+            studentLogin(e)
+        }
     })
 
     /* PASSWORD TOGGLE */
     if (eye && password) {
-        eye.addEventListener("click", () => {
-
-            if (password.type === "password") {
-                password.type = "text"
-                eye.classList.replace("fa-eye", "fa-eye-slash")
-            } else {
-                password.type = "password"
-                eye.classList.replace("fa-eye-slash", "fa-eye")
-            }
-
-        })
+        eye.onclick = () => {
+            password.type = password.type === "password" ? "text" : "password"
+            eye.classList.toggle("fa-eye")
+            eye.classList.toggle("fa-eye-slash")
+        }
     }
 
 })
