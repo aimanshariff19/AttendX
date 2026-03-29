@@ -1,4 +1,4 @@
-/* -------- AUTO INIT (FINAL MERGED VERSION) -------- */
+/* -------- AUTO INIT (FINAL CLEAN VERSION) -------- */
 
 (function () {
 
@@ -41,6 +41,9 @@
 
             setTimeout(() => {
 
+                // 🔥 CLEAR OLD DATA (IMPORTANT)
+                localStorage.clear()
+
                 Object.keys(data).forEach(key => {
                     localStorage.setItem(key, data[key])
                 })
@@ -69,7 +72,8 @@
         if (user === "faculty1" && pass === "1234") {
             successLogin({
                 role: "faculty",
-                facultyName: "Prof.Keerthi"
+                name: "Prof.Keerthi",
+                user: "faculty1"
             }, "dashboard.html")
             return
         }
@@ -77,7 +81,8 @@
         if (user === "faculty2" && pass === "1234") {
             successLogin({
                 role: "faculty",
-                facultyName: "Prof.Geeta"
+                name: "Prof.Geeta",
+                user: "faculty2"
             }, "dashboard.html")
             return
         }
@@ -89,7 +94,8 @@
             if (hod) {
                 successLogin({
                     role: "hod",
-                    hodName: hod.name
+                    name: hod.name,
+                    department: hod.department
                 }, "hod-dashboard.html")
                 return
             }
@@ -111,12 +117,10 @@
         const password = document.getElementById("password")
         const eye = document.getElementById("eyeIcon")
 
-        /* 🔥 BUTTON CLICK */
-        if (btn) {
-            btn.onclick = login
-        }
+        /* BUTTON */
+        if (btn) btn.onclick = login
 
-        /* 🔥 FORM SUBMIT BLOCK */
+        /* FORM */
         if (form) {
             form.onsubmit = function (e) {
                 e.preventDefault()
@@ -124,7 +128,7 @@
             }
         }
 
-        /* 🔥 ENTER KEY */
+        /* ENTER */
         document.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
                 e.preventDefault()
@@ -132,20 +136,18 @@
             }
         })
 
-        /* 👁 PASSWORD TOGGLE */
+        /* PASSWORD TOGGLE */
         if (eye && password) {
             eye.onclick = function () {
-                if (password.type === "password") {
-                    password.type = "text"
-                    eye.className = "fa-solid fa-eye-slash eye"
-                } else {
-                    password.type = "password"
-                    eye.className = "fa-solid fa-eye eye"
-                }
+                password.type = password.type === "password" ? "text" : "password"
+                eye.className =
+                    password.type === "text"
+                        ? "fa-solid fa-eye-slash eye"
+                        : "fa-solid fa-eye eye"
             }
         }
 
-        /* 💧 RIPPLE */
+        /* RIPPLE */
         document.addEventListener("click", function (e) {
             const btn = e.target.closest("button")
             if (!btn) return
@@ -162,8 +164,7 @@
         })
     }
 
-
-    /* -------- RUN (SAFE LOAD) -------- */
+    /* RUN */
     if (document.readyState === "complete") {
         init()
     } else {
