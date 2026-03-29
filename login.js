@@ -1,8 +1,8 @@
-/* -------- AUTO INIT (FINAL CLEAN VERSION) -------- */
+/* -------- AUTO INIT -------- */
 
 (function () {
 
-    console.log("✅ Login JS Loaded")
+    console.log("✅ Faculty Login JS Loaded")
 
     function login(e) {
 
@@ -25,8 +25,8 @@
         const pass = password.value.trim()
 
         /* -------- EMPTY -------- */
-        if (!user || !pass) {
-            error.innerText = "⚠ Enter all fields"
+        if (!user) {
+            error.innerText = "⚠ Enter Faculty ID"
             shake()
             return
         }
@@ -41,7 +41,7 @@
 
             setTimeout(() => {
 
-                // 🔥 CLEAR OLD DATA (IMPORTANT)
+                // clear old session
                 localStorage.clear()
 
                 Object.keys(data).forEach(key => {
@@ -68,28 +68,32 @@
             setTimeout(() => loginCard.classList.remove("shake"), 400)
         }
 
-        /* -------- FACULTY -------- */
-        if (user === "faculty1" && pass === "1234") {
-            successLogin({
-                role: "faculty",
-                name: "Prof.Keerthi",
-                user: "faculty1"
-            }, "dashboard.html")
-            return
+        /* -------- 🔥 FACULTY LOGIN (FROM mockData) -------- */
+        if (typeof facultyList !== "undefined") {
+
+            const faculty = facultyList.find(
+                f => f.id === user
+            )
+
+            if (faculty) {
+
+                successLogin({
+                    role: "faculty",
+                    name: faculty.name,
+                    department: faculty.department,
+                    user: faculty.id
+                }, "dashboard.html")
+
+                return
+            }
         }
 
-        if (user === "faculty2" && pass === "1234") {
-            successLogin({
-                role: "faculty",
-                name: "Prof.Geeta",
-                user: "faculty2"
-            }, "dashboard.html")
-            return
-        }
-
-        /* -------- HOD -------- */
+        /* -------- HOD LOGIN (IF USED) -------- */
         if (typeof hods !== "undefined") {
-            const hod = hods.find(h => h.username === user && h.password === pass)
+
+            const hod = hods.find(
+                h => h.username === user && h.password === pass
+            )
 
             if (hod) {
                 successLogin({
@@ -102,7 +106,7 @@
         }
 
         /* -------- INVALID -------- */
-        error.innerText = "❌ Invalid credentials"
+        error.innerText = "❌ Invalid Faculty ID"
         shake()
     }
 
@@ -130,8 +134,7 @@
 
         /* ENTER */
         document.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") {
-                e.preventDefault()
+            if (e.key === "Enter" && document.activeElement.tagName === "INPUT") {
                 login(e)
             }
         })
