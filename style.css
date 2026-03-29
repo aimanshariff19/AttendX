@@ -27,19 +27,12 @@ body {
 @keyframes fadeUp {
     from {
         opacity: 0;
-        transform: translateY(25px);
+        transform: translateY(20px);
     }
 
     to {
         opacity: 1;
         transform: translateY(0);
-    }
-}
-
-@keyframes fadeOut {
-    to {
-        opacity: 0;
-        transform: scale(0.95) translateY(10px);
     }
 }
 
@@ -51,20 +44,21 @@ body {
 
 /* ===== 🔘 BUTTON ===== */
 button {
-    padding: 12px;
-    border-radius: 12px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
     border: none;
     background: linear-gradient(135deg, var(--primary), var(--accent));
     color: white;
     cursor: pointer;
-    font-weight: 500;
+    font-size: 14px;
     transition: 0.25s;
     position: relative;
 }
 
 button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);
+    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.4);
 }
 
 button:active {
@@ -79,8 +73,8 @@ button.loading {
 
 button.loading::after {
     content: "";
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     border: 3px solid white;
     border-top: 3px solid transparent;
     border-radius: 50%;
@@ -91,80 +85,98 @@ button.loading::after {
     animation: spin 0.7s linear infinite;
 }
 
-/* ===== 📦 CARD ===== */
-.card {
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(20px);
-    padding: 20px;
-    border-radius: 16px;
-}
-
 /* ===== LOGIN PAGE ===== */
 .login-page {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: radial-gradient(circle at 20% 20%, #8b5cf6, #4f46e5 60%);
+    padding: 20px;
 }
 
+/* THEMES */
+body.login-page.faculty {
+    background: radial-gradient(circle at 20% 20%, #6366f1, #4f46e5 60%);
+}
+
+body.login-page.student {
+    background: radial-gradient(circle at 20% 20%, #7c3aed, #9333ea 60%);
+}
+
+/* ===== LOGIN CONTAINER ===== */
 .login-container {
-    width: 380px;
-    padding: 34px;
-    border-radius: 22px;
+    width: 330px;
+    padding: 24px;
+    border-radius: 18px;
 
     background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(30px);
+    backdrop-filter: blur(25px);
     border: 1px solid rgba(255, 255, 255, 0.2);
 
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 12px;
 
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
-    animation: fadeUp 0.6s ease;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    animation: fadeUp 0.5s ease;
+
+    position: relative;
+    overflow: hidden;
+}
+
+/* GLOW */
+.login-container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    opacity: 0;
+    transition: 0.5s;
+}
+
+.login-container:hover::before {
+    opacity: 1;
 }
 
 /* LOGO */
 .college-logo {
-    width: 70px;
+    width: 55px;
     margin: auto;
-    filter: brightness(0) invert(1);
 }
 
 /* TEXT */
 .college-name {
     text-align: center;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .college-location,
 .college-status {
     text-align: center;
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-muted);
 }
 
 .system-title {
     text-align: center;
-    color: #c7d2fe;
+    font-size: 17px;
+    font-weight: 600;
+    margin-top: 4px;
 }
 
-/* ===== FLOATING INPUT ===== */
+/* ===== INPUT ===== */
 .input-group {
     position: relative;
 }
 
 .input-group input {
     width: 100%;
-    padding: 18px 14px;
-    border-radius: 14px;
+    padding: 13px 12px;
+    border-radius: 12px;
     border: none;
-
     background: rgba(255, 255, 255, 0.12);
     color: white;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .input-group input::placeholder {
@@ -173,22 +185,23 @@ button.loading::after {
 
 .input-group label {
     position: absolute;
-    left: 14px;
+    left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 13px;
+    font-size: 12px;
     color: rgba(255, 255, 255, 0.6);
     transition: 0.25s;
 }
 
 .input-group input:focus+label,
 .input-group input:not(:placeholder-shown)+label {
-    top: -8px;
-    font-size: 11px;
+    top: -7px;
+    font-size: 10px;
     color: #e0e7ff;
 }
 
 .input-group input:focus {
+    outline: none;
     background: rgba(255, 255, 255, 0.18);
     box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.6);
 }
@@ -200,20 +213,21 @@ button.loading::after {
 
 .eye {
     position: absolute;
-    right: 14px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
 }
 
-/* ===== ERROR ===== */
+/* ERROR */
+#error,
 .error-text {
     text-align: center;
     font-size: 12px;
     color: #fecaca;
 }
 
-/* ===== SUCCESS POP ===== */
+/* SUCCESS POP */
 .success-pop {
     position: fixed;
     inset: 0;
@@ -234,19 +248,19 @@ button.loading::after {
 
 .success-box {
     background: white;
-    padding: 30px;
-    border-radius: 16px;
+    padding: 24px;
+    border-radius: 14px;
     color: black;
 }
 
-/* ===== DASHBOARD ===== */
+/* ===== DASHBOARD BASE ===== */
 .dashboard {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 10px;
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 15px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 18px;
 }
 
 /* HEADER */
@@ -254,33 +268,39 @@ button.loading::after {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    background: rgba(255, 255, 255, 0.08);
+    padding: 14px 18px;
+    border-radius: 14px;
+    backdrop-filter: blur(15px);
 }
 
 /* GRID */
 .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 18px;
 }
 
 /* COURSE CARD */
 .course-card {
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(20px);
 
-    padding: 20px;
-    border-radius: 16px;
+    padding: 16px;
+    border-radius: 14px;
 
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 
-    transition: 0.25s;
+    transition: 0.3s;
 }
 
 .course-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
 }
 
 /* TABLE */
@@ -301,86 +321,6 @@ td {
 
 th,
 td {
-    padding: 10px;
+    padding: 8px;
     text-align: center;
-}
-
-/* ===== 🚀 LOGIN UPGRADE ===== */
-
-/* FACULTY THEME */
-body.login-page.faculty {
-    background: radial-gradient(circle at 20% 20%, #6366f1, #4f46e5 60%);
-}
-
-/* STUDENT THEME */
-body.login-page.student {
-    background: radial-gradient(circle at 20% 20%, #7c3aed, #9333ea 60%);
-}
-
-/* CONTAINER UPGRADE */
-.login-container {
-    position: relative;
-    overflow: hidden;
-}
-
-/* GLOW EFFECT */
-.login-container::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-
-    background: linear-gradient(120deg,
-            transparent,
-            rgba(255, 255, 255, 0.2),
-            transparent);
-
-    opacity: 0;
-    transition: 0.5s;
-}
-
-.login-container:hover::before {
-    opacity: 1;
-}
-
-/* TITLE STRONGER */
-.system-title {
-    font-size: 20px;
-    font-weight: 600;
-}
-
-/* BUTTON FULL WIDTH */
-button {
-    width: 100%;
-}
-
-/* ERROR IMPROVE */
-#error {
-    text-align: center;
-    font-size: 13px;
-    color: #fecaca;
-}
-
-/* INPUT FIX FOR STUDENT LOGIN */
-.login-container input {
-    width: 100%;
-    padding: 16px;
-    border-radius: 12px;
-    border: none;
-
-    background: rgba(255, 255, 255, 0.12);
-    color: white;
-    font-size: 14px;
-}
-
-/* INPUT FOCUS */
-.login-container input:focus {
-    outline: none;
-    background: rgba(255, 255, 255, 0.18);
-    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.6);
-}
-
-/* SPACING FIX */
-.login-container input,
-.login-container button {
-    margin-top: 10px;
 }
