@@ -18,7 +18,10 @@ function login() {
     function successLogin(data, redirectPage) {
 
         btn.classList.add("loading")
-        btn.innerText = ""
+
+        /* 🔥 ADD: hide button text smoothly */
+        const text = btn.querySelector(".btn-text")
+        if (text) text.style.opacity = "0"
 
         setTimeout(() => {
 
@@ -26,11 +29,17 @@ function login() {
                 localStorage.setItem(key, data[key])
             })
 
-            loginCard.classList.add("page-exit")
+            /* 🔥 ADD: success popup */
+            const pop = document.getElementById("successPop")
+            if (pop) pop.classList.add("show")
+
+            /* 🔥 ADD: exit animation */
+            loginCard.style.transform = "scale(0.95)"
+            loginCard.style.opacity = "0"
 
             setTimeout(() => {
                 window.location.href = redirectPage
-            }, 400)
+            }, 800)
 
         }, 700)
     }
