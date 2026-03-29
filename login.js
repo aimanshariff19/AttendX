@@ -1,170 +1,163 @@
-/* -------- LOGIN -------- */
+/* -------- AUTO INIT (NO DEPENDENCY ON HTML FIXES) -------- */
 
-function login() {
+(function () {
 
-    const username = document.getElementById("username")
-    const password = document.getElementById("password")
-    const loginCard = document.querySelector(".login-container")
-    const error = document.getElementById("error")
-    const btn = document.getElementById("loginBtn")
+    console.log("✅ Login JS Loaded")
 
-    if (!username || !password || !btn) {
-        console.error("Login elements missing")
-        return
-    }
+    function login(e) {
 
-    error.innerText = ""
+        if (e) e.preventDefault() // 🔥 stops form submit
 
-    const user = username.value.trim()
-    const pass = password.value.trim()
+        const username = document.getElementById("username")
+        const password = document.getElementById("password")
+        const loginCard = document.querySelector(".login-container")
+        const error = document.getElementById("error")
+        const btn = document.getElementById("loginBtn")
 
-    /* -------- EMPTY CHECK -------- */
-    if (!user || !pass) {
-        error.innerText = "Please enter all fields ⚠️"
-        triggerError()
-        return
-    }
-
-    /* -------- HELPER: SUCCESS -------- */
-    function successLogin(data, redirectPage) {
-
-        btn.classList.add("loading")
-
-        const text = btn.querySelector(".btn-text")
-        if (text) text.style.opacity = "0"
-
-        setTimeout(() => {
-
-            Object.keys(data).forEach(key => {
-                localStorage.setItem(key, data[key])
-            })
-
-            const pop = document.getElementById("successPop")
-            if (pop) pop.classList.add("show")
-
-            loginCard.style.transition = "0.4s"
-            loginCard.style.transform = "scale(0.95)"
-            loginCard.style.opacity = "0"
-
-            setTimeout(() => {
-                window.location.href = redirectPage
-            }, 700)
-
-        }, 600)
-    }
-
-    /* -------- ERROR HANDLER -------- */
-    function triggerError() {
-        loginCard.classList.add("shake")
-        username.classList.add("input-error")
-        password.classList.add("input-error")
-
-        password.value = ""
-
-        setTimeout(() => {
-            loginCard.classList.remove("shake")
-            username.classList.remove("input-error")
-            password.classList.remove("input-error")
-        }, 400)
-    }
-
-    /* -------- FACULTY LOGIN -------- */
-    if (user === "faculty1" && pass === "1234") {
-
-        successLogin({
-            role: "faculty",
-            faculty: "faculty1",
-            facultyName: "Prof.Keerthi",
-            department: "CSE"
-        }, "dashboard.html")
-
-        return
-    }
-
-    if (user === "faculty2" && pass === "1234") {
-
-        successLogin({
-            role: "faculty",
-            faculty: "faculty2",
-            facultyName: "Prof.Geeta",
-            department: "CSE"
-        }, "dashboard.html")
-
-        return
-    }
-
-    /* -------- HOD LOGIN -------- */
-    if (typeof hods !== "undefined") {
-        const hod = hods.find(
-            h => h.username === user && h.password === pass
-        )
-
-        if (hod) {
-            successLogin({
-                role: "hod",
-                hodDepartment: hod.department,
-                hodName: hod.name
-            }, "hod-dashboard.html")
-
+        if (!username || !password || !btn) {
+            console.error("❌ Missing elements")
             return
         }
-    }
 
-    /* -------- INVALID -------- */
-    error.innerText = "Invalid username or password ❌"
-    triggerError()
-}
+        error.innerText = ""
 
+        const user = username.value.trim()
+        const pass = password.value.trim()
 
-/* -------- DOM READY -------- */
+        /* -------- EMPTY -------- */
+        if (!user || !pass) {
+            error.innerText = "⚠ Enter all fields"
+            shake()
+            return
+        }
 
-document.addEventListener("DOMContentLoaded", () => {
+        /* -------- SUCCESS HANDLER -------- */
+        function successLogin(data, redirectPage) {
 
-    const btn = document.getElementById("loginBtn")
-    const password = document.getElementById("password")
-    const eyeIcon = document.getElementById("eyeIcon")
+            btn.classList.add("loading")
 
-    /* ✅ FIX: BUTTON CLICK */
-    if (btn) {
-        btn.addEventListener("click", login)
-    }
+            const text = btn.querySelector(".btn-text")
+            if (text) text.style.opacity = "0"
 
-    /* ✅ FIX: ENTER KEY SUPPORT */
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") login()
-    })
+            setTimeout(() => {
 
-    /* 👁 PASSWORD TOGGLE */
-    if (eyeIcon && password) {
+                Object.keys(data).forEach(key => {
+                    localStorage.setItem(key, data[key])
+                })
 
-        eyeIcon.addEventListener("click", () => {
-            if (password.type === "password") {
-                password.type = "text"
-                eyeIcon.className = "fa-solid fa-eye-slash eye"
-            } else {
-                password.type = "password"
-                eyeIcon.className = "fa-solid fa-eye eye"
+                if (loginCard) {
+                    loginCard.style.transition = "0.4s"
+                    loginCard.style.transform = "scale(0.95)"
+                    loginCard.style.opacity = "0"
+                }
+
+                setTimeout(() => {
+                    window.location.href = redirectPage
+                }, 600)
+
+            }, 500)
+        }
+
+        /* -------- SHAKE -------- */
+        function shake() {
+            if (!loginCard) return
+            loginCard.classList.add("shake")
+            setTimeout(() => loginCard.classList.remove("shake"), 400)
+        }
+
+        /* -------- FACULTY -------- */
+        if (user === "faculty1" && pass === "1234") {
+            successLogin({
+                role: "faculty",
+                facultyName: "Prof.Keerthi"
+            }, "dashboard.html")
+            return
+        }
+
+        if (user === "faculty2" && pass === "1234") {
+            successLogin({
+                role: "faculty",
+                facultyName: "Prof.Geeta"
+            }, "dashboard.html")
+            return
+        }
+
+        /* -------- HOD -------- */
+        if (typeof hods !== "undefined") {
+            const hod = hods.find(h => h.username === user && h.password === pass)
+
+            if (hod) {
+                successLogin({
+                    role: "hod",
+                    hodName: hod.name
+                }, "hod-dashboard.html")
+                return
             }
+        }
+
+        /* -------- INVALID -------- */
+        error.innerText = "❌ Invalid credentials"
+        shake()
+    }
+
+    /* -------- AUTO BIND -------- */
+    function init() {
+
+        const btn = document.getElementById("loginBtn")
+        const form = document.getElementById("loginForm")
+        const password = document.getElementById("password")
+        const eye = document.getElementById("eyeIcon")
+
+        /* 🔥 BUTTON CLICK */
+        if (btn) {
+            btn.onclick = login
+        }
+
+        /* 🔥 FORM SUBMIT SAFE */
+        if (form) {
+            form.onsubmit = login
+        }
+
+        /* 🔥 ENTER KEY */
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") login(e)
         })
 
+        /* 🔥 PASSWORD TOGGLE */
+        if (eye && password) {
+            eye.onclick = () => {
+                if (password.type === "password") {
+                    password.type = "text"
+                    eye.className = "fa-solid fa-eye-slash eye"
+                } else {
+                    password.type = "password"
+                    eye.className = "fa-solid fa-eye eye"
+                }
+            }
+        }
+
+        /* 🔥 RIPPLE */
+        document.addEventListener("click", function (e) {
+            const btn = e.target.closest("button")
+            if (!btn) return
+
+            const circle = document.createElement("span")
+            circle.classList.add("ripple")
+
+            const rect = btn.getBoundingClientRect()
+            circle.style.left = (e.clientX - rect.left) + "px"
+            circle.style.top = (e.clientY - rect.top) + "px"
+
+            btn.appendChild(circle)
+            setTimeout(() => circle.remove(), 600)
+        })
     }
 
-    /* 💧 RIPPLE EFFECT */
-    document.addEventListener("click", function (e) {
+    /* -------- RUN -------- */
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init)
+    } else {
+        init()
+    }
 
-        const btn = e.target.closest("button")
-        if (!btn) return
-
-        const circle = document.createElement("span")
-        circle.classList.add("ripple")
-
-        const rect = btn.getBoundingClientRect()
-        circle.style.left = (e.clientX - rect.left) + "px"
-        circle.style.top = (e.clientY - rect.top) + "px"
-
-        btn.appendChild(circle)
-
-        setTimeout(() => circle.remove(), 600)
-    })
-
-})
+})();
