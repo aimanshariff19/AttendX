@@ -270,11 +270,20 @@ function submitAttendance() {
             hour++
         }
 
-        showMessage("✅ Attendance Saved", "success")
+        /* ✅ SUCCESS OVERLAY */
+        const overlay = document.getElementById("successOverlay")
+        if (overlay) {
+            overlay.classList.add("show")
+        }
 
+        /* ✅ RESET BUTTON */
+        btn.classList.remove("loading")
+        btn.innerText = "Submit Attendance"
+
+        /* ✅ REDIRECT */
         setTimeout(() => {
             window.location.href = "dashboard.html"
-        }, 600)
+        }, 1200)
 
     }, 800)
 }
