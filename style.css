@@ -390,3 +390,208 @@ td {
     border-radius: 16px;
     text-align: center;
 }
+
+/* ===== 🔥 ULTRA PREMIUM LOGIN ===== */
+
+/* background depth */
+.login-page {
+    background: radial-gradient(circle at 20% 20%, #8b5cf6, #4f46e5 60%);
+}
+
+/* card */
+.login-container {
+    width: 380px;
+    max-width: 90%;
+    padding: 34px;
+    border-radius: 22px;
+
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.35),
+        inset 0 0 20px rgba(255, 255, 255, 0.05);
+
+    animation: fadeUp 0.6s ease;
+}
+
+/* logo */
+.college-logo {
+    width: 75px;
+    margin: 0 auto;
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+}
+
+/* text */
+.college-name {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.college-location,
+.college-status {
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.system-title {
+    text-align: center;
+    font-size: 14px;
+    color: #c7d2fe;
+    margin-top: 8px;
+}
+
+/* ===== FLOATING INPUT ===== */
+.input-group {
+    position: relative;
+}
+
+/* input */
+.input-group input {
+    width: 100%;
+    padding: 16px 14px;
+    border-radius: 14px;
+    border: none;
+
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+/* label */
+.input-group label {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+
+    transition: 0.25s;
+    pointer-events: none;
+}
+
+/* float */
+.input-group input:focus+label,
+.input-group input:valid+label {
+    top: -8px;
+    font-size: 11px;
+    color: #c7d2fe;
+}
+
+/* glow */
+.input-group input:focus {
+    background: rgba(255, 255, 255, 0.18);
+    box-shadow:
+        0 0 0 2px rgba(124, 58, 237, 0.6),
+        0 0 25px rgba(124, 58, 237, 0.3);
+}
+
+/* ===== PASSWORD ICON ===== */
+.password-field {
+    position: relative;
+}
+
+.eye {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    opacity: 0.7;
+    transition: 0.2s;
+}
+
+.eye:hover {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* ===== BUTTON ===== */
+.login-container button {
+    padding: 14px;
+    border-radius: 14px;
+    font-weight: 600;
+
+    background: linear-gradient(135deg, #6366f1, #7c3aed);
+
+    box-shadow:
+        0 10px 30px rgba(124, 58, 237, 0.5),
+        inset 0 0 10px rgba(255, 255, 255, 0.1);
+
+    transition: 0.3s;
+}
+
+/* hover */
+.login-container button:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 15px 40px rgba(124, 58, 237, 0.6),
+        inset 0 0 12px rgba(255, 255, 255, 0.15);
+}
+
+/* click */
+.login-container button:active {
+    transform: scale(0.95);
+}
+
+/* ===== ERROR ===== */
+.error-text {
+    text-align: center;
+    font-size: 12px;
+    color: #fecaca;
+}
+
+/* ===== SUCCESS POP ===== */
+.success-pop {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(12px);
+
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s;
+}
+
+.success-pop.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.success-box {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    text-align: center;
+
+    animation: pop 0.4s ease;
+}
+
+@keyframes pop {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
