@@ -304,3 +304,83 @@ td {
     padding: 10px;
     text-align: center;
 }
+
+/* ===== 🚀 LOGIN UPGRADE ===== */
+
+/* FACULTY THEME */
+body.login-page.faculty {
+    background: radial-gradient(circle at 20% 20%, #6366f1, #4f46e5 60%);
+}
+
+/* STUDENT THEME */
+body.login-page.student {
+    background: radial-gradient(circle at 20% 20%, #7c3aed, #9333ea 60%);
+}
+
+/* CONTAINER UPGRADE */
+.login-container {
+    position: relative;
+    overflow: hidden;
+}
+
+/* GLOW EFFECT */
+.login-container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(120deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent);
+
+    opacity: 0;
+    transition: 0.5s;
+}
+
+.login-container:hover::before {
+    opacity: 1;
+}
+
+/* TITLE STRONGER */
+.system-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* BUTTON FULL WIDTH */
+button {
+    width: 100%;
+}
+
+/* ERROR IMPROVE */
+#error {
+    text-align: center;
+    font-size: 13px;
+    color: #fecaca;
+}
+
+/* INPUT FIX FOR STUDENT LOGIN */
+.login-container input {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    border: none;
+
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+    font-size: 14px;
+}
+
+/* INPUT FOCUS */
+.login-container input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.6);
+}
+
+/* SPACING FIX */
+.login-container input,
+.login-container button {
+    margin-top: 10px;
+}
