@@ -5,40 +5,10 @@ if (window.__CHANGE_PASS_RUNNING__) {
 window.__CHANGE_PASS_RUNNING__ = true
 
 
-/* -------- USER -------- */
-const usn = localStorage.getItem("studentUSN")
-
-if (!usn) {
-    window.location.href = "student-login.html"
-}
-
-
-/* -------- 💧 RIPPLE -------- */
-document.addEventListener("click", function (e) {
-
-    const btn = e.target.closest("button")
-    if (!btn) return
-
-    if (btn.querySelector(".ripple")) return
-
-    const circle = document.createElement("span")
-    circle.classList.add("ripple")
-
-    const rect = btn.getBoundingClientRect()
-
-    circle.style.left = (e.clientX - rect.left) + "px"
-    circle.style.top = (e.clientY - rect.top) + "px"
-
-    btn.appendChild(circle)
-
-    setTimeout(() => circle.remove(), 600)
-})
-
-
 /* -------- INIT -------- */
 document.addEventListener("DOMContentLoaded", () => {
 
-    console.log("✅ Change Password Page Loaded")
+    console.log("✅ Change Password Loaded")
 
     const updateBtn = document.getElementById("updateBtn")
     const backBtn = document.getElementById("backBtn")
@@ -48,11 +18,19 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 
-/* -------- MESSAGE BOX -------- */
+/* -------- USER -------- */
+const usn = localStorage.getItem("studentUSN")
+
+if (!usn) {
+    console.warn("⚠ No user found, redirecting...")
+    window.location.href = "student-login.html"
+}
+
+
+/* -------- MESSAGE -------- */
 function showMessage(text, type) {
 
     const box = document.getElementById("messageBox")
-
     if (!box) return
 
     box.innerText = text
@@ -69,7 +47,6 @@ function showMessage(text, type) {
 function shakeForm() {
 
     const card = document.querySelector(".card")
-
     if (!card) return
 
     card.style.animation = "shake 0.4s"
@@ -85,11 +62,9 @@ function updatePassword() {
 
     const btn = document.getElementById("updateBtn")
 
-    let oldPass = document.getElementById("oldPass").value.trim()
-    let newPass = document.getElementById("newPass").value.trim()
-    let confirmPass = document.getElementById("confirmPass").value.trim()
-
-    let savedPass = localStorage.getItem("password_" + usn) || usn
+    const oldPass = document.getElementById("oldPass")?.value.trim()
+    const newPass = document.getElementById("newPass")?.value.trim()
+    const confirmPass = document.getElementById("confirmPass")?.value.trim()
 
     if (!oldPass || !newPass || !confirmPass) {
         showMessage("⚠ Fill all fields", "error")
@@ -97,14 +72,16 @@ function updatePassword() {
         return
     }
 
+    const savedPass = localStorage.getItem("password_" + usn) || usn
+
     if (oldPass !== savedPass) {
-        showMessage("❌ Old password is incorrect", "error")
+        showMessage("❌ Old password incorrect", "error")
         shakeForm()
         return
     }
 
     if (newPass.length < 4) {
-        showMessage("⚠ Password must be at least 4 characters", "error")
+        showMessage("⚠ Password too short", "error")
         shakeForm()
         return
     }
@@ -125,7 +102,7 @@ function updatePassword() {
 
         localStorage.setItem("password_" + usn, newPass)
 
-        showMessage("✅ Password updated successfully")
+        showMessage("✅ Password updated")
 
         document.querySelector(".dashboard")?.classList.add("page-exit")
 
