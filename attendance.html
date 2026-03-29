@@ -19,21 +19,25 @@
             background: #f5f7ff;
         }
 
+        /* ===== MAIN CONTAINER ===== */
         .dashboard {
             max-width: 950px;
-            margin: 30px auto;
-            padding: 20px;
+            margin: 40px auto;
+            /* 🔥 better top spacing */
+            padding: 24px;
+            /* 🔥 consistent padding */
         }
 
-        /* HEADER */
+        /* ===== HEADER ===== */
         .header-actions {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
+            /* 🔥 spacing fix */
         }
 
-        /* BUTTONS */
+        /* ===== BUTTONS ===== */
         .btn {
             padding: 8px 14px;
             border-radius: 8px;
@@ -51,44 +55,56 @@
         .btn-secondary {
             background: #e2e8f0;
             color: #111;
+            margin-bottom: 18px;
+            /* 🔥 spacing fix */
         }
 
         .btn:hover {
             transform: translateY(-1px);
         }
 
+        /* ===== SUBMIT BUTTON ===== */
         #submitBtn {
             width: 100%;
-            margin-top: 20px;
+            margin-top: 22px;
+            /* 🔥 more breathing space */
+            height: 44px;
             position: relative;
         }
 
-        /* CARD */
+        /* ===== CARD ===== */
         .card {
             background: white;
-            padding: 15px;
+            padding: 16px 18px;
+            /* 🔥 balanced padding */
             border-radius: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
+            /* 🔥 consistent spacing */
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
         }
 
-        /* FORM GRID */
+        /* ===== FORM GRID ===== */
         .form-container {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
+            gap: 14px;
+            /* 🔥 improved gap */
+            margin-bottom: 18px;
             align-items: end;
         }
 
         /* TIME CARD FULL WIDTH */
         .form-container .card {
             grid-column: span 3;
+            margin-bottom: 0;
         }
 
+        /* ===== INPUT GROUP ===== */
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 6px;
+            /* 🔥 better label spacing */
         }
 
         .input-group input {
@@ -97,21 +113,24 @@
             border: 1px solid #ddd;
         }
 
-        /* ANALYTICS */
+        /* ===== ANALYTICS ===== */
         .cards {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            gap: 14px;
+            margin: 18px 0;
+            /* 🔥 spacing fix */
         }
 
         .course-card {
             text-align: center;
             background: white;
-            padding: 15px;
+            padding: 16px;
+            /* 🔥 consistent */
             border-radius: 12px;
         }
 
-        /* TABLE */
+        /* ===== TABLE ===== */
         table {
             width: 100%;
             border-collapse: separate;
@@ -120,7 +139,7 @@
 
         thead th {
             text-align: left;
-            padding: 10px;
+            padding: 12px 10px;
         }
 
         tbody tr {
@@ -129,15 +148,18 @@
         }
 
         tbody td {
-            padding: 12px;
+            padding: 14px 12px;
+            /* 🔥 better readability */
         }
 
+        /* LEFT RED BORDER */
         tbody tr td:first-child {
             border-left: 4px solid red;
             border-top-left-radius: 10px;
             border-bottom-left-radius: 10px;
         }
 
+        /* RIGHT RADIUS */
         tbody tr td:last-child {
             border-top-right-radius: 10px;
             border-bottom-right-radius: 10px;
@@ -147,7 +169,7 @@
             background: #eef2ff;
         }
 
-        /* TOGGLE */
+        /* ===== TOGGLE ===== */
         .toggle-switch {
             position: relative;
             width: 36px;
@@ -186,7 +208,7 @@
             transform: translateX(18px);
         }
 
-        /* SPINNER */
+        /* ===== SPINNER ===== */
         .btn-loader {
             opacity: 0;
             width: 14px;
@@ -216,7 +238,7 @@
             }
         }
     </style>
-    
+
 
 </head>
 
