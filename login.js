@@ -14,11 +14,6 @@
         const error = document.getElementById("error")
         const btn = document.getElementById("loginBtn")
 
-        if (!username || !password || !btn) {
-            console.error("❌ Missing elements")
-            return
-        }
-
         error.innerText = ""
 
         const user = username.value.trim()
@@ -31,100 +26,92 @@
             return
         }
 
+        /* -------- LOADING STATE -------- */
+        btn.classList.add("loading")
+        btn.innerHTML = `<div class="spinner"></div>`
+
         /* -------- SUCCESS -------- */
         function successLogin(data, redirectPage) {
 
-            btn.classList.add("loading")
-
-            const text = btn.querySelector(".btn-text")
-            if (text) text.style.opacity = "0"
-
             setTimeout(() => {
 
-                // clear old session
                 localStorage.clear()
-
                 Object.keys(data).forEach(key => {
                     localStorage.setItem(key, data[key])
                 })
 
-                if (loginCard) {
-                    loginCard.style.transition = "0.4s"
-                    loginCard.style.transform = "scale(0.95)"
-                    loginCard.style.opacity = "0"
-                }
+                /* 🔥 EXIT ANIMATION */
+                loginCard.style.transform = "scale(0.9)"
+                loginCard.style.opacity = "0"
 
                 setTimeout(() => {
                     window.location.href = redirectPage
                 }, 600)
 
-            }, 500)
+            }, 1000)
         }
 
         /* -------- SHAKE -------- */
         function shake() {
-            if (!loginCard) return
             loginCard.classList.add("shake")
             setTimeout(() => loginCard.classList.remove("shake"), 400)
         }
 
-        /* -------- 🔥 FACULTY LOGIN (FROM mockData) -------- */
-        if (typeof facultyList !== "undefined") {
+        /* -------- LOGIN LOGIC -------- */
 
-            const faculty = facultyList.find(
-                f => f.id === user
-            )
+        setTimeout(() => {
 
-            if (faculty) {
+            if (typeof facultyList !== "undefined") {
 
-                successLogin({
-                    role: "faculty",
-                    name: faculty.name,
-                    department: faculty.department,
-                    user: faculty.id
-                }, "dashboard.html")
+                const faculty = facultyList.find(f => f.id === user)
 
-                return
+                if (faculty) {
+                    successLogin({
+                        role: "faculty",
+                        name: faculty.name,
+                        department: faculty.department,
+                        user: faculty.id
+                    }, "dashboard.html")
+                    return
+                }
             }
-        }
 
-        /* -------- HOD LOGIN (IF USED) -------- */
-        if (typeof hods !== "undefined") {
+            if (typeof hods !== "undefined") {
 
-            const hod = hods.find(
-                h => h.username === user && h.password === pass
-            )
+                const hod = hods.find(
+                    h => h.username === user && h.password === pass
+                )
 
-            if (hod) {
-                successLogin({
-                    role: "hod",
-                    name: hod.name,
-                    department: hod.department
-                }, "hod-dashboard.html")
-                return
+                if (hod) {
+                    successLogin({
+                        role: "hod",
+                        name: hod.name,
+                        department: hod.department
+                    }, "hod-dashboard.html")
+                    return
+                }
             }
-        }
 
-        /* -------- INVALID -------- */
-        error.innerText = "❌ Invalid Faculty ID"
-        shake()
+            /* ❌ ERROR */
+            error.innerText = "❌ Invalid Credentials"
+            shake()
+
+            btn.classList.remove("loading")
+            btn.innerHTML = `<span class="btn-text">Login</span>`
+
+        }, 1200)
+
     }
 
-
-    /* -------- INIT -------- */
     function init() {
-
-        console.log("✅ JS Bound")
 
         const btn = document.getElementById("loginBtn")
         const form = document.getElementById("loginForm")
         const password = document.getElementById("password")
         const eye = document.getElementById("eyeIcon")
 
-        /* BUTTON */
         if (btn) btn.onclick = login
 
-        /* FORM */
         if (form) {
             form.onsubmit = function (e) {
                 e.preventDefault()
@@ -132,25 +119,19 @@
             }
         }
 
-        /* ENTER */
         document.addEventListener("keydown", (e) => {
-            if (e.key === "Enter" && document.activeElement.tagName === "INPUT") {
-                login(e)
-            }
+            if (e.key === "Enter") login(e)
         })
 
-        /* PASSWORD TOGGLE */
+        /* 👁 PASSWORD TOGGLE */
         if (eye && password) {
             eye.onclick = function () {
                 password.type = password.type === "password" ? "text" : "password"
-                eye.className =
-                    password.type === "text"
-                        ? "fa-solid fa-eye-slash eye"
-                        : "fa-solid fa-eye eye"
+                eye.classList.toggle("fa-eye-slash")
             }
         }
 
-        /* RIPPLE */
+        /* 💧 RIPPLE */
         document.addEventListener("click", function (e) {
             const btn = e.target.closest("button")
             if (!btn) return
@@ -167,7 +148,6 @@
         })
     }
 
-    /* RUN */
     if (document.readyState === "complete") {
         init()
     } else {
@@ -175,7 +155,3 @@
     }
 
 })();
-
-document.getElementById("loginBtn").onclick = function () {
-    window.location.href = "dashboard.html"
-}
