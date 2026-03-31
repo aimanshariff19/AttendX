@@ -6,269 +6,233 @@
 }
 
 /* ===== BODY ===== */
-body {
+body.login-page.faculty {
     font-family: 'Inter', sans-serif;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #f5f7ff;
+
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    overflow: hidden;
 }
 
-/* ===== LOGIN CONTAINER ===== */
+/* ===== BACKGROUND GLOW ===== */
+body::before {
+    content: "";
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, #5f5cff55, transparent);
+    top: -100px;
+    left: -100px;
+    filter: blur(120px);
+}
+
+body::after {
+    content: "";
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, #7c7cff44, transparent);
+    bottom: -100px;
+    right: -100px;
+    filter: blur(120px);
+}
+
+/* ===== CONTAINER ===== */
 .login-container {
+    position: relative;
+    z-index: 2;
+
     width: 380px;
     padding: 40px 30px;
-    border-radius: 18px;
 
-    background: linear-gradient(135deg, #5f5cff, #7c3aed);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
 
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-
-    color: white;
-    animation: fadeIn 0.6s ease;
+    text-align: center;
+    animation: fadeUp 0.8s ease;
 }
 
-/* ===== FORM ===== */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+/* ===== ANIMATION ===== */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ===== LOGO ===== */
 .college-logo {
-    width: 60px;
-    margin: 0 auto 8px;
+    width: 70px;
+    margin-bottom: 15px;
 }
 
 /* ===== TEXT ===== */
 .college-name {
-    text-align: center;
-    font-size: 17px;
+    font-size: 16px;
+    color: #fff;
     font-weight: 600;
 }
 
 .college-location,
 .college-status {
-    text-align: center;
-    font-size: 11px;
-    opacity: 0.75;
+    font-size: 12px;
+    color: #aaa;
 }
 
 .system-title {
-    text-align: center;
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
+    margin: 20px 0;
+    font-size: 18px;
+    color: #fff;
+    font-weight: 600;
 }
 
 /* ===== INPUT GROUP ===== */
 .input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+    text-align: left;
+    margin-bottom: 18px;
 }
 
-/* LABEL */
 .input-group label {
-    font-size: 12px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.9);
+    font-size: 13px;
+    color: #bbb;
+    margin-bottom: 6px;
+    display: block;
 }
 
-/* INPUT */
 .input-group input {
     width: 100%;
-    padding: 13px 12px;
-    border-radius: 12px;
-    border: none;
+    padding: 12px;
+    border-radius: 10px;
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+
+    color: #fff;
     font-size: 14px;
 
-    background: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
-
-    outline: none;
-    font-weight: 500;
-
-    backdrop-filter: blur(6px);
-    transition: all 0.25s ease;
+    transition: 0.3s;
 }
 
-/* HOVER */
-.input-group input:hover {
-    background: rgba(255, 255, 255, 0.28);
-}
-
-/* FOCUS */
 .input-group input:focus {
-    background: rgba(255, 255, 255, 0.35);
-    box-shadow:
-        0 0 0 2px rgba(255, 255, 255, 0.25),
-        0 6px 20px rgba(0, 0, 0, 0.25);
-    transform: translateY(-1px);
+    outline: none;
+    border-color: #5f5cff;
+    box-shadow: 0 0 10px #5f5caa55;
 }
 
-/* ===== PASSWORD ===== */
+/* ===== PASSWORD ICON ===== */
 .password-field {
     position: relative;
 }
 
-/* 🔥 MORE SPACE FOR ICON */
-.password-field input {
-    padding-right: 48px;
-}
-
-/* 🔥 FINAL EYE FIX */
 .eye {
     position: absolute;
-    right: 14px; /* slightly right */
-    top: 68%; /* PERFECT vertical center */
-    transform: translateY(-50%);
-
+    right: 12px;
+    top: 36px;
+    color: #aaa;
     cursor: pointer;
-    color: #000; /* black icon */
-    opacity: 0.9;
-
-    font-size: 14px;
-    transition: 0.2s ease;
+    transition: 0.3s;
 }
 
 .eye:hover {
-    opacity: 1;
-    transform: translateY(-50%) scale(1.1);
+    color: #fff;
 }
 
-/* ===== EXTRA ===== */
+/* ===== EXTRA OPTIONS ===== */
 .form-extra {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-size: 12px;
+    color: #aaa;
+    margin-bottom: 20px;
 }
 
-.forgot {
-    color: rgba(255, 255, 255, 0.85);
+.form-extra a {
+    color: #7c7cff;
     text-decoration: none;
+}
+
+.form-extra a:hover {
+    text-decoration: underline;
 }
 
 /* ===== BUTTON ===== */
 button {
-    width: 60%;
-    height: 38px;
-
-    margin: 0 auto;
-
-    border-radius: 8px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
     border: none;
 
-    background: linear-gradient(135deg, #ff7bff, #6a5cff);
-    color: white;
-    font-size: 13px;
+    background: linear-gradient(135deg, #5f5cff, #7c7cff);
+    color: #fff;
     font-weight: 600;
+    font-size: 15px;
 
     cursor: pointer;
-    transition: all 0.25s ease;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
     position: relative;
     overflow: hidden;
+
+    transition: 0.3s;
 }
 
-/* GLOW */
-button::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, #ff9bff, #7c6cff);
-    opacity: 0;
-    transition: 0.25s;
-}
-
-button:hover::before {
-    opacity: 1;
-}
-
-/* TEXT ABOVE */
-button span {
-    position: relative;
-    z-index: 2;
-}
-
-/* HOVER */
 button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px #5f5cff55;
 }
 
-/* CLICK */
-button:active {
-    transform: scale(0.97);
-}
-
-/* ===== SPINNER ===== */
+/* ===== BUTTON LOADER ===== */
 .btn-loader {
-    opacity: 0;
-
-    width: 14px;
-    height: 14px;
-
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top: 2px solid white;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #fff;
+    border-top: 2px solid transparent;
     border-radius: 50%;
 
     position: absolute;
     top: 50%;
     left: 50%;
 
-    margin-top: -7px;
-    margin-left: -7px;
+    transform: translate(-50%, -50%);
+    display: none;
 
-    animation: spin 0.6s linear infinite;
-
-    transition: opacity 0.2s ease;
+    animation: spin 0.8s linear infinite;
 }
 
-/* LOADING */
-button.loading {
-    pointer-events: none;
+@keyframes spin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
 }
 
+/* ===== LOADING STATE ===== */
 button.loading .btn-text {
     opacity: 0;
 }
 
 button.loading .btn-loader {
-    opacity: 1;
+    display: block;
 }
 
 /* ===== ERROR ===== */
 .error-text {
-    text-align: center;
-    font-size: 12px;
+    margin-top: 10px;
+    font-size: 13px;
     color: #ff4d4d;
 }
 
-/* ===== ANIMATIONS ===== */
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* ===== REMEMBER CHECKBOX ===== */
+.remember input {
+    accent-color: #5f5cff;
 }
