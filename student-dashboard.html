@@ -6,7 +6,6 @@
     <title>AttendX Student Dashboard</title>
 
     <style>
-        /* ===== BODY ===== */
         body {
             margin: 0;
             font-family: 'Inter', sans-serif;
@@ -14,7 +13,6 @@
             color: white;
         }
 
-        /* ===== GLOW ===== */
         body::before,
         body::after {
             content: "";
@@ -37,28 +35,19 @@
             right: -100px;
         }
 
-        /* ===== DASHBOARD ===== */
         .dashboard {
             position: relative;
             z-index: 2;
-
             max-width: 1100px;
             margin: 40px auto;
             padding: 25px;
-
             border-radius: 20px;
-
-            background: rgba(255,255,255,0.06);
+            background: rgba(255, 255, 255, 0.06);
             backdrop-filter: blur(20px);
-
-            border: 1px solid rgba(255,255,255,0.1);
-
-            box-shadow: 0 25px 60px rgba(0,0,0,0.6);
-
-            animation: fadeIn 0.6s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
         }
 
-        /* ===== HEADER ===== */
         .header-actions {
             display: flex;
             justify-content: space-between;
@@ -66,26 +55,13 @@
             margin-bottom: 25px;
         }
 
-        .header-actions h1 {
-            font-size: 22px;
-        }
-
-        /* ===== BUTTONS ===== */
         button {
             padding: 10px 16px;
             border-radius: 12px;
             border: none;
-
             background: linear-gradient(135deg, #8b5cf6, #6366f1);
             color: white;
-
             cursor: pointer;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(139,92,246,0.5);
         }
 
         .logout-btn {
@@ -93,68 +69,40 @@
             width: 100%;
         }
 
-        /* ===== PROFILE ===== */
         .card {
-            background: rgba(255,255,255,0.06);
+            background: rgba(255, 255, 255, 0.06);
             padding: 18px;
             border-radius: 16px;
-
-            border: 1px solid rgba(255,255,255,0.1);
-
+            border: 1px solid rgba(255, 255, 255, 0.1);
             margin-bottom: 20px;
         }
 
-        .card p {
-            margin: 6px 0;
-            font-size: 14px;
-        }
-
-        /* ===== TABLE ===== */
         table {
             width: 100%;
             border-collapse: collapse;
-
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 16px;
             overflow: hidden;
         }
 
-        thead {
-            background: rgba(255,255,255,0.08);
-        }
-
-        th {
-            padding: 12px;
-            font-size: 13px;
-            color: #ddd;
-        }
-
+        th,
         td {
-            padding: 14px;
+            padding: 12px;
             text-align: center;
-            font-size: 13px;
-            border-top: 1px solid rgba(255,255,255,0.08);
         }
 
-        /* ===== ROW HOVER ===== */
+        thead {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
         tbody tr:hover {
-            background: rgba(255,255,255,0.08);
+            background: rgba(255, 255, 255, 0.08);
         }
 
-        /* ===== ATTENDANCE COLORS ===== */
-        .good {
-            color: #22c55e;
-        }
-
-        .low {
-            color: #ef4444;
-            font-weight: 600;
-        }
-
-        /* ===== PROGRESS BAR ===== */
+        /* ===== BAR ===== */
         .bar {
             height: 6px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             margin-top: 6px;
         }
@@ -169,18 +117,36 @@
             background: linear-gradient(90deg, #ef4444, #f87171);
         }
 
-        /* ===== ANIMATION ===== */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* ===== CIRCLE ===== */
+        .circle {
+            width: 50px;
+            height: 50px;
+            margin: auto;
+            border-radius: 50%;
+            position: relative;
+            background: conic-gradient(#6366f1 var(--percent), rgba(255, 255, 255, 0.1) 0);
         }
 
+        .circle.low {
+            background: conic-gradient(#ef4444 var(--percent), rgba(255, 255, 255, 0.1) 0);
+        }
+
+        .circle::after {
+            content: attr(data-text);
+            position: absolute;
+            inset: 5px;
+            background: #1e1b4b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+        }
+
+        .prediction {
+            font-size: 11px;
+            margin-top: 6px;
+        }
     </style>
 
 </head>
@@ -189,18 +155,11 @@
 
     <div class="dashboard">
 
-        <!-- HEADER -->
         <div class="header-actions">
             <h1>AttendX / Student Dashboard</h1>
-
-            <p id="sessionError" class="error-message"></p>
-
-            <div>
-                <button id="changePasswordBtn">Change Password</button>
-            </div>
+            <button id="changePasswordBtn">Change Password</button>
         </div>
 
-        <!-- PROFILE -->
         <div class="card">
             <p><strong>Name:</strong> <span id="studentName"></span></p>
             <p><strong>USN:</strong> <span id="studentUSN"></span></p>
@@ -210,12 +169,11 @@
             <p><strong>Section:</strong> <span id="section"></span></p>
         </div>
 
-        <!-- TABLE -->
         <table>
             <thead>
                 <tr>
                     <th>Subject</th>
-                    <th>Subject Code</th>
+                    <th>Code</th>
                     <th>Classes</th>
                     <th>Present</th>
                     <th>Absent</th>
@@ -223,9 +181,7 @@
                 </tr>
             </thead>
 
-            <tbody id="subjectRows">
-                <!-- JS FILLS -->
-            </tbody>
+            <tbody id="subjectRows"></tbody>
         </table>
 
         <button id="logoutBtn" class="logout-btn">Logout</button>
