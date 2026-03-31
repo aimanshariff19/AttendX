@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("sem").innerText = sem
     document.getElementById("section").innerText = section
 
-    /* -------- 🔥 BUTTON EVENTS -------- */
+    /* -------- BUTTON EVENTS -------- */
     document.getElementById("changePasswordBtn")?.addEventListener("click", openChangePassword)
     document.getElementById("logoutBtn")?.addEventListener("click", studentLogout)
 
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
-    /* -------- FAST STORAGE -------- */
+    /* -------- STORAGE -------- */
     let attendanceData = {}
 
     try {
@@ -110,15 +110,21 @@ document.addEventListener("DOMContentLoaded", () => {
         return "#ef4444"
     }
 
-    /* -------- LOAD TABLE -------- */
+    /* -------- TABLE (UPGRADED UI) -------- */
     table.innerHTML = ""
 
     let totalPercent = 0
 
-    classSubjects.forEach(sub => {
+    classSubjects.forEach((sub, index) => {
 
         const stats = calculateAttendance(sub.subject)
         totalPercent += stats.percent
+
+        const percentClass =
+            stats.percent >= 85 ? "good" :
+                stats.percent >= 75 ? "avg" : "low"
+
+        const barClass = stats.percent < 75 ? "low-bar" : ""
 
         const row = document.createElement("tr")
 
@@ -128,10 +134,23 @@ document.addEventListener("DOMContentLoaded", () => {
 <td>${stats.conducted}</td>
 <td>${stats.present}</td>
 <td>${stats.absent}</td>
-<td style="font-weight:600;color:${getColor(stats.percent)}">
-${stats.percent}%
+<td class="${percentClass}">
+    ${stats.percent}%
+    <div class="bar ${barClass}">
+        <div class="fill" style="width:${stats.percent}%"></div>
+    </div>
 </td>
 `
+
+        /* ✨ stagger animation */
+        row.style.opacity = "0"
+        row.style.transform = "translateY(10px)"
+
+        setTimeout(() => {
+            row.style.transition = "0.3s ease"
+            row.style.opacity = "1"
+            row.style.transform = "translateY(0)"
+        }, index * 80)
 
         table.appendChild(row)
     })
@@ -153,20 +172,25 @@ ${stats.percent}%
     overallBox.innerHTML = `
 <p><strong>Overall Attendance:</strong> 
 <span style="color:${getColor(overall)}">${overall}%</span></p>
-<p id="warningText" style="font-weight:600;"></p>
+
+<div class="bar ${overall < 75 ? "low-bar" : ""}">
+    <div class="fill" style="width:${overall}%"></div>
+</div>
+
+<p id="warningText" style="margin-top:8px;font-weight:600;"></p>
 `
 
     const warning = document.getElementById("warningText")
 
     if (overall < 75) {
-        warning.innerText = "⚠ Low Attendance!"
-        warning.style.color = "#dc2626"
+        warning.innerText = "⚠ Low Attendance! Risk of shortage"
+        warning.style.color = "#ef4444"
     } else if (overall < 85) {
-        warning.innerText = "⚠ Average Attendance"
+        warning.innerText = "⚠ Average – Stay consistent"
         warning.style.color = "#f59e0b"
     } else {
-        warning.innerText = "✅ Good Attendance"
-        warning.style.color = "#16a34a"
+        warning.innerText = "✅ Excellent Attendance"
+        warning.style.color = "#22c55e"
     }
 
 })
@@ -178,8 +202,14 @@ function openChangePassword() {
 }
 
 
-/* -------- LOGOUT -------- */
+/* -------- LOGOUT (SMOOTH) -------- */
 function studentLogout() {
-    localStorage.clear()
-    window.location.href = "student-login.html"
+
+    document.querySelector(".dashboard").style.opacity = "0"
+    document.querySelector(".dashboard").style.transform = "scale(0.95)"
+
+    setTimeout(() => {
+        localStorage.clear()
+        window.location.href = "student-login.html"
+    }, 400)
 }
