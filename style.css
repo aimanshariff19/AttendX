@@ -58,7 +58,30 @@ body::after {
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
 
     color: white;
-    animation: fadeIn 0.6s ease;
+
+    /* 🔥 COMBINED ANIMATION */
+    animation: fadeIn 0.6s ease, float 6s ease-in-out infinite;
+}
+
+/* ===== FLOAT ===== */
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+/* ===== HOVER LIFT ===== */
+.login-container:hover {
+    transform: translateY(-6px) scale(1.01);
+    transition: 0.3s ease;
 }
 
 /* ===== FORM ===== */
@@ -68,10 +91,16 @@ form {
     gap: 18px;
 }
 
-/* ===== LOGO ===== */
+/* ===== LOGO (FIXED VISIBILITY) ===== */
 .college-logo {
     width: 60px;
-    margin: 0 auto 8px;
+    margin: 0 auto 10px;
+    padding: 10px;
+
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
 }
 
 /* ===== TEXT ===== */
@@ -153,11 +182,11 @@ form {
     padding-right: 48px;
 }
 
-/* FIXED EYE ICON */
+/* EYE */
 .eye {
     position: absolute;
     right: 14px;
-    top: 68%;
+    top: 50%;
     transform: translateY(-50%);
 
     cursor: pointer;
@@ -213,7 +242,7 @@ button {
     overflow: hidden;
 }
 
-/* PREMIUM HOVER */
+/* HOVER */
 button:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(95, 92, 255, 0.5);
