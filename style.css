@@ -5,7 +5,7 @@
     box-sizing: border-box;
 }
 
-/* ===== BODY ===== */
+/* ===== BODY BASE ===== */
 body {
     font-family: 'Inter', sans-serif;
     min-height: 100vh;
@@ -13,8 +13,17 @@ body {
     justify-content: center;
     align-items: center;
 
-    background: linear-gradient(135deg, #0f172a, #1e293b);
     overflow: hidden;
+}
+
+/* ===== FACULTY BACKGROUND ===== */
+body.login-page.faculty {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+}
+
+/* ===== STUDENT BACKGROUND ===== */
+body.login-page.student {
+    background: linear-gradient(135deg, #1e1b4b, #312e81);
 }
 
 /* ===== BACKGROUND GLOW ===== */
@@ -23,7 +32,6 @@ body::before {
     position: absolute;
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, #5f5cff55, transparent);
     top: -120px;
     left: -120px;
     filter: blur(120px);
@@ -34,10 +42,27 @@ body::after {
     position: absolute;
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, #7c3aed55, transparent);
     bottom: -120px;
     right: -120px;
     filter: blur(120px);
+}
+
+/* FACULTY GLOW */
+body.login-page.faculty::before {
+    background: radial-gradient(circle, #5f5cff55, transparent);
+}
+
+body.login-page.faculty::after {
+    background: radial-gradient(circle, #7c3aed55, transparent);
+}
+
+/* STUDENT GLOW */
+body.login-page.student::before {
+    background: radial-gradient(circle, #8b5cf655, transparent);
+}
+
+body.login-page.student::after {
+    background: radial-gradient(circle, #6366f155, transparent);
 }
 
 /* ===== LOGIN CONTAINER ===== */
@@ -77,7 +102,7 @@ body::after {
     }
 }
 
-/* ===== HOVER LIFT ===== */
+/* ===== HOVER ===== */
 .login-container:hover {
     transform: translateY(-6px) scale(1.01);
     transition: 0.3s ease;
@@ -90,22 +115,29 @@ form {
     gap: 18px;
 }
 
-/* ===== LOGO (REAL FIX) ===== */
+/* ===== LOGO (FIXED CLEAN) ===== */
 .college-logo {
     width: 65px;
     margin: 0 auto 12px;
 
-    /* ✨ CLEAN VISIBILITY FIX */
     filter: brightness(1.2) contrast(1.1);
     opacity: 0.95;
 
     transition: 0.3s ease;
 }
 
-/* subtle premium glow */
 .college-logo:hover {
     transform: scale(1.05);
+}
+
+/* faculty glow */
+body.login-page.faculty .college-logo:hover {
     filter: brightness(1.4) drop-shadow(0 0 12px rgba(124, 124, 255, 0.6));
+}
+
+/* student glow */
+body.login-page.student .college-logo:hover {
+    filter: brightness(1.4) drop-shadow(0 0 14px rgba(139, 92, 246, 0.7));
 }
 
 /* ===== TEXT ===== */
@@ -129,7 +161,7 @@ form {
     letter-spacing: 0.5px;
 }
 
-/* ===== INPUT GROUP ===== */
+/* ===== INPUT ===== */
 .input-group {
     display: flex;
     flex-direction: column;
@@ -138,44 +170,41 @@ form {
 
 .input-group label {
     font-size: 12px;
-    font-weight: 500;
     color: rgba(255, 255, 255, 0.85);
 }
 
-/* INPUT */
 .input-group input {
     width: 100%;
     padding: 13px 12px;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
 
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+
+    color: white;
     font-size: 14px;
 
-    background: rgba(255, 255, 255, 0.08);
-    color: #ffffff;
-
-    outline: none;
-    font-weight: 500;
-
     backdrop-filter: blur(10px);
-    transition: all 0.25s ease;
+    transition: 0.25s;
 }
 
-/* HOVER */
 .input-group input:hover {
     background: rgba(255, 255, 255, 0.12);
 }
 
-/* FOCUS */
-.input-group input:focus {
-    background: rgba(255, 255, 255, 0.15);
+/* ===== FOCUS ===== */
+body.login-page.faculty .input-group input:focus {
     border-color: #7c7cff;
-
     box-shadow:
         0 0 0 2px rgba(124, 124, 255, 0.2),
         0 8px 25px rgba(0, 0, 0, 0.4);
+}
 
-    transform: translateY(-1px);
+body.login-page.student .input-group input:focus {
+    border-color: #8b5cf6;
+    box-shadow:
+        0 0 0 2px rgba(139, 92, 246, 0.25),
+        0 8px 25px rgba(0, 0, 0, 0.4);
 }
 
 /* ===== PASSWORD ===== */
@@ -187,23 +216,17 @@ form {
     padding-right: 48px;
 }
 
-/* EYE */
 .eye {
     position: absolute;
     right: 14px;
     top: 65%;
     transform: translateY(-50%);
-
-    cursor: pointer;
     color: rgba(255, 255, 255, 0.7);
-
-    font-size: 14px;
-    transition: 0.2s ease;
+    cursor: pointer;
 }
 
 .eye:hover {
     color: #fff;
-    transform: translateY(-50%) scale(1.1);
 }
 
 /* ===== EXTRA ===== */
@@ -215,42 +238,53 @@ form {
 }
 
 .forgot {
-    color: #7c7cff;
     text-decoration: none;
 }
 
-.forgot:hover {
-    text-decoration: underline;
+body.login-page.faculty .forgot {
+    color: #7c7cff;
+}
+
+body.login-page.student .forgot {
+    color: #a78bfa;
 }
 
 /* ===== BUTTON ===== */
 button {
     width: 100%;
     height: 44px;
-
     border-radius: 12px;
     border: none;
 
-    background: linear-gradient(135deg, #5f5cff, #7c3aed);
     color: white;
     font-size: 14px;
     font-weight: 600;
 
     cursor: pointer;
-    transition: all 0.25s ease;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
     position: relative;
     overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* HOVER */
-button:hover {
-    transform: translateY(-2px);
+/* FACULTY BTN */
+body.login-page.faculty button {
+    background: linear-gradient(135deg, #5f5cff, #7c3aed);
+}
+
+body.login-page.faculty button:hover {
     box-shadow: 0 10px 25px rgba(95, 92, 255, 0.5);
+}
+
+/* STUDENT BTN */
+body.login-page.student button {
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+}
+
+body.login-page.student button:hover {
+    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.5);
 }
 
 /* CLICK */
@@ -258,10 +292,9 @@ button:active {
     transform: scale(0.97);
 }
 
-/* ===== SPINNER ===== */
+/* ===== LOADER ===== */
 .btn-loader {
     opacity: 0;
-
     width: 16px;
     height: 16px;
 
@@ -274,14 +307,7 @@ button:active {
     left: 50%;
 
     transform: translate(-50%, -50%);
-
     animation: spin 0.6s linear infinite;
-    transition: opacity 0.2s ease;
-}
-
-/* LOADING */
-button.loading {
-    pointer-events: none;
 }
 
 button.loading .btn-text {
