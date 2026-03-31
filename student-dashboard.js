@@ -24,10 +24,19 @@ document.addEventListener("click", function (e) {
 })
 
 
+/* -------- 🧠 PREDICTION -------- */
+function predictAttendance(present, total, target = 75) {
+    let needed = 0
+    while (true) {
+        let percent = ((present + needed) / (total + needed)) * 100
+        if (percent >= target) return needed
+        needed++
+    }
+}
+
+
 /* -------- INIT -------- */
 document.addEventListener("DOMContentLoaded", () => {
-
-    console.log("✅ Dashboard Loaded")
 
     const usn = localStorage.getItem("studentUSN")
     const name = localStorage.getItem("studentName")
@@ -38,7 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return
     }
 
-    /* -------- DISPLAY -------- */
     document.getElementById("studentUSN").innerText = usn
     document.getElementById("studentName").innerText = name
 
@@ -49,14 +57,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("sem").innerText = sem
     document.getElementById("section").innerText = section
 
-    /* -------- BUTTON EVENTS -------- */
     document.getElementById("changePasswordBtn")?.addEventListener("click", openChangePassword)
     document.getElementById("logoutBtn")?.addEventListener("click", studentLogout)
 
     const table = document.getElementById("subjectRows")
     if (!table || typeof courses === "undefined") return
 
-    /* -------- SUBJECTS -------- */
     const classSubjects = []
 
     courses.forEach(c => {
@@ -70,7 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
-    /* -------- STORAGE -------- */
     let attendanceData = {}
 
     try {
@@ -79,7 +84,6 @@ document.addEventListener("DOMContentLoaded", () => {
         attendanceData = {}
     }
 
-    /* -------- CALCULATE -------- */
     function calculateAttendance(subject) {
 
         const key = `${subject}_${department}_${program}_${sem}_${section}`
@@ -103,14 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    /* -------- COLOR -------- */
-    function getColor(percent) {
-        if (percent >= 85) return "#22c55e"
-        if (percent >= 75) return "#f59e0b"
-        return "#ef4444"
-    }
-
-    /* -------- TABLE (UPGRADED UI) -------- */
     table.innerHTML = ""
 
     let totalPercent = 0
@@ -120,11 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const stats = calculateAttendance(sub.subject)
         totalPercent += stats.percent
 
-        const percentClass =
-            stats.percent >= 85 ? "good" :
-                stats.percent >= 75 ? "avg" : "low"
-
-        const barClass = stats.percent < 75 ? "low-bar" : ""
+        const needed = predictAttendance(stats.present, stats.conducted)
 
         const row = document.createElement("tr")
 
@@ -134,15 +126,27 @@ document.addEventListener("DOMContentLoaded", () => {
 <td>${stats.conducted}</td>
 <td>${stats.present}</td>
 <td>${stats.absent}</td>
-<td class="${percentClass}">
-    ${stats.percent}%
-    <div class="bar ${barClass}">
+
+<td>
+    <!-- 🔵 CIRCLE -->
+    <div class="circle ${stats.percent < 75 ? "low" : ""}"
+        style="--percent:${stats.percent * 3.6}deg"
+        data-text="${stats.percent}%">
+    </div>
+
+    <!-- 📊 BAR -->
+    <div class="bar ${stats.percent < 75 ? "low-bar" : ""}">
         <div class="fill" style="width:${stats.percent}%"></div>
+    </div>
+
+    <!-- 🧠 PREDICTION -->
+    <div style="font-size:11px;margin-top:6px;color:${stats.percent < 75 ? "#ef4444" : "#aaa"}">
+        ${stats.percent < 75 ? `Need ${needed} more classes` : "On track"}
     </div>
 </td>
 `
 
-        /* ✨ stagger animation */
+        /* ✨ animation */
         row.style.opacity = "0"
         row.style.transform = "translateY(10px)"
 
@@ -170,29 +174,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     overallBox.innerHTML = `
-<p><strong>Overall Attendance:</strong> 
-<span style="color:${getColor(overall)}">${overall}%</span></p>
+<p><strong>Overall Attendance:</strong> ${overall}%</p>
 
 <div class="bar ${overall < 75 ? "low-bar" : ""}">
     <div class="fill" style="width:${overall}%"></div>
 </div>
 
-<p id="warningText" style="margin-top:8px;font-weight:600;"></p>
+<p style="margin-top:8px;font-weight:600;color:${overall < 75 ? "#ef4444" :
+            overall < 85 ? "#f59e0b" :
+                "#22c55e"
+        }">
+    ${overall < 75 ? "⚠ Low Attendance" :
+            overall < 85 ? "⚠ Average" :
+                "✅ Excellent"
+        }
+</p>
 `
-
-    const warning = document.getElementById("warningText")
-
-    if (overall < 75) {
-        warning.innerText = "⚠ Low Attendance! Risk of shortage"
-        warning.style.color = "#ef4444"
-    } else if (overall < 85) {
-        warning.innerText = "⚠ Average – Stay consistent"
-        warning.style.color = "#f59e0b"
-    } else {
-        warning.innerText = "✅ Excellent Attendance"
-        warning.style.color = "#22c55e"
-    }
-
 })
 
 
@@ -202,9 +199,8 @@ function openChangePassword() {
 }
 
 
-/* -------- LOGOUT (SMOOTH) -------- */
+/* -------- LOGOUT -------- */
 function studentLogout() {
-
     document.querySelector(".dashboard").style.opacity = "0"
     document.querySelector(".dashboard").style.transform = "scale(0.95)"
 
