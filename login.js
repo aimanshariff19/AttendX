@@ -21,7 +21,10 @@
 
         /* -------- SHAKE -------- */
         function shake() {
+            loginCard.classList.remove("shake") // reset
+            void loginCard.offsetWidth // force reflow
             loginCard.classList.add("shake")
+
             setTimeout(() => loginCard.classList.remove("shake"), 400)
         }
 
@@ -35,26 +38,33 @@
         /* -------- PREVENT DOUBLE CLICK -------- */
         if (btn.classList.contains("loading")) return
 
-        /* -------- LOADING -------- */
+        /* -------- LOADING START -------- */
         btn.classList.add("loading")
 
-        /* -------- SUCCESS -------- */
-        function successLogin(data, redirectPage) {
-
-            /* SAVE SESSION */
-            localStorage.clear()
-            Object.keys(data).forEach(key => {
-                localStorage.setItem(key, data[key])
-            })
-
-            /* SMOOTH DELAY BEFORE REDIRECT */
-            setTimeout(() => {
-                window.location.href = redirectPage
-            }, 500)
-        }
-
-        /* -------- LOGIN LOGIC -------- */
+        /* slight delay so user FEELS click */
         setTimeout(() => {
+
+            /* -------- SUCCESS FUNCTION -------- */
+            function successLogin(data, redirectPage) {
+
+                /* SAVE SESSION */
+                localStorage.clear()
+                Object.keys(data).forEach(key => {
+                    localStorage.setItem(key, data[key])
+                })
+
+                /* 🎬 PAGE EXIT ANIMATION */
+                loginCard.style.transition = "all 0.4s ease"
+                loginCard.style.opacity = "0"
+                loginCard.style.transform = "scale(0.95)"
+
+                /* REDIRECT */
+                setTimeout(() => {
+                    window.location.href = redirectPage
+                }, 400)
+            }
+
+            /* -------- LOGIN LOGIC -------- */
 
             /* FACULTY LOGIN */
             if (typeof facultyList !== "undefined") {
@@ -95,7 +105,7 @@
 
             btn.classList.remove("loading")
 
-        }, 1000)
+        }, 1200) // 🔥 realistic delay
 
     }
 
