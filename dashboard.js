@@ -1,20 +1,14 @@
 /* -------- SAFE TEXT -------- */
-
 function setText(id, value) {
     const el = document.getElementById(id)
     if (el) el.innerHTML = value || "-"
 }
 
+/* -------- USER -------- */
+const faculty = localStorage.getItem("user")
 
-/* -------- USER (🔥 FIXED) -------- */
-
-const faculty = localStorage.getItem("user")   // ✅ FIXED
-
-
-/* -------- 💧 RIPPLE EFFECT -------- */
-
+/* -------- 💧 RIPPLE -------- */
 document.addEventListener("click", function (e) {
-
     const btn = e.target.closest("button")
     if (!btn) return
 
@@ -22,18 +16,14 @@ document.addEventListener("click", function (e) {
     circle.classList.add("ripple")
 
     const rect = btn.getBoundingClientRect()
-
     circle.style.left = (e.clientX - rect.left) + "px"
     circle.style.top = (e.clientY - rect.top) + "px"
 
     btn.appendChild(circle)
-
     setTimeout(() => circle.remove(), 600)
 })
 
-
 /* -------- FACULTY DETAILS -------- */
-
 function loadFacultyDetails() {
 
     if (!faculty) return
@@ -45,13 +35,12 @@ function loadFacultyDetails() {
 
     setText(
         "facultyDept",
-        `<span style="font-weight:500;">Department:</span> ${info.department}`
+        `<span style="opacity:0.8;">Department:</span> ${info.department}`
     )
 
     setText("facultyId", info.id)
 
     const myCourses = courses.filter(c => c.faculty === faculty)
-
     setText("courseCount", myCourses.length)
 
     const sections = new Set(myCourses.map(c => c.section))
@@ -67,9 +56,7 @@ function loadFacultyDetails() {
     setText("studentCount", totalStudents)
 }
 
-
 /* -------- TODAY SCHEDULE -------- */
-
 function loadTodaySchedule() {
 
     const box = document.getElementById("todaySchedule")
@@ -84,7 +71,7 @@ function loadTodaySchedule() {
     )
 
     if (todayClasses.length === 0) {
-        box.innerHTML = "<p>No classes today</p>"
+        box.innerHTML = "<p style='opacity:0.7;'>No classes today</p>"
         return
     }
 
@@ -100,15 +87,20 @@ function loadTodaySchedule() {
             ${cls.program} • Sem ${cls.sem} • Sec ${cls.section} • Room ${cls.room}
         `
 
-        div.style.animation = `fadeUp ${0.3 + index * 0.1}s ease`
+        div.style.opacity = "0"
+        div.style.transform = "translateY(10px)"
+
+        setTimeout(() => {
+            div.style.transition = "0.3s ease"
+            div.style.opacity = "1"
+            div.style.transform = "translateY(0)"
+        }, index * 120)
 
         box.appendChild(div)
     })
 }
 
-
 /* -------- COURSE CARDS -------- */
-
 function loadCourseCards() {
 
     const container = document.getElementById("courseCards")
@@ -121,44 +113,51 @@ function loadCourseCards() {
     const unique = []
 
     myCourses.forEach(c => {
-
         const key = `${c.subject}_${c.program}_${c.sem}_${c.section}`
-
         if (!unique.find(u => u.key === key)) {
             unique.push({ ...c, key })
         }
     })
 
     if (unique.length === 0) {
-        container.innerHTML = "<p>No courses assigned</p>"
+        container.innerHTML = "<p style='opacity:0.7;'>No courses assigned</p>"
         return
     }
 
     unique.forEach((course, index) => {
 
         const card = document.createElement("div")
-        card.className = "card"
+        card.className = "subject-card"   // ✅ FIXED
 
         card.innerHTML = `
-            <p><strong>Subject:</strong> ${course.subject}</p>
-            <p><strong>Branch:</strong> ${course.program}</p>
-            <p><strong>Semester:</strong> ${course.sem}</p>
-            <p><strong>Section:</strong> ${course.section}</p>
+            <h4>${course.subject}</h4>
+            <p>${course.program} • Sem ${course.sem} • Sec ${course.section}</p>
 
-            <button onclick="openCourse('${course.subject}','${course.program}','${course.sem}','${course.section}')">
+            <button>
                 Take Attendance
             </button>
         `
 
-        card.style.animation = `fadeUp ${0.4 + index * 0.1}s ease`
+        /* click handler */
+        card.querySelector("button").onclick = () => {
+            openCourse(course.subject, course.program, course.sem, course.section)
+        }
+
+        /* stagger animation */
+        card.style.opacity = "0"
+        card.style.transform = "translateY(20px)"
+
+        setTimeout(() => {
+            card.style.transition = "0.4s ease"
+            card.style.opacity = "1"
+            card.style.transform = "translateY(0)"
+        }, index * 120)
 
         container.appendChild(card)
     })
 }
 
-
-/* -------- 🚀 OPEN COURSE -------- */
-
+/* -------- OPEN COURSE -------- */
 function openCourse(subject, program, sem, section) {
 
     document.querySelector(".dashboard").classList.add("page-exit")
@@ -175,19 +174,17 @@ function openCourse(subject, program, sem, section) {
     }, 400)
 }
 
+/* -------- LOGOUT -------- */
+function logout(e) {
 
-/* -------- 🚪 LOGOUT (🔥 FIXED) -------- */
-
-function logout() {
-
-    const btn = event.target
+    const btn = e?.target || document.querySelector(".logout-btn")
 
     btn.classList.add("loading")
     btn.innerText = ""
 
     setTimeout(() => {
 
-        localStorage.clear()   // ✅ FIXED
+        localStorage.clear()
 
         document.querySelector(".dashboard").classList.add("page-exit")
 
@@ -198,17 +195,19 @@ function logout() {
     }, 800)
 }
 
-
 /* -------- INIT -------- */
-
 document.addEventListener("DOMContentLoaded", () => {
 
     if (!faculty) {
-        document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>No faculty logged in ❌</h2>"
+        document.body.innerHTML =
+            "<h2 style='text-align:center;margin-top:50px;'>No faculty logged in ❌</h2>"
         return
     }
 
-    loadFacultyDetails()
-    loadTodaySchedule()
-    loadCourseCards()
+    /* slight delay → premium feel */
+    setTimeout(() => {
+        loadFacultyDetails()
+        loadTodaySchedule()
+        loadCourseCards()
+    }, 300)
 })
