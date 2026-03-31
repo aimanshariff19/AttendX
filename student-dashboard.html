@@ -3,8 +3,185 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Student Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <title>AttendX Student Dashboard</title>
+
+    <style>
+        /* ===== BODY ===== */
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            color: white;
+        }
+
+        /* ===== GLOW ===== */
+        body::before,
+        body::after {
+            content: "";
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            filter: blur(120px);
+            z-index: 0;
+        }
+
+        body::before {
+            background: #8b5cf655;
+            top: -100px;
+            left: -100px;
+        }
+
+        body::after {
+            background: #6366f155;
+            bottom: -100px;
+            right: -100px;
+        }
+
+        /* ===== DASHBOARD ===== */
+        .dashboard {
+            position: relative;
+            z-index: 2;
+
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 25px;
+
+            border-radius: 20px;
+
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(20px);
+
+            border: 1px solid rgba(255,255,255,0.1);
+
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+
+            animation: fadeIn 0.6s ease;
+        }
+
+        /* ===== HEADER ===== */
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header-actions h1 {
+            font-size: 22px;
+        }
+
+        /* ===== BUTTONS ===== */
+        button {
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: none;
+
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            color: white;
+
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139,92,246,0.5);
+        }
+
+        .logout-btn {
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        /* ===== PROFILE ===== */
+        .card {
+            background: rgba(255,255,255,0.06);
+            padding: 18px;
+            border-radius: 16px;
+
+            border: 1px solid rgba(255,255,255,0.1);
+
+            margin-bottom: 20px;
+        }
+
+        .card p {
+            margin: 6px 0;
+            font-size: 14px;
+        }
+
+        /* ===== TABLE ===== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: rgba(255,255,255,0.08);
+        }
+
+        th {
+            padding: 12px;
+            font-size: 13px;
+            color: #ddd;
+        }
+
+        td {
+            padding: 14px;
+            text-align: center;
+            font-size: 13px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        /* ===== ROW HOVER ===== */
+        tbody tr:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* ===== ATTENDANCE COLORS ===== */
+        .good {
+            color: #22c55e;
+        }
+
+        .low {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        /* ===== PROGRESS BAR ===== */
+        .bar {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-top: 6px;
+        }
+
+        .fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #8b5cf6, #6366f1);
+        }
+
+        .low-bar .fill {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+        }
+
+        /* ===== ANIMATION ===== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+    </style>
 
 </head>
 
@@ -12,6 +189,7 @@
 
     <div class="dashboard">
 
+        <!-- HEADER -->
         <div class="header-actions">
             <h1>AttendX / Student Dashboard</h1>
 
@@ -22,6 +200,7 @@
             </div>
         </div>
 
+        <!-- PROFILE -->
         <div class="card">
             <p><strong>Name:</strong> <span id="studentName"></span></p>
             <p><strong>USN:</strong> <span id="studentUSN"></span></p>
@@ -31,21 +210,22 @@
             <p><strong>Section:</strong> <span id="section"></span></p>
         </div>
 
-        <br>
-
+        <!-- TABLE -->
         <table>
             <thead>
                 <tr>
-                    <th>Subject Name</th>
+                    <th>Subject</th>
                     <th>Subject Code</th>
-                    <th>Classes Conducted</th>
+                    <th>Classes</th>
                     <th>Present</th>
                     <th>Absent</th>
-                    <th>Attendance %</th>
+                    <th>Attendance</th>
                 </tr>
             </thead>
 
-            <tbody id="subjectRows"></tbody>
+            <tbody id="subjectRows">
+                <!-- JS FILLS -->
+            </tbody>
         </table>
 
         <button id="logoutBtn" class="logout-btn">Logout</button>
