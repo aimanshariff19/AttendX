@@ -6,7 +6,7 @@
 }
 
 /* ===== BODY ===== */
-body.login-page.faculty {
+body {
     font-family: 'Inter', sans-serif;
     min-height: 100vh;
     display: flex;
@@ -21,11 +21,11 @@ body.login-page.faculty {
 body::before {
     content: "";
     position: absolute;
-    width: 600px;
-    height: 600px;
+    width: 500px;
+    height: 500px;
     background: radial-gradient(circle, #5f5cff55, transparent);
-    top: -100px;
-    left: -100px;
+    top: -120px;
+    left: -120px;
     filter: blur(120px);
 }
 
@@ -34,170 +34,205 @@ body::after {
     position: absolute;
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, #7c7cff44, transparent);
-    bottom: -100px;
-    right: -100px;
+    background: radial-gradient(circle, #7c3aed55, transparent);
+    bottom: -120px;
+    right: -120px;
     filter: blur(120px);
 }
 
-/* ===== CONTAINER ===== */
+/* ===== LOGIN CONTAINER ===== */
 .login-container {
-    position: relative;
-    z-index: 2;
-
     width: 380px;
     padding: 40px 30px;
-
     border-radius: 20px;
+
+    background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(20px);
-    background: rgba(255, 255, 255, 0.05);
+
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
     border: 1px solid rgba(255, 255, 255, 0.1);
 
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
 
-    text-align: center;
-    animation: fadeUp 0.8s ease;
+    color: white;
+    animation: fadeIn 0.6s ease;
 }
 
-/* ===== ANIMATION ===== */
-@keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* ===== FORM ===== */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
 /* ===== LOGO ===== */
 .college-logo {
-    width: 70px;
-    margin-bottom: 15px;
+    width: 60px;
+    margin: 0 auto 8px;
 }
 
 /* ===== TEXT ===== */
 .college-name {
-    font-size: 16px;
-    color: #fff;
+    text-align: center;
+    font-size: 17px;
     font-weight: 600;
 }
 
 .college-location,
 .college-status {
-    font-size: 12px;
-    color: #aaa;
+    text-align: center;
+    font-size: 11px;
+    opacity: 0.75;
 }
 
 .system-title {
-    margin: 20px 0;
-    font-size: 18px;
-    color: #fff;
-    font-weight: 600;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
 /* ===== INPUT GROUP ===== */
 .input-group {
-    text-align: left;
-    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .input-group label {
-    font-size: 13px;
-    color: #bbb;
-    margin-bottom: 6px;
-    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
 }
 
+/* INPUT */
 .input-group input {
     width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-
+    padding: 13px 12px;
+    border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.05);
 
-    color: #fff;
     font-size: 14px;
 
-    transition: 0.3s;
-}
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
 
-.input-group input:focus {
     outline: none;
-    border-color: #5f5cff;
-    box-shadow: 0 0 10px #5f5caa55;
+    font-weight: 500;
+
+    backdrop-filter: blur(10px);
+    transition: all 0.25s ease;
 }
 
-/* ===== PASSWORD ICON ===== */
+/* HOVER */
+.input-group input:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* FOCUS */
+.input-group input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #7c7cff;
+
+    box-shadow:
+        0 0 0 2px rgba(124, 124, 255, 0.2),
+        0 8px 25px rgba(0, 0, 0, 0.4);
+
+    transform: translateY(-1px);
+}
+
+/* ===== PASSWORD ===== */
 .password-field {
     position: relative;
 }
 
+.password-field input {
+    padding-right: 48px;
+}
+
+/* FIXED EYE ICON */
 .eye {
     position: absolute;
-    right: 12px;
-    top: 36px;
-    color: #aaa;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+
     cursor: pointer;
-    transition: 0.3s;
+    color: rgba(255, 255, 255, 0.7);
+
+    font-size: 14px;
+    transition: 0.2s ease;
 }
 
 .eye:hover {
     color: #fff;
+    transform: translateY(-50%) scale(1.1);
 }
 
-/* ===== EXTRA OPTIONS ===== */
+/* ===== EXTRA ===== */
 .form-extra {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     font-size: 12px;
     color: #aaa;
-    margin-bottom: 20px;
 }
 
-.form-extra a {
+.forgot {
     color: #7c7cff;
     text-decoration: none;
 }
 
-.form-extra a:hover {
+.forgot:hover {
     text-decoration: underline;
 }
 
 /* ===== BUTTON ===== */
 button {
     width: 100%;
-    padding: 12px;
+    height: 44px;
+
     border-radius: 12px;
     border: none;
 
-    background: linear-gradient(135deg, #5f5cff, #7c7cff);
-    color: #fff;
+    background: linear-gradient(135deg, #5f5cff, #7c3aed);
+    color: white;
+    font-size: 14px;
     font-weight: 600;
-    font-size: 15px;
 
     cursor: pointer;
+    transition: all 0.25s ease;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     position: relative;
     overflow: hidden;
-
-    transition: 0.3s;
 }
 
+/* PREMIUM HOVER */
 button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px #5f5cff55;
+    box-shadow: 0 10px 25px rgba(95, 92, 255, 0.5);
 }
 
-/* ===== BUTTON LOADER ===== */
+/* CLICK */
+button:active {
+    transform: scale(0.97);
+}
+
+/* ===== SPINNER ===== */
 .btn-loader {
-    width: 18px;
-    height: 18px;
-    border: 2px solid #fff;
-    border-top: 2px solid transparent;
+    opacity: 0;
+
+    width: 16px;
+    height: 16px;
+
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid white;
     border-radius: 50%;
 
     position: absolute;
@@ -205,34 +240,46 @@ button:hover {
     left: 50%;
 
     transform: translate(-50%, -50%);
-    display: none;
 
-    animation: spin 0.8s linear infinite;
+    animation: spin 0.6s linear infinite;
+    transition: opacity 0.2s ease;
 }
 
+/* LOADING */
+button.loading {
+    pointer-events: none;
+}
+
+button.loading .btn-text {
+    opacity: 0;
+}
+
+button.loading .btn-loader {
+    opacity: 1;
+}
+
+/* ===== ERROR ===== */
+.error-text {
+    text-align: center;
+    font-size: 12px;
+    color: #ff4d4d;
+}
+
+/* ===== ANIMATIONS ===== */
 @keyframes spin {
     to {
         transform: translate(-50%, -50%) rotate(360deg);
     }
 }
 
-/* ===== LOADING STATE ===== */
-button.loading .btn-text {
-    opacity: 0;
-}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
 
-button.loading .btn-loader {
-    display: block;
-}
-
-/* ===== ERROR ===== */
-.error-text {
-    margin-top: 10px;
-    font-size: 13px;
-    color: #ff4d4d;
-}
-
-/* ===== REMEMBER CHECKBOX ===== */
-.remember input {
-    accent-color: #5f5cff;
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
