@@ -59,7 +59,6 @@ body::after {
 
     color: white;
 
-    /* 🔥 COMBINED ANIMATION */
     animation: fadeIn 0.6s ease, float 6s ease-in-out infinite;
 }
 
@@ -91,16 +90,22 @@ form {
     gap: 18px;
 }
 
-/* ===== LOGO (FIXED VISIBILITY) ===== */
+/* ===== LOGO (REAL FIX) ===== */
 .college-logo {
-    width: 60px;
-    margin: 0 auto 10px;
-    padding: 10px;
+    width: 65px;
+    margin: 0 auto 12px;
 
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 50%;
+    /* ✨ CLEAN VISIBILITY FIX */
+    filter: brightness(1.2) contrast(1.1);
+    opacity: 0.95;
 
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    transition: 0.3s ease;
+}
+
+/* subtle premium glow */
+.college-logo:hover {
+    transform: scale(1.05);
+    filter: brightness(1.4) drop-shadow(0 0 12px rgba(124, 124, 255, 0.6));
 }
 
 /* ===== TEXT ===== */
@@ -186,7 +191,7 @@ form {
 .eye {
     position: absolute;
     right: 14px;
-    top: 50%;
+    top: 65%;
     transform: translateY(-50%);
 
     cursor: pointer;
