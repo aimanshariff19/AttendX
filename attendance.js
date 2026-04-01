@@ -331,3 +331,14 @@ function goBack() {
 function editAttendance() {
     window.location.href = "edit-attendance.html"
 }
+
+/* ⚡ BULK MARK */
+function markAll(isPresent) {
+
+    document.querySelectorAll(".toggle-switch input").forEach(input => {
+        input.checked = isPresent
+
+        const row = input.closest("tr")
+        updateSingleRow(row, input)
+    })
+}

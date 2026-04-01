@@ -182,6 +182,18 @@
             font-size: 13px;
             opacity: 0.8;
         }
+
+        /* 🔥 TOGGLE GLOW */
+        .toggle-switch input:checked+.slider {
+            background: #22c55e;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+        }
+
+        /* 🔥 HOVER ROW */
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
     </style>
 
 </head>
@@ -198,6 +210,11 @@
                 <button class="btn" onclick="goBack()">← Back</button>
                 <button class="btn" onclick="editAttendance()">Edit Attendance</button>
             </div>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <button class="btn" onclick="markAll(true)">Mark All Present</button>
+            <button class="btn" onclick="markAll(false)">Mark All Absent</button>
         </div>
 
         <!-- COURSE INFO -->
