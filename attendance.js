@@ -41,13 +41,11 @@ function getAttendanceRecords(key) {
 /* -------- STUDENTS -------- */
 let studentList = []
 
-/* 🔥 FIXED KEY MATCH (MAIN FIX) */
 const classKey = `${department}_${program}_${sem}_${section}`
 
 function initStudents() {
     if (typeof students === "undefined") return
 
-    /* 🔥 NORMALIZE VALUES TO MATCH MOCKDATA */
     const dept = (department || "").trim().toUpperCase()
     const prog = (program || "").trim().toUpperCase()
     const s = (sem || "").toString().trim()
@@ -132,14 +130,12 @@ function loadStudents() {
 </td>
 `
 
-        /* 🎨 COLOR */
         const percentText = row.querySelector(".percent-text")
 
         if (percent >= 85) percentText.style.color = "#22c55e"
         else if (percent >= 75) percentText.style.color = "#f59e0b"
         else percentText.style.color = "#ef4444"
 
-        /* ✨ ANIMATION */
         row.style.opacity = "0"
         row.style.transform = "translateY(10px)"
 
@@ -233,11 +229,11 @@ function calculateTimeRange() {
         return `${h}:${String(m).padStart(2, "0")} ${ampm}`
     }
 
-    document.getElementById("timeRange").innerText =
-        `${format12(start)} - ${format12(end)}`
+    const el = document.getElementById("timeRange")
+    if (el) el.innerText = `${format12(start)} - ${format12(end)}`
 }
 
-/* -------- CURRENT TIME -------- */
+/* -------- CURRENT TIME (🔥 FIXED) -------- */
 function updateCurrentTime() {
     const now = new Date()
     let h = now.getHours()
@@ -245,8 +241,12 @@ function updateCurrentTime() {
     let ampm = h >= 12 ? "PM" : "AM"
     h = h % 12 || 12
 
-    document.getElementById("currentTime").innerText =
-        `${h}:${String(m).padStart(2, "0")} ${ampm}`
+    const el = document.getElementById("currentTime")
+
+    /* 🔥 FIX: use value not innerText */
+    if (el) {
+        el.value = `${h}:${String(m).padStart(2, "0")} ${ampm}`
+    }
 }
 
 /* -------- SUBMIT -------- */
@@ -298,17 +298,22 @@ function submitAttendance(btn) {
     }, 600)
 }
 
-/* -------- INIT -------- */
+/* -------- INIT (🔥 SAFE FIX) -------- */
 window.onload = function () {
 
     const today = new Date().toISOString().split("T")[0]
-    document.getElementById("date").value = today
+
+    const dateInput = document.getElementById("date")
+    if (dateInput) dateInput.value = today
 
     updateCurrentTime()
     setInterval(updateCurrentTime, 1000)
 
-    document.getElementById("classTime")?.addEventListener("change", calculateTimeRange)
-    document.getElementById("numClasses")?.addEventListener("change", calculateTimeRange)
+    const classTime = document.getElementById("classTime")
+    const numClasses = document.getElementById("numClasses")
+
+    if (classTime) classTime.addEventListener("change", calculateTimeRange)
+    if (numClasses) numClasses.addEventListener("change", calculateTimeRange)
 
     setTimeout(() => {
         initStudents()
@@ -319,4 +324,8 @@ window.onload = function () {
 /* -------- BACK -------- */
 function goBack() {
     window.location.href = "dashboard.html"
+}
+
+function editAttendance() {
+    window.location.href = "edit-attendance.html"
 }
