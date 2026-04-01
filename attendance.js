@@ -3,6 +3,27 @@ function normalize(str) {
     return (str || "").toString().toLowerCase().replace(/\s+/g, "")
 }
 
+/* -------- 🔥 BUTTON SPINNER (ADDED) -------- */
+function setBtnLoading(btn, text) {
+    if (!btn || btn.classList.contains("loading")) return
+    btn.dataset.original = btn.innerHTML
+    btn.classList.add("loading")
+    btn.innerHTML = `${text} <span class="btn-spinner"></span>`
+}
+
+function resetBtn(btn, redirect = null) {
+    btn.innerHTML = "✔ Done"
+
+    setTimeout(() => {
+        if (redirect) {
+            window.location.href = redirect
+        } else {
+            btn.classList.remove("loading")
+            btn.innerHTML = btn.dataset.original
+        }
+    }, 700)
+}
+
 /* -------- CLASS DETAILS -------- */
 let subject = localStorage.getItem("subject")
 let department = localStorage.getItem("department")
@@ -153,7 +174,7 @@ function updateSingleRow(row, input) {
     updateStats()
 }
 
-/* -------- SUBMIT (ONLY IMPROVED PART) -------- */
+/* -------- SUBMIT (EDITED) -------- */
 function submitAttendance(btn) {
 
     if (!btn) btn = document.getElementById("submitBtn")
@@ -167,14 +188,9 @@ function submitAttendance(btn) {
         return
     }
 
-    // 🔥 prevent double click
     if (btn.classList.contains("loading")) return
 
-    btn.classList.add("loading")
-    const original = btn.innerHTML
-
-    // 🔥 spinner
-    btn.innerHTML = "Submitting <span class='btn-spinner'></span>"
+    setBtnLoading(btn, "Submitting")
 
     setTimeout(() => {
 
@@ -203,12 +219,7 @@ function submitAttendance(btn) {
             localStorage.setItem(key, JSON.stringify({ data }))
         }
 
-        // 🔥 success
-        btn.innerHTML = "✔ Submitted"
-
-        setTimeout(() => {
-            window.location.href = "dashboard.html"
-        }, 800)
+        resetBtn(btn, "dashboard.html")
 
     }, 800)
 }
@@ -231,20 +242,33 @@ window.onload = function () {
     }, 300)
 }
 
-/* -------- NAV -------- */
+/* -------- NAV (EDITED) -------- */
 function goBack() {
-    window.location.href = "dashboard.html"
+    const btn = event.target.closest(".btn")
+    setBtnLoading(btn, "Going back")
+    resetBtn(btn, "dashboard.html")
 }
 
 function editAttendance() {
-    window.location.href = "edit-attendance.html"
+    const btn = event.target.closest(".btn")
+    setBtnLoading(btn, "Opening")
+    resetBtn(btn, "edit-attendance.html")
 }
 
-/* -------- BULK -------- */
+/* -------- BULK (EDITED) -------- */
 function markAll(isPresent) {
 
-    document.querySelectorAll(".toggle-switch input").forEach(input => {
-        input.checked = isPresent
-        updateSingleRow(input.closest("tr"), input)
-    })
+    const btn = event.target.closest(".btn")
+    setBtnLoading(btn, "Updating")
+
+    setTimeout(() => {
+        document.querySelectorAll(".toggle-switch input").forEach(input => {
+            input.checked = isPresent
+            updateSingleRow(input.closest("tr"), input)
+        })
+
+        btn.classList.remove("loading")
+        btn.innerHTML = btn.dataset.original
+
+    }, 400)
 }
