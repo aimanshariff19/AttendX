@@ -30,21 +30,27 @@
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
         }
 
-        /* 🔥 HEADER FIX */
+        /* 🔥 PERFECT HEADER */
         .header-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
             margin-bottom: 18px;
         }
 
-        .header-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        .header-actions .left {
+            justify-self: start;
         }
 
-        /* 🔥 BUTTON FIX */
+        .header-actions .center {
+            justify-self: center;
+        }
+
+        .header-actions .right {
+            justify-self: end;
+        }
+
+        /* BUTTON */
         .btn {
             padding: 8px 14px;
             border-radius: 8px;
@@ -54,10 +60,8 @@
             font-size: 13px;
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
             color: white;
-            width: fit-content;
         }
 
-        /* 🔥 SUBMIT BUTTON */
         #submitBtn {
             display: block;
             margin: 20px auto 0;
@@ -71,7 +75,6 @@
             margin-bottom: 18px;
         }
 
-        /* 🔥 INPUT GRID FIX */
         .input-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -84,7 +87,6 @@
             font-size: 13px;
         }
 
-        /* 🔥 INPUT WIDTH FIX */
         .input-group input {
             margin-top: 4px;
             padding: 9px;
@@ -94,10 +96,6 @@
             background: rgba(255, 255, 255, 0.15);
             color: white;
             max-width: 260px;
-        }
-
-        .input-group input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
         }
 
         table {
@@ -122,7 +120,6 @@
             opacity: 0.7;
         }
 
-        /* 🔥 PROGRESS */
         .bar {
             height: 6px;
             background: rgba(255, 255, 255, 0.1);
@@ -171,27 +168,25 @@
 
         input:checked+.slider {
             background: #22c55e;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
         }
 
         input:checked+.slider::before {
             transform: translateX(18px);
         }
 
+        tbody tr {
+            transition: all 0.25s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
         .time-info {
             margin-top: 12px;
             font-size: 13px;
             opacity: 0.8;
-        }
-
-        /* 🔥 TOGGLE GLOW */
-        .toggle-switch input:checked+.slider {
-            background: #22c55e;
-            box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
-        }
-
-        /* 🔥 HOVER ROW */
-        tbody tr:hover {
-            background: rgba(255, 255, 255, 0.08);
         }
     </style>
 
@@ -201,18 +196,24 @@
 
     <div class="dashboard">
 
+        <!-- 🔥 HEADER -->
         <div class="header-actions">
-            <h2>AttendX / Take Attendance</h2>
 
-            <!-- 🔥 FIXED BUTTON STACK -->
-            <div class="header-buttons">
+            <div class="left">
                 <button class="btn" onclick="goBack()">← Back</button>
+            </div>
+
+            <div class="center">
+                <h2>AttendX / Take Attendance</h2>
+            </div>
+
+            <div class="right">
                 <button class="btn" onclick="editAttendance()">Edit Attendance</button>
             </div>
+
         </div>
 
-
-        <!-- COURSE INFO -->
+        <!-- COURSE -->
         <div class="card">
             <p><b>Course:</b> <span id="subject"></span></p>
             <p><b>Department:</b> <span id="department"></span></p>
@@ -221,7 +222,7 @@
             <p><b>Section:</b> <span id="section"></span></p>
         </div>
 
-        <!-- DATE + TIME -->
+        <!-- DATE -->
         <div class="card">
             <div class="input-grid">
 
@@ -237,7 +238,7 @@
 
                 <div class="input-group">
                     <label>No. of Classes</label>
-                    <input type="number" id="numClasses" min="1" max="8" value="1">
+                    <input type="number" id="numClasses" value="1">
                 </div>
 
                 <div class="input-group">
@@ -252,6 +253,7 @@
             </div>
         </div>
 
+        <!-- BULK -->
         <div style="display:flex; gap:10px; margin-bottom:15px;">
             <button class="btn" onclick="markAll(true)">Mark All Present</button>
             <button class="btn" onclick="markAll(false)">Mark All Absent</button>
@@ -271,9 +273,7 @@
 
                 <tbody id="studentRows">
                     <tr>
-                        <td colspan="4" class="empty">
-                            Loading students...
-                        </td>
+                        <td colspan="4" class="empty">Loading students...</td>
                     </tr>
                 </tbody>
             </table>
