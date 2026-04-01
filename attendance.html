@@ -16,6 +16,14 @@
         }
 
         /* ===== BODY ===== */
+        /* ===== RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ===== BODY ===== */
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #1e1b4b, #312e81);
@@ -39,14 +47,13 @@
             flex-direction: column;
             gap: 10px;
             margin-bottom: 20px;
-            align-items: flex-start;
-            /* 🔥 FIX */
         }
 
         .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            width: 100%;
         }
 
         .header-top h1 {
@@ -54,7 +61,21 @@
             font-weight: 600;
         }
 
-        /* ===== BACK BUTTON (FIXED 🔥) ===== */
+        /* 🔥 EDIT BUTTON (FIXED RIGHT + PREMIUM) */
+        .header-top .btn {
+            padding: 6px 12px;
+            font-size: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(6px);
+        }
+
+        .header-top .btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
+        }
+
+        /* ===== BACK BUTTON ===== */
         .back-btn {
             padding: 4px 10px !important;
             font-size: 11px !important;
@@ -173,7 +194,6 @@
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(6px);
             transition: all 0.25s ease;
-            position: relative;
         }
 
         .status-btn:hover {
@@ -184,13 +204,11 @@
             transform: scale(0.95);
         }
 
-        /* PRESENT */
         .status-btn.present.active {
             background: linear-gradient(135deg, #22c55e, #16a34a);
             box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
         }
 
-        /* ABSENT */
         .status-btn.absent.active {
             background: linear-gradient(135deg, #ef4444, #dc2626);
             box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
@@ -269,6 +287,7 @@
             animation: shake 0.3s ease;
             border: 1px solid #ef4444 !important;
         }
+        
     </style>
 </head>
 
