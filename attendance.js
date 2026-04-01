@@ -4,11 +4,17 @@ function normalize(str) {
 }
 
 /* -------- CLASS DETAILS -------- */
-const subject = localStorage.getItem("subject")
-const department = localStorage.getItem("department")
-const program = localStorage.getItem("program")
-const sem = localStorage.getItem("sem")
-const section = localStorage.getItem("section")
+let subject = localStorage.getItem("subject")
+let department = localStorage.getItem("department")
+let program = localStorage.getItem("program")
+let sem = localStorage.getItem("sem")
+let section = localStorage.getItem("section")
+
+/* 🔥 FALLBACK FIX (IMPORTANT) */
+if (!department) {
+    console.warn("⚠ Department missing, using fallback")
+    department = localStorage.getItem("facultyDepartment") || "CSE"
+}
 
 function setText(id, value) {
     const el = document.getElementById(id)
@@ -65,14 +71,12 @@ function calculatePercentage(usn, currentStatus = null) {
         }
     }
 
-    /* 🔥 CURRENT SESSION DEFAULT PRESENT */
     total++
     if (currentStatus === null || currentStatus === "Present") {
         present++
     }
 
     return Math.round((present / total) * 100)
-
 }
 
 /* -------- LOAD STUDENTS -------- */
@@ -88,23 +92,44 @@ function loadStudents() {
         let row = document.createElement("tr")
 
         row.innerHTML = `
-        < td > ${student.usn}</td >
-    <td>${student.name}</td>
-    <td class="percent">${percent}%</td>
-    <td>
-        <div style="display:flex;align-items:center;gap:10px;">
-            <label class="toggle-switch">
-                <input type="checkbox" data-usn="${student.usn}" checked>
-                <span class="slider"></span>
-            </label>
-            <span class="status-text" style="font-size:12px;color:#22c55e;">Present</span>
-        </div>
-    </td>
-    `
+<td>${student.usn}</td>
+<td>${student.name}</td>
 
-        row.style.animation = `fadeUp 0.4s ease ${index * 0.05}s both`
+<td>
+    <span class="percent-text">${percent}%</span>
 
-        updateRowStyle(row, percent, true)
+    <div class="bar ${percent < 75 ? "low-bar" : ""}">
+        <div class="fill" style="width:${percent}%"></div>
+    </div>
+</td>
+
+<td>
+    <div style="display:flex;align-items:center;gap:10px;">
+        <label class="toggle-switch">
+            <input type="checkbox" data-usn="${student.usn}" checked>
+            <span class="slider"></span>
+        </label>
+        <span class="status-text" style="font-size:12px;color:#22c55e;">Present</span>
+    </div>
+</td>
+`
+
+        /* 🎨 COLOR */
+        const percentText = row.querySelector(".percent-text")
+
+        if (percent >= 85) percentText.style.color = "#22c55e"
+        else if (percent >= 75) percentText.style.color = "#f59e0b"
+        else percentText.style.color = "#ef4444"
+
+        /* ✨ ANIMATION */
+        row.style.opacity = "0"
+        row.style.transform = "translateY(10px)"
+
+        setTimeout(() => {
+            row.style.transition = "0.3s ease"
+            row.style.opacity = "1"
+            row.style.transform = "translateY(0)"
+        }, index * 60)
 
         const input = row.querySelector("input")
         input.addEventListener("change", () => updateSingleRow(row, input))
@@ -113,27 +138,36 @@ function loadStudents() {
     })
 
     updateStats()
-
 }
 
-/* -------- UPDATE SINGLE ROW -------- */
+/* -------- UPDATE ROW -------- */
 function updateSingleRow(row, input) {
 
     const usn = input.dataset.usn
-    const percentCell = row.querySelector(".percent")
+    const percentText = row.querySelector(".percent-text")
     const statusText = row.querySelector(".status-text")
+    const fill = row.querySelector(".fill")
 
     const status = input.checked ? "Present" : "Absent"
 
     let percent = calculatePercentage(usn, status)
 
-    percentCell.innerText = percent + "%"
+    percentText.innerText = percent + "%"
+    fill.style.width = percent + "%"
+
+    /* 🎨 COLOR */
+    if (percent >= 85) percentText.style.color = "#22c55e"
+    else if (percent >= 75) percentText.style.color = "#f59e0b"
+    else percentText.style.color = "#ef4444"
+
+    if (percent < 75) fill.parentElement.classList.add("low-bar")
+    else fill.parentElement.classList.remove("low-bar")
+
     statusText.innerText = status
     statusText.style.color = input.checked ? "#22c55e" : "#ef4444"
 
     updateRowStyle(row, percent, input.checked)
     updateStats()
-
 }
 
 /* -------- ROW STYLE -------- */
@@ -156,10 +190,9 @@ function updateStats() {
     setText("totalCount", total)
     setText("presentCount", present)
     setText("absentCount", total - present)
-
 }
 
-/* -------- TIME RANGE (FIXED PROPERLY) -------- */
+/* -------- TIME RANGE -------- */
 function calculateTimeRange() {
 
     const startTime = document.getElementById("classTime")?.value
@@ -173,42 +206,33 @@ function calculateTimeRange() {
     start.setHours(hour, minute, 0)
 
     let end = new Date(start)
-    end.setMinutes(end.getMinutes() + (numClasses * 60)) // 🔥 FIXED LOGIC
+    end.setMinutes(end.getMinutes() + (numClasses * 60))
 
     function format12(date) {
         let h = date.getHours()
         let m = date.getMinutes()
         let ampm = h >= 12 ? "PM" : "AM"
         h = h % 12 || 12
-        return `${h}:${String(m).padStart(2, "0")} ${ampm} `
+        return `${h}:${String(m).padStart(2, "0")} ${ampm}`
     }
 
-    const startStr = format12(start)
-    const endStr = format12(end)
-
-    document.getElementById("timeRange").innerText = `${startStr} - ${endStr} `
-
+    document.getElementById("timeRange").innerText =
+        `${format12(start)} - ${format12(end)}`
 }
 
 /* -------- CURRENT TIME -------- */
 function updateCurrentTime() {
-
     const now = new Date()
+    let h = now.getHours()
+    let m = now.getMinutes()
+    let ampm = h >= 12 ? "PM" : "AM"
+    h = h % 12 || 12
 
-    let hours = now.getHours()
-    let minutes = now.getMinutes()
-
-    let ampm = hours >= 12 ? "PM" : "AM"
-    hours = hours % 12 || 12
-
-    const timeString = `${hours}:${String(minutes).padStart(2, "0")} ${ampm} `
-
-    const el = document.getElementById("currentTime")
-    if (el) el.innerText = timeString
-
+    document.getElementById("currentTime").innerText =
+        `${h}:${String(m).padStart(2, "0")} ${ampm}`
 }
 
-/* -------- SUBMIT (WITH BUTTON SPINNER FIX) -------- */
+/* -------- SUBMIT -------- */
 function submitAttendance(btn) {
 
     if (!btn) btn = document.getElementById("submitBtn")
@@ -218,7 +242,7 @@ function submitAttendance(btn) {
     const numClasses = parseInt(document.getElementById("numClasses")?.value)
 
     if (!date || !startTime) {
-        showMessage("⚠️ Fill date & time properly", "error")
+        alert("Fill date & time")
         return
     }
 
@@ -232,14 +256,12 @@ function submitAttendance(btn) {
         for (let i = 0; i < numClasses; i++) {
 
             let timeObj = new Date()
-            timeObj.setHours(hour, minute + (i * 60)) // 🔥 FIXED TIME SHIFT
+            timeObj.setHours(hour, minute + (i * 60))
 
-            let h = timeObj.getHours()
-            let m = timeObj.getMinutes()
+            const formattedTime =
+                `${String(timeObj.getHours()).padStart(2, "0")}:${String(timeObj.getMinutes()).padStart(2, "0")}`
 
-            const formattedTime = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")} `
-
-            const key = `${base}_${date}_${formattedTime} `
+            const key = `${base}_${date}_${formattedTime}`
 
             let data = []
 
@@ -254,28 +276,9 @@ function submitAttendance(btn) {
         }
 
         btn.classList.remove("loading")
-
-        setTimeout(() => {
-            window.location.href = "dashboard.html"
-        }, 800)
+        window.location.href = "dashboard.html"
 
     }, 600)
-
-}
-
-/* -------- MESSAGE -------- */
-function showMessage(text, type) {
-    let box = document.getElementById("messageBox")
-    if (!box) return
-
-    box.innerHTML = text
-    box.style.display = "block"
-    box.className = "message-box " + type
-
-    setTimeout(() => {
-        box.style.display = "none"
-    }, 2500)
-
 }
 
 /* -------- INIT -------- */
@@ -297,11 +300,6 @@ window.onload = function () {
 }
 
 /* -------- BACK -------- */
-function goBack(btn) {
-    if (btn) btn.classList.add("loading")
-
-    setTimeout(() => {
-        window.location.href = "dashboard.html"
-    }, 300)
-
+function goBack() {
+    window.location.href = "dashboard.html"
 }
