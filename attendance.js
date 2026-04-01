@@ -62,10 +62,10 @@ function calculateTimeRange() {
     if (el) el.innerText = `${format12(startDate)} - ${format12(endDate)}`
 }
 
-/* -------- CLASS DETAILS (FIXED) -------- */
+/* -------- CLASS DETAILS -------- */
 let subject = localStorage.getItem("subject") || "Data Structures"
 let department = localStorage.getItem("department") || "CSE"
-let program = localStorage.getItem("program") || "CSE"   // 🔥 FIX
+let program = localStorage.getItem("program") || "CSE"
 let sem = localStorage.getItem("sem") || "3"
 let section = localStorage.getItem("section") || "A"
 
@@ -187,29 +187,96 @@ function loadStudents() {
     })
 }
 
-/* -------- STATUS -------- */
-function setStatus(btn, isPresent) {
+/* -------- 🔥 TOGGLE STATUS (NEW) -------- */
+function toggleStatus(btn) {
 
     const row = btn.closest("tr")
-    const buttons = row.querySelectorAll(".status-btn")
-
-    buttons.forEach(b => b.classList.remove("active"))
-    btn.classList.add("active")
-
     const percentText = row.querySelector(".percent-text")
     const fill = row.querySelector(".fill")
-
     const usn = row.children[0].innerText
-    const status = isPresent ? "Present" : "Absent"
+
+    const isPresent = btn.classList.contains("present")
+
+    if (isPresent) {
+        btn.classList.remove("present")
+        btn.classList.add("absent")
+        btn.innerText = "Absent"
+    } else {
+        btn.classList.remove("absent")
+        btn.classList.add("present")
+        btn.innerText = "Present"
+    }
+
+    const status = btn.classList.contains("present") ? "Present" : "Absent"
 
     let percent = calculatePercentage(usn, status)
 
     if (percentText) percentText.innerText = percent + "%"
     if (fill) fill.style.width = percent + "%"
 
-    row.style.background = isPresent
+    row.style.background = status === "Present"
         ? "rgba(34,197,94,0.08)"
         : "rgba(239,68,68,0.08)"
+}
+
+/* -------- SUBMIT -------- */
+function submitAttendance(btn) {
+
+    if (!btn) btn = document.getElementById("submitBtn")
+
+    setBtnLoading(btn, "Submitting")
+
+    setTimeout(() => {
+
+        let data = []
+
+        document.querySelectorAll("#studentRows tr").forEach(row => {
+
+            const btn = row.querySelector(".status-btn")
+            if (!btn) return
+
+            data.push({
+                usn: row.children[0].innerText,
+                status: btn.classList.contains("present") ? "Present" : "Absent"
+            })
+        })
+
+        console.log("Saved:", data)
+
+        window.location.href = "dashboard.html"
+
+    }, 800)
+}
+
+/* -------- BULK -------- */
+function markAll(isPresent) {
+
+    const btn = event.target.closest(".btn")
+    setBtnLoading(btn, "Updating")
+
+    setTimeout(() => {
+
+        document.querySelectorAll("#studentRows tr").forEach(row => {
+
+            const btn = row.querySelector(".status-btn")
+            if (!btn) return
+
+            if (isPresent) {
+                btn.classList.remove("absent")
+                btn.classList.add("present")
+                btn.innerText = "Present"
+            } else {
+                btn.classList.remove("present")
+                btn.classList.add("absent")
+                btn.innerText = "Absent"
+            }
+
+            toggleStatus(btn) // reuse logic
+        })
+
+        resetBtn(btn)
+
+    }, 400)
 }
 
 /* -------- INIT -------- */
