@@ -16,6 +16,52 @@ function resetBtn(btn) {
     btn.innerHTML = btn.dataset.original
 }
 
+/* -------- 🔥 CURRENT TIME (ADDED) -------- */
+function updateCurrentTime() {
+    const now = new Date()
+
+    let h = now.getHours()
+    const m = String(now.getMinutes()).padStart(2, "0")
+
+    const ampm = h >= 12 ? "PM" : "AM"
+    h = h % 12
+    h = h ? h : 12
+
+    const el = document.getElementById("currentTime")
+    if (el) el.value = `${h}:${m} ${ampm}`
+}
+
+/* -------- 🔥 TIME RANGE (ADDED) -------- */
+function calculateTimeRange() {
+
+    const start = document.getElementById("classTime")?.value
+    const num = parseInt(document.getElementById("numClasses")?.value)
+
+    if (!start || !num) return
+
+    let [h, m] = start.split(":").map(Number)
+
+    let startDate = new Date()
+    startDate.setHours(h, m)
+
+    let endDate = new Date(startDate)
+    endDate.setMinutes(endDate.getMinutes() + num * 60)
+
+    const format12 = (d) => {
+        let hr = d.getHours()
+        const min = String(d.getMinutes()).padStart(2, "0")
+        const ampm = hr >= 12 ? "PM" : "AM"
+
+        hr = hr % 12
+        hr = hr ? hr : 12
+
+        return `${hr}:${min} ${ampm}`
+    }
+
+    const el = document.getElementById("timeRange")
+    if (el) el.innerText = `${format12(startDate)} - ${format12(endDate)}`
+}
+
 /* -------- CLASS DETAILS -------- */
 let subject = localStorage.getItem("subject")
 let department = localStorage.getItem("department")
@@ -150,7 +196,6 @@ function setStatus(btn, isPresent) {
     if (percentText) percentText.innerText = percent + "%"
     if (fill) fill.style.width = percent + "%"
 
-    // 🔥 row color feedback
     row.style.background = isPresent
         ? "rgba(34,197,94,0.08)"
         : "rgba(239,68,68,0.08)"
