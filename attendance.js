@@ -223,9 +223,9 @@ window.onload = function () {
     loadStudents()
 }
 
-function markAll(isPresent) {
+function markAll(isPresent, e) {
 
-    const mainBtn = event.target.closest(".btn")
+    const mainBtn = e.target.closest(".btn")
     setBtnLoading(mainBtn, "Updating")
 
     setTimeout(() => {
@@ -235,7 +235,6 @@ function markAll(isPresent) {
             const btn = row.querySelector(".status-btn")
             if (!btn) return
 
-            // 🔥 RESET FIRST
             btn.classList.remove("present", "absent", "active")
 
             if (isPresent) {
@@ -247,19 +246,27 @@ function markAll(isPresent) {
                 btn.innerText = "Absent"
                 row.style.background = "rgba(239,68,68,0.08)"
             }
-
-            // 🔥 UPDATE PERCENT ALSO
-            const percentText = row.querySelector(".percent-text")
-            const fill = row.querySelector(".fill")
-            const usn = row.children[0].innerText
-
-            let percent = calculatePercentage(usn, isPresent ? "Present" : "Absent")
-
-            if (percentText) percentText.innerText = percent + "%"
-            if (fill) fill.style.width = percent + "%"
         })
 
         resetBtn(mainBtn)
 
     }, 400)
+}
+
+function goBack(e) {
+    const btn = e.target.closest(".btn")
+    setBtnLoading(btn, "Going back")
+
+    setTimeout(() => {
+        window.location.href = "dashboard.html"
+    }, 200)
+}
+
+function editAttendance(e) {
+    const btn = e.target.closest(".btn")
+    setBtnLoading(btn, "Opening")
+
+    setTimeout(() => {
+        window.location.href = "edit-attendance.html"
+    }, 200)
 }
