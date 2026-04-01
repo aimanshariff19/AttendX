@@ -47,10 +47,16 @@ const classKey = `${department}_${program}_${sem}_${section}`
 function initStudents() {
     if (typeof students === "undefined") return
 
-    const key = `${department}_${program}_${sem}_${section}`
+    /* 🔥 NORMALIZE VALUES TO MATCH MOCKDATA */
+    const dept = (department || "").trim().toUpperCase()
+    const prog = (program || "").trim().toUpperCase()
+    const s = (sem || "").toString().trim()
+    const sec = (section || "").trim().toUpperCase()
 
-    console.log("🔍 Looking for:", key)
-    console.log("📦 Available keys:", Object.keys(students))
+    const key = `${dept}_${prog}_${s}_${sec}`
+
+    console.log("🔥 FINAL KEY:", key)
+    console.log("📦 AVAILABLE KEYS:", Object.keys(students))
 
     studentList = students[key]
 

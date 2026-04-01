@@ -58,6 +58,12 @@
             border-spacing: 0 10px;
         }
 
+        thead th {
+            text-align: left;
+            padding: 10px;
+            opacity: 0.8;
+        }
+
         tbody tr {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
@@ -65,6 +71,13 @@
 
         tbody td {
             padding: 14px;
+        }
+
+        /* 🔥 EMPTY STATE */
+        .empty {
+            text-align: center;
+            padding: 20px;
+            opacity: 0.7;
         }
 
         /* 🔥 PROGRESS */
@@ -156,11 +169,21 @@
                         <th>Status</th>
                     </tr>
                 </thead>
-                <tbody id="studentRows"></tbody>
+
+                <tbody id="studentRows">
+                    <!-- 🔥 fallback if JS fails -->
+                    <tr>
+                        <td colspan="4" class="empty">
+                            Loading students...
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
 
-        <button class="btn" onclick="submitAttendance()">Submit Attendance</button>
+        <button id="submitBtn" class="btn" onclick="submitAttendance(this)">
+            Submit Attendance
+        </button>
 
     </div>
 
