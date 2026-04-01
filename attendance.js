@@ -10,7 +10,6 @@ let program = localStorage.getItem("program")
 let sem = localStorage.getItem("sem")
 let section = localStorage.getItem("section")
 
-/* 🔥 FALLBACK FIX (IMPORTANT) */
 if (!department) {
     console.warn("⚠ Department missing, using fallback")
     department = localStorage.getItem("facultyDepartment") || "CSE"
@@ -56,12 +55,7 @@ function initStudents() {
     console.log("🔥 FINAL KEY:", key)
     console.log("📦 AVAILABLE KEYS:", Object.keys(students))
 
-    studentList = students[key]
-
-    if (!studentList) {
-        console.error("❌ No students found for:", key)
-        studentList = []
-    }
+    studentList = students[key] || []
 }
 
 const table = document.getElementById("studentRows")
@@ -113,7 +107,6 @@ function loadStudents() {
 
 <td>
     <span class="percent-text">${percent}%</span>
-
     <div class="bar ${percent < 75 ? "low-bar" : ""}">
         <div class="fill" style="width:${percent}%"></div>
     </div>
@@ -183,10 +176,23 @@ function updateSingleRow(row, input) {
     updateStats()
 }
 
-/* -------- ROW STYLE -------- */
+/* -------- 🔥 FIXED ROW STYLE -------- */
 function updateRowStyle(row, percent, isPresent) {
-    row.style.borderLeft = percent < 75 ? "4px solid #ef4444" : "4px solid transparent"
-    row.style.background = isPresent ? "#f0fdf4" : "#fef2f2"
+
+    /* base dark */
+    row.style.background = "rgba(255,255,255,0.05)"
+    row.style.borderLeft = "4px solid transparent"
+
+    /* absent = subtle red */
+    if (!isPresent) {
+        row.style.borderLeft = "4px solid #ef4444"
+        row.style.background = "rgba(239,68,68,0.08)"
+    }
+
+    /* low attendance warning */
+    if (percent < 75) {
+        row.style.borderLeft = "4px solid #f59e0b"
+    }
 }
 
 /* -------- STATS -------- */
@@ -233,7 +239,7 @@ function calculateTimeRange() {
     if (el) el.innerText = `${format12(start)} - ${format12(end)}`
 }
 
-/* -------- CURRENT TIME (🔥 FIXED) -------- */
+/* -------- CURRENT TIME -------- */
 function updateCurrentTime() {
     const now = new Date()
     let h = now.getHours()
@@ -242,11 +248,7 @@ function updateCurrentTime() {
     h = h % 12 || 12
 
     const el = document.getElementById("currentTime")
-
-    /* 🔥 FIX: use value not innerText */
-    if (el) {
-        el.value = `${h}:${String(m).padStart(2, "0")} ${ampm}`
-    }
+    if (el) el.value = `${h}:${String(m).padStart(2, "0")} ${ampm}`
 }
 
 /* -------- SUBMIT -------- */
@@ -298,7 +300,7 @@ function submitAttendance(btn) {
     }, 600)
 }
 
-/* -------- INIT (🔥 SAFE FIX) -------- */
+/* -------- INIT -------- */
 window.onload = function () {
 
     const today = new Date().toISOString().split("T")[0]
@@ -321,7 +323,7 @@ window.onload = function () {
     }, 100)
 }
 
-/* -------- BACK -------- */
+/* -------- NAV -------- */
 function goBack() {
     window.location.href = "dashboard.html"
 }
