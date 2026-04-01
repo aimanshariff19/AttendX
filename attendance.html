@@ -193,7 +193,6 @@
         tbody tr:hover {
             background: rgba(255, 255, 255, 0.08);
         }
-        
     </style>
 
 </head>
@@ -212,10 +211,6 @@
             </div>
         </div>
 
-        <div style="display:flex; gap:10px; margin-bottom:15px;">
-            <button class="btn" onclick="markAll(true)">Mark All Present</button>
-            <button class="btn" onclick="markAll(false)">Mark All Absent</button>
-        </div>
 
         <!-- COURSE INFO -->
         <div class="card">
@@ -255,6 +250,11 @@
             <div class="time-info">
                 <p><b>Time Range:</b> <span id="timeRange">--</span></p>
             </div>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <button class="btn" onclick="markAll(true)">Mark All Present</button>
+            <button class="btn" onclick="markAll(false)">Mark All Absent</button>
         </div>
 
         <!-- TABLE -->
