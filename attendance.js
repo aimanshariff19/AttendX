@@ -89,7 +89,7 @@ function calculatePercentage(usn, currentStatus = null) {
     return Math.round((present / total) * 100)
 }
 
-/* -------- LOAD STUDENTS (EDITED ONLY HERE) -------- */
+/* -------- LOAD STUDENTS -------- */
 function loadStudents() {
 
     if (!table) return
@@ -120,8 +120,8 @@ function loadStudents() {
 
 <td>
     <div class="attendance-actions">
-        <button class="status-btn present active" onclick="setStatus(this, true)">P</button>
-        <button class="status-btn absent" onclick="setStatus(this, false)">A</button>
+        <button class="status-btn present active" onclick="setStatus(this, true)">Present</button>
+        <button class="status-btn absent" onclick="setStatus(this, false)">Absent</button>
     </div>
 </td>
 `
@@ -130,7 +130,7 @@ function loadStudents() {
     })
 }
 
-/* -------- NEW FUNCTION (ADDED ONLY) -------- */
+/* -------- STATUS UPDATE -------- */
 function setStatus(btn, isPresent) {
 
     const row = btn.closest("tr")
@@ -149,9 +149,14 @@ function setStatus(btn, isPresent) {
 
     if (percentText) percentText.innerText = percent + "%"
     if (fill) fill.style.width = percent + "%"
+
+    // 🔥 row color feedback
+    row.style.background = isPresent
+        ? "rgba(34,197,94,0.08)"
+        : "rgba(239,68,68,0.08)"
 }
 
-/* -------- SUBMIT (EDITED ONLY DATA PART) -------- */
+/* -------- SUBMIT -------- */
 function submitAttendance(btn) {
 
     if (!btn) btn = document.getElementById("submitBtn")
@@ -199,7 +204,7 @@ function editAttendance() {
     }, 200)
 }
 
-/* -------- BULK (EDITED ONLY) -------- */
+/* -------- BULK -------- */
 function markAll(isPresent) {
 
     const btn = event.target.closest(".btn")
@@ -207,16 +212,20 @@ function markAll(isPresent) {
 
     setTimeout(() => {
 
-        document.querySelectorAll(".attendance-actions").forEach(row => {
+        document.querySelectorAll("#studentRows tr").forEach(row => {
 
             const presentBtn = row.querySelector(".present")
             const absentBtn = row.querySelector(".absent")
+
+            if (!presentBtn) return
 
             presentBtn.classList.remove("active")
             absentBtn.classList.remove("active")
 
             if (isPresent) presentBtn.classList.add("active")
             else absentBtn.classList.add("active")
+
+            setStatus(isPresent ? presentBtn : absentBtn, isPresent)
         })
 
         resetBtn(btn)
