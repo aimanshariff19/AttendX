@@ -120,10 +120,12 @@ function initStudents() {
     studentList = students[key] || []
 }
 
-/* -------- % CALC -------- */
+/* -------- 🔥 % CALC (MODIFIED) -------- */
 function calculatePercentage(usn, status) {
-    // simple logic (can upgrade later)
-    return status === "Present" ? 100 : 0
+    // 🔥 basic dynamic logic
+    if (status === "Present") return 100
+    if (status === "Absent") return 0
+    return 100
 }
 
 /* -------- LOAD STUDENTS -------- */
@@ -229,7 +231,7 @@ function submitAttendance(btn) {
     }, 800)
 }
 
-/* -------- BULK -------- */
+/* -------- 🔥 BULK (FIXED %) -------- */
 function markAll(isPresent, e) {
 
     const mainBtn = e.target.closest(".btn")
@@ -261,7 +263,7 @@ function markAll(isPresent, e) {
             const percentText = row.querySelector(".percent-text")
             const fill = row.querySelector(".fill")
 
-            let percent = calculatePercentage("", status)
+            let percent = calculatePercentage(row.children[0].innerText, status)
 
             if (percentText) percentText.innerText = percent + "%"
             if (fill) fill.style.width = percent + "%"
@@ -296,7 +298,6 @@ window.onload = function () {
 
     table = document.getElementById("studentRows")
 
-    // 🔥 LOCK DATE
     const dateInput = document.getElementById("date")
     const today = new Date().toISOString().split("T")[0]
     if (dateInput) {
