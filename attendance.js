@@ -222,3 +222,44 @@ window.onload = function () {
     initStudents()
     loadStudents()
 }
+
+function markAll(isPresent) {
+
+    const mainBtn = event.target.closest(".btn")
+    setBtnLoading(mainBtn, "Updating")
+
+    setTimeout(() => {
+
+        document.querySelectorAll("#studentRows tr").forEach(row => {
+
+            const btn = row.querySelector(".status-btn")
+            if (!btn) return
+
+            // 🔥 RESET FIRST
+            btn.classList.remove("present", "absent", "active")
+
+            if (isPresent) {
+                btn.classList.add("present", "active")
+                btn.innerText = "Present"
+                row.style.background = "rgba(34,197,94,0.08)"
+            } else {
+                btn.classList.add("absent", "active")
+                btn.innerText = "Absent"
+                row.style.background = "rgba(239,68,68,0.08)"
+            }
+
+            // 🔥 UPDATE PERCENT ALSO
+            const percentText = row.querySelector(".percent-text")
+            const fill = row.querySelector(".fill")
+            const usn = row.children[0].innerText
+
+            let percent = calculatePercentage(usn, isPresent ? "Present" : "Absent")
+
+            if (percentText) percentText.innerText = percent + "%"
+            if (fill) fill.style.width = percent + "%"
+        })
+
+        resetBtn(mainBtn)
+
+    }, 400)
+}
