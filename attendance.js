@@ -151,11 +151,17 @@ function updateSingleRow(row, input) {
 /* -------- 🔥 TIME FUNCTIONS -------- */
 function updateCurrentTime() {
     const now = new Date()
-    const h = String(now.getHours()).padStart(2, "0")
+
+    let h = now.getHours()
     const m = String(now.getMinutes()).padStart(2, "0")
 
+    const ampm = h >= 12 ? "PM" : "AM"
+
+    h = h % 12
+    h = h ? h : 12 // 0 becomes 12
+
     const el = document.getElementById("currentTime")
-    if (el) el.value = `${h}:${m}`
+    if (el) el.value = `${h}:${m} ${ampm}`
 }
 
 function calculateTimeRange() {
