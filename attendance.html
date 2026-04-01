@@ -138,33 +138,51 @@
             background: linear-gradient(90deg, #6366f1, #8b5cf6);
         }
 
-        /* 🔥 NEW ATTENDANCE BUTTONS */
+        /* 💎 PREMIUM ATTENDANCE BUTTONS */
         .attendance-actions {
             display: flex;
-            gap: 6px;
+            gap: 8px;
         }
 
         .status-btn {
-            padding: 5px 8px;
-            border: none;
-            border-radius: 6px;
-            font-size: 11px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
             cursor: pointer;
-            background: rgba(255, 255, 255, 0.1);
+            border: none;
             color: white;
-            transition: 0.2s;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(6px);
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         .status-btn:hover {
-            transform: scale(1.05);
+            transform: translateY(-1px) scale(1.05);
+        }
+
+        .status-btn:active {
+            transform: scale(0.95);
         }
 
         .status-btn.present.active {
-            background: #22c55e;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
         }
 
         .status-btn.absent.active {
-            background: #ef4444;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+        }
+
+        .status-btn.active::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 8px;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
+            opacity: 0.4;
         }
 
         .time-info {
