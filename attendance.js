@@ -40,11 +40,23 @@ function getAttendanceRecords(key) {
 
 /* -------- STUDENTS -------- */
 let studentList = []
+
+/* 🔥 FIXED KEY MATCH (MAIN FIX) */
 const classKey = `${department}_${program}_${sem}_${section}`
 
 function initStudents() {
-    if (typeof students !== "undefined") {
-        studentList = students[classKey] || []
+    if (typeof students === "undefined") return
+
+    const key = `${department}_${program}_${sem}_${section}`
+
+    console.log("🔍 Looking for:", key)
+    console.log("📦 Available keys:", Object.keys(students))
+
+    studentList = students[key]
+
+    if (!studentList) {
+        console.error("❌ No students found for:", key)
+        studentList = []
     }
 }
 
@@ -155,7 +167,6 @@ function updateSingleRow(row, input) {
     percentText.innerText = percent + "%"
     fill.style.width = percent + "%"
 
-    /* 🎨 COLOR */
     if (percent >= 85) percentText.style.color = "#22c55e"
     else if (percent >= 75) percentText.style.color = "#f59e0b"
     else percentText.style.color = "#ef4444"
