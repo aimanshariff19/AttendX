@@ -197,13 +197,16 @@ function toggleStatus(btn) {
 
     const isPresent = btn.classList.contains("present")
 
+    // 🔥 RESET
+    btn.classList.remove("present", "absent", "active")
+
     if (isPresent) {
-        btn.classList.remove("present")
-        btn.classList.add("absent")
+        // 👉 switch to Absent
+        btn.classList.add("absent", "active")
         btn.innerText = "Absent"
     } else {
-        btn.classList.remove("absent")
-        btn.classList.add("present")
+        // 👉 switch to Present
+        btn.classList.add("present", "active")
         btn.innerText = "Present"
     }
 
