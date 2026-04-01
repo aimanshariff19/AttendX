@@ -17,7 +17,7 @@ document.addEventListener("click", function (e) {
 
 
 /* -------- LOGIN FUNCTION -------- */
-function studentLogin(e) {
+function login(e) {
 
     if (e) e.preventDefault()
 
@@ -41,47 +41,69 @@ function studentLogin(e) {
         return
     }
 
-    /* DATA CHECK */
-    if (typeof students === "undefined") {
-        error.innerText = "❌ Data not loaded"
-        return
-    }
+    /* PREVENT DOUBLE CLICK */
+    if (btn.classList.contains("loading")) return
 
-    let foundStudent = null
-
-    for (let key in students) {
-        const student = students[key].find(
-            s => s.usn === id && s.password === pass
-        )
-
-        if (student) {
-            foundStudent = student
-            foundStudent.classKey = key
-            break
-        }
-    }
-
-    if (!foundStudent) {
-        error.innerText = "❌ Invalid credentials"
-        shake()
-        return
-    }
-
-    /* SAVE (🔥 CLEAR OLD DATA) */
-    localStorage.clear()
-    localStorage.setItem("studentUSN", foundStudent.usn)
-    localStorage.setItem("studentName", foundStudent.name)
-    localStorage.setItem("studentClass", foundStudent.classKey)
-
-    console.log("✅ Login success", foundStudent)
-
-    /* LOADING */
+    /* 🔥 START LOADING */
     btn.classList.add("loading")
 
+    const text = btn.querySelector(".btn-text")
+    const loader = btn.querySelector(".btn-loader")
+
+    if (text) text.innerText = "Logging in..."
+    if (loader) loader.style.display = "inline-block"
+
     setTimeout(() => {
-        window.location.href = "student-dashboard.html"
+
+        /* DATA CHECK */
+        if (typeof students === "undefined") {
+            error.innerText = "❌ Data not loaded"
+            resetBtn()
+            return
+        }
+
+        let foundStudent = null
+
+        for (let key in students) {
+            const student = students[key].find(
+                s => s.usn === id && s.password === pass
+            )
+
+            if (student) {
+                foundStudent = student
+                foundStudent.classKey = key
+                break
+            }
+        }
+
+        if (!foundStudent) {
+            error.innerText = "❌ Invalid credentials"
+            shake()
+            resetBtn()
+            return
+        }
+
+        /* SAVE */
+        localStorage.clear()
+        localStorage.setItem("studentUSN", foundStudent.usn)
+        localStorage.setItem("studentName", foundStudent.name)
+        localStorage.setItem("studentClass", foundStudent.classKey)
+
+        console.log("✅ Login success", foundStudent)
+
+        /* SUCCESS REDIRECT */
+        setTimeout(() => {
+            window.location.href = "student-dashboard.html"
+        }, 400)
+
     }, 800)
 
+
+    function resetBtn() {
+        btn.classList.remove("loading")
+        if (text) text.innerText = "Login"
+        if (loader) loader.style.display = "none"
+    }
 
     function shake() {
         if (!card) return
@@ -102,17 +124,17 @@ window.addEventListener("load", () => {
     const eye = document.getElementById("eyeIcon")
 
     /* CLICK */
-    if (btn) btn.onclick = studentLogin
+    if (btn) btn.onclick = login
 
     /* FORM SUBMIT */
     if (form) {
-        form.onsubmit = studentLogin
+        form.onsubmit = login
     }
 
-    /* ENTER (ONLY IF INPUT FOCUSED) */
+    /* ENTER */
     document.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && document.activeElement.tagName === "INPUT") {
-            studentLogin(e)
+            login(e)
         }
     })
 
