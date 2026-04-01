@@ -177,10 +177,9 @@ function loadStudents() {
 </td>
 
 <td>
-    <div class="attendance-actions">
-        <button class="status-btn present active" onclick="setStatus(this, true)">Present</button>
-        <button class="status-btn absent" onclick="setStatus(this, false)">Absent</button>
-    </div>
+    <button class="status-btn present active" onclick="toggleStatus(this)">
+        Present
+    </button>
 </td>
 `
 
