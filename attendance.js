@@ -44,6 +44,8 @@ function initStudents() {
     if (typeof students === "undefined") return
 
     const key = `${(department || "").toUpperCase()}_${(program || "").toUpperCase()}_${sem}_${(section || "").toUpperCase()}`
+    console.log("🔥 KEY:", key)
+
     studentList = students[key] || []
 }
 
@@ -127,6 +129,15 @@ function loadStudents() {
         else if (percent >= 75) percentText.style.color = "#f59e0b"
         else percentText.style.color = "#ef4444"
 
+        row.style.opacity = "0"
+        row.style.transform = "translateY(10px)"
+
+        setTimeout(() => {
+            row.style.transition = "0.3s ease"
+            row.style.opacity = "1"
+            row.style.transform = "translateY(0)"
+        }, index * 50)
+
         const input = row.querySelector("input")
         input.addEventListener("change", () => updateSingleRow(row, input))
 
@@ -155,13 +166,88 @@ function updateSingleRow(row, input) {
     else if (percent >= 75) percentText.style.color = "#f59e0b"
     else percentText.style.color = "#ef4444"
 
+    if (percent < 75) fill.parentElement.classList.add("low-bar")
+    else fill.parentElement.classList.remove("low-bar")
+
     statusText.innerText = status
     statusText.style.color = input.checked ? "#22c55e" : "#ef4444"
 
+    updateRowStyle(row, percent, input.checked)
     updateStats()
 }
 
-/* -------- SUBMIT (SPINNER FIXED CLEAN) -------- */
+/* -------- ROW STYLE -------- */
+function updateRowStyle(row, percent, isPresent) {
+
+    row.style.background = "rgba(255,255,255,0.05)"
+    row.style.borderLeft = "4px solid transparent"
+
+    if (!isPresent) {
+        row.style.borderLeft = "4px solid #ef4444"
+        row.style.background = "rgba(239,68,68,0.08)"
+    }
+
+    if (percent < 75) {
+        row.style.borderLeft = "4px solid #f59e0b"
+    }
+}
+
+/* -------- STATS -------- */
+function updateStats() {
+
+    let total = 0
+    let present = 0
+
+    document.querySelectorAll(".toggle-switch input").forEach(input => {
+        total++
+        if (input.checked) present++
+    })
+
+    setText("totalCount", total)
+    setText("presentCount", present)
+    setText("absentCount", total - present)
+}
+
+/* -------- TIME -------- */
+function calculateTimeRange() {
+
+    const startTime = document.getElementById("classTime")?.value
+    const numClasses = parseInt(document.getElementById("numClasses")?.value)
+
+    if (!startTime || !numClasses) return
+
+    let [hour, minute] = startTime.split(":").map(Number)
+
+    let start = new Date()
+    start.setHours(hour, minute, 0)
+
+    let end = new Date(start)
+    end.setMinutes(end.getMinutes() + (numClasses * 60))
+
+    function format12(date) {
+        let h = date.getHours()
+        let m = date.getMinutes()
+        let ampm = h >= 12 ? "PM" : "AM"
+        h = h % 12 || 12
+        return `${h}:${String(m).padStart(2, "0")} ${ampm}`
+    }
+
+    document.getElementById("timeRange").innerText =
+        `${format12(start)} - ${format12(end)}`
+}
+
+function updateCurrentTime() {
+    const now = new Date()
+    let h = now.getHours()
+    let m = now.getMinutes()
+    let ampm = h >= 12 ? "PM" : "AM"
+    h = h % 12 || 12
+
+    document.getElementById("currentTime").value =
+        `${h}:${String(m).padStart(2, "0")} ${ampm}`
+}
+
+/* -------- SUBMIT (FIXED + SPINNER) -------- */
 function submitAttendance(btn) {
 
     if (!btn) btn = document.getElementById("submitBtn")
@@ -175,8 +261,8 @@ function submitAttendance(btn) {
         return
     }
 
-    // 🔥 spinner ON
     btn.classList.add("loading")
+    const original = btn.innerHTML
     btn.innerHTML = "Submitting <span class='btn-spinner'></span>"
 
     setTimeout(() => {
@@ -206,7 +292,6 @@ function submitAttendance(btn) {
             localStorage.setItem(key, JSON.stringify({ data }))
         }
 
-        // 🔥 success
         btn.innerHTML = "✔ Submitted"
 
         setTimeout(() => {

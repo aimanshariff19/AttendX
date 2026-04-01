@@ -195,7 +195,7 @@
             opacity: 0.8;
         }
 
-        /* ===== 🔥 SPINNER ADD ONLY ===== */
+        /* 🔥 ONLY ADD THIS (SPINNER) */
         .btn.loading {
             pointer-events: none;
             opacity: 0.8;
@@ -204,7 +204,7 @@
         .btn-spinner {
             width: 14px;
             height: 14px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255,255,255,0.3);
             border-top: 2px solid white;
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
@@ -220,7 +220,7 @@
         .spinner {
             width: 22px;
             height: 22px;
-            border: 3px solid rgba(255, 255, 255, 0.2);
+            border: 3px solid rgba(255,255,255,0.2);
             border-top: 3px solid #8b5cf6;
             border-radius: 50%;
             animation: spin 0.7s linear infinite;
@@ -228,10 +228,9 @@
         }
 
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
+
     </style>
 
 </head>
@@ -261,14 +260,31 @@
 
         <div class="card">
             <div class="input-grid">
-                <input type="date" id="date">
-                <input type="time" id="classTime">
-                <input type="number" id="numClasses" value="1">
-                <input type="text" id="currentTime" readonly>
+
+                <div class="input-group">
+                    <label>Date</label>
+                    <input type="date" id="date">
+                </div>
+
+                <div class="input-group">
+                    <label>Start Time</label>
+                    <input type="time" id="classTime">
+                </div>
+
+                <div class="input-group">
+                    <label>No. of Classes</label>
+                    <input type="number" id="numClasses" value="1">
+                </div>
+
+                <div class="input-group">
+                    <label>Current Time</label>
+                    <input type="text" id="currentTime" readonly>
+                </div>
+
             </div>
 
             <div class="time-info">
-                <b>Time Range:</b> <span id="timeRange">--</span>
+                <p><b>Time Range:</b> <span id="timeRange">--</span></p>
             </div>
         </div>
 
@@ -288,6 +304,7 @@
                     </tr>
                 </thead>
 
+                <!-- 🔥 ONLY EDITED THIS PART -->
                 <tbody id="studentRows">
                     <tr>
                         <td colspan="4" class="loader-row">
@@ -296,6 +313,7 @@
                         </td>
                     </tr>
                 </tbody>
+
             </table>
         </div>
 
