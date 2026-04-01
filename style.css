@@ -12,7 +12,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-
     overflow: hidden;
 }
 
@@ -27,24 +26,23 @@ body.login-page.student {
 }
 
 /* ===== BACKGROUND GLOW ===== */
-body::before {
-    content: "";
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    top: -120px;
-    left: -120px;
-    filter: blur(120px);
-}
-
+body::before,
 body::after {
     content: "";
     position: absolute;
     width: 500px;
     height: 500px;
+    filter: blur(120px);
+}
+
+body::before {
+    top: -120px;
+    left: -120px;
+}
+
+body::after {
     bottom: -120px;
     right: -120px;
-    filter: blur(120px);
 }
 
 /* FACULTY GLOW */
@@ -70,20 +68,14 @@ body.login-page.student::after {
     width: 380px;
     padding: 40px 30px;
     border-radius: 20px;
-
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(20px);
-
     display: flex;
     flex-direction: column;
     gap: 18px;
-
     border: 1px solid rgba(255, 255, 255, 0.1);
-
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
-
     color: white;
-
     animation: fadeIn 0.6s ease, float 6s ease-in-out infinite;
 }
 
@@ -115,29 +107,17 @@ form {
     gap: 18px;
 }
 
-/* ===== LOGO (FIXED CLEAN) ===== */
+/* ===== LOGO ===== */
 .college-logo {
     width: 65px;
     margin: 0 auto 12px;
-
     filter: brightness(1.2) contrast(1.1);
     opacity: 0.95;
-
     transition: 0.3s ease;
 }
 
 .college-logo:hover {
     transform: scale(1.05);
-}
-
-/* faculty glow */
-body.login-page.faculty .college-logo:hover {
-    filter: brightness(1.4) drop-shadow(0 0 12px rgba(124, 124, 255, 0.6));
-}
-
-/* student glow */
-body.login-page.student .college-logo:hover {
-    filter: brightness(1.4) drop-shadow(0 0 14px rgba(139, 92, 246, 0.7));
 }
 
 /* ===== TEXT ===== */
@@ -158,7 +138,6 @@ body.login-page.student .college-logo:hover {
     text-align: center;
     font-size: 16px;
     font-weight: 700;
-    letter-spacing: 0.5px;
 }
 
 /* ===== INPUT ===== */
@@ -168,43 +147,15 @@ body.login-page.student .college-logo:hover {
     gap: 6px;
 }
 
-.input-group label {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.85);
-}
-
 .input-group input {
     width: 100%;
     padding: 13px 12px;
     border-radius: 12px;
-
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.08);
-
     color: white;
     font-size: 14px;
-
     backdrop-filter: blur(10px);
-    transition: 0.25s;
-}
-
-.input-group input:hover {
-    background: rgba(255, 255, 255, 0.12);
-}
-
-/* ===== FOCUS ===== */
-body.login-page.faculty .input-group input:focus {
-    border-color: #7c7cff;
-    box-shadow:
-        0 0 0 2px rgba(124, 124, 255, 0.2),
-        0 8px 25px rgba(0, 0, 0, 0.4);
-}
-
-body.login-page.student .input-group input:focus {
-    border-color: #8b5cf6;
-    box-shadow:
-        0 0 0 2px rgba(139, 92, 246, 0.25),
-        0 8px 25px rgba(0, 0, 0, 0.4);
 }
 
 /* ===== PASSWORD ===== */
@@ -212,41 +163,12 @@ body.login-page.student .input-group input:focus {
     position: relative;
 }
 
-.password-field input {
-    padding-right: 48px;
-}
-
 .eye {
     position: absolute;
     right: 14px;
     top: 65%;
     transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.7);
     cursor: pointer;
-}
-
-.eye:hover {
-    color: #fff;
-}
-
-/* ===== EXTRA ===== */
-.form-extra {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: #aaa;
-}
-
-.forgot {
-    text-decoration: none;
-}
-
-body.login-page.faculty .forgot {
-    color: #7c7cff;
-}
-
-body.login-page.student .forgot {
-    color: #a78bfa;
 }
 
 /* ===== BUTTON ===== */
@@ -255,14 +177,10 @@ button {
     height: 44px;
     border-radius: 12px;
     border: none;
-
     color: white;
     font-size: 14px;
     font-weight: 600;
-
     cursor: pointer;
-    position: relative;
-    overflow: hidden;
 
     display: flex;
     align-items: center;
@@ -274,48 +192,26 @@ body.login-page.faculty button {
     background: linear-gradient(135deg, #5f5cff, #7c3aed);
 }
 
-body.login-page.faculty button:hover {
-    box-shadow: 0 10px 25px rgba(95, 92, 255, 0.5);
-}
-
-/* STUDENT BTN */
-body.login-page.student button {
-    background: linear-gradient(135deg, #8b5cf6, #6366f1);
-}
-
-body.login-page.student button:hover {
-    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.5);
-}
-
-/* CLICK */
-button:active {
-    transform: scale(0.97);
-}
-
-/* ===== LOADER ===== */
+/* ===== 🔥 FIXED LOADER ===== */
 .btn-loader {
-    opacity: 0;
-    width: 16px;
-    height: 16px;
-
+    display: none;
+    width: 14px;
+    height: 14px;
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-top: 2px solid white;
     border-radius: 50%;
-
-    position: absolute;
-    top: 50%;
-    left: 50%;
-
-    transform: translate(-50%, -50%);
     animation: spin 0.6s linear infinite;
+    margin-left: 8px;
 }
 
-button.loading .btn-text {
-    opacity: 0;
-}
-
+/* ===== 🔥 LOADING STATE ===== */
 button.loading .btn-loader {
-    opacity: 1;
+    display: inline-block;
+}
+
+button.loading {
+    pointer-events: none;
+    opacity: 0.9;
 }
 
 /* ===== ERROR ===== */
@@ -328,7 +224,7 @@ button.loading .btn-loader {
 /* ===== ANIMATIONS ===== */
 @keyframes spin {
     to {
-        transform: translate(-50%, -50%) rotate(360deg);
+        transform: rotate(360deg);
     }
 }
 
