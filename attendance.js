@@ -16,7 +16,7 @@ function resetBtn(btn) {
     btn.innerHTML = btn.dataset.original
 }
 
-/* -------- 🔥 CURRENT TIME (ADDED) -------- */
+/* -------- 🔥 CURRENT TIME -------- */
 function updateCurrentTime() {
     const now = new Date()
 
@@ -31,7 +31,7 @@ function updateCurrentTime() {
     if (el) el.value = `${h}:${m} ${ampm}`
 }
 
-/* -------- 🔥 TIME RANGE (ADDED) -------- */
+/* -------- 🔥 TIME RANGE -------- */
 function calculateTimeRange() {
 
     const start = document.getElementById("classTime")?.value
@@ -62,12 +62,12 @@ function calculateTimeRange() {
     if (el) el.innerText = `${format12(startDate)} - ${format12(endDate)}`
 }
 
-/* -------- CLASS DETAILS -------- */
-let subject = localStorage.getItem("subject")
-let department = localStorage.getItem("department")
-let program = localStorage.getItem("program")
-let sem = localStorage.getItem("sem")
-let section = localStorage.getItem("section")
+/* -------- CLASS DETAILS (FIXED) -------- */
+let subject = localStorage.getItem("subject") || "Data Structures"
+let department = localStorage.getItem("department") || "CSE"
+let program = localStorage.getItem("program") || "CSE"   // 🔥 FIX
+let sem = localStorage.getItem("sem") || "3"
+let section = localStorage.getItem("section") || "A"
 
 if (!department) {
     department = localStorage.getItem("facultyDepartment") || "CSE"
@@ -100,10 +100,22 @@ let studentList = []
 let table = null
 
 function initStudents() {
-    if (typeof students === "undefined") return
 
-    const key = `${(department || "").toUpperCase()}_${(program || "").toUpperCase()}_${sem}_${(section || "").toUpperCase()}`
+    if (typeof students === "undefined") {
+        console.error("❌ students not loaded")
+        return
+    }
+
+    const key = `${department}_${program}_${sem}_${section}`
+
+    console.log("🔥 Using key:", key)
+    console.log("📦 Available keys:", Object.keys(students))
+
     studentList = students[key] || []
+
+    if (studentList.length === 0) {
+        console.warn("⚠ No students found for this key")
+    }
 }
 
 /* -------- % CALC -------- */
@@ -176,7 +188,7 @@ function loadStudents() {
     })
 }
 
-/* -------- STATUS UPDATE -------- */
+/* -------- STATUS -------- */
 function setStatus(btn, isPresent) {
 
     const row = btn.closest("tr")
@@ -199,83 +211,6 @@ function setStatus(btn, isPresent) {
     row.style.background = isPresent
         ? "rgba(34,197,94,0.08)"
         : "rgba(239,68,68,0.08)"
-}
-
-/* -------- SUBMIT -------- */
-function submitAttendance(btn) {
-
-    if (!btn) btn = document.getElementById("submitBtn")
-
-    setBtnLoading(btn, "Submitting")
-
-    setTimeout(() => {
-
-        let data = []
-
-        document.querySelectorAll("#studentRows tr").forEach(row => {
-
-            const presentBtn = row.querySelector(".present")
-            if (!presentBtn) return
-
-            data.push({
-                usn: row.children[0].innerText,
-                status: presentBtn.classList.contains("active") ? "Present" : "Absent"
-            })
-        })
-
-        console.log("Saved:", data)
-
-        window.location.href = "dashboard.html"
-
-    }, 800)
-}
-
-/* -------- NAV -------- */
-function goBack() {
-    const btn = event.target.closest(".btn")
-    setBtnLoading(btn, "Going back")
-
-    setTimeout(() => {
-        window.location.href = "dashboard.html"
-    }, 200)
-}
-
-function editAttendance() {
-    const btn = event.target.closest(".btn")
-    setBtnLoading(btn, "Opening")
-
-    setTimeout(() => {
-        window.location.href = "edit-attendance.html"
-    }, 200)
-}
-
-/* -------- BULK -------- */
-function markAll(isPresent) {
-
-    const btn = event.target.closest(".btn")
-    setBtnLoading(btn, "Updating")
-
-    setTimeout(() => {
-
-        document.querySelectorAll("#studentRows tr").forEach(row => {
-
-            const presentBtn = row.querySelector(".present")
-            const absentBtn = row.querySelector(".absent")
-
-            if (!presentBtn) return
-
-            presentBtn.classList.remove("active")
-            absentBtn.classList.remove("active")
-
-            if (isPresent) presentBtn.classList.add("active")
-            else absentBtn.classList.add("active")
-
-            setStatus(isPresent ? presentBtn : absentBtn, isPresent)
-        })
-
-        resetBtn(btn)
-
-    }, 400)
 }
 
 /* -------- INIT -------- */
