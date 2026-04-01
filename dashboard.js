@@ -23,6 +23,26 @@ document.addEventListener("click", function (e) {
     setTimeout(() => circle.remove(), 600)
 })
 
+/* -------- 🔥 BUTTON LOADING HELPER -------- */
+function setBtnLoading(btn, textValue) {
+    if (!btn) return
+
+    btn.classList.add("loading")
+
+    let text = btn.querySelector("span")
+    if (!text) {
+        text = document.createElement("span")
+        btn.appendChild(text)
+    }
+
+    text.innerText = textValue
+
+    let spinner = document.createElement("span")
+    spinner.className = "btn-spinner"
+
+    btn.appendChild(spinner)
+}
+
 /* -------- FACULTY DETAILS -------- */
 function loadFacultyDetails() {
 
@@ -127,23 +147,24 @@ function loadCourseCards() {
     unique.forEach((course, index) => {
 
         const card = document.createElement("div")
-        card.className = "subject-card"   // ✅ FIXED
+        card.className = "subject-card"
 
         card.innerHTML = `
             <h4>${course.subject}</h4>
             <p>${course.program} • Sem ${course.sem} • Sec ${course.section}</p>
 
             <button>
-                Take Attendance
+                <span>Take Attendance</span>
             </button>
         `
 
-        /* click handler */
-        card.querySelector("button").onclick = () => {
+        /* 🔥 BUTTON SPINNER */
+        card.querySelector("button").onclick = function () {
+            setBtnLoading(this, "Opening...")
             openCourse(course.subject, course.program, course.sem, course.section)
         }
 
-        /* stagger animation */
+        /* animation */
         card.style.opacity = "0"
         card.style.transform = "translateY(20px)"
 
@@ -175,12 +196,11 @@ function openCourse(subject, program, sem, section) {
 }
 
 /* -------- LOGOUT -------- */
-function logout(e) {
+function logout(btn) {
 
-    const btn = e?.target || document.querySelector(".logout-btn")
+    if (!btn) btn = document.querySelector(".logout-btn")
 
-    btn.classList.add("loading")
-    btn.innerText = ""
+    setBtnLoading(btn, "Logging out...")
 
     setTimeout(() => {
 
@@ -204,7 +224,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return
     }
 
-    /* slight delay → premium feel */
     setTimeout(() => {
         loadFacultyDetails()
         loadTodaySchedule()
