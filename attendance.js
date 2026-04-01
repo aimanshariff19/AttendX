@@ -24,7 +24,6 @@ let sem = localStorage.getItem("sem")
 let section = localStorage.getItem("section")
 
 if (!department) {
-    console.warn("⚠ Department missing, using fallback")
     department = localStorage.getItem("facultyDepartment") || "CSE"
 }
 
@@ -52,17 +51,14 @@ function getAttendanceRecords(key) {
 
 /* -------- STUDENTS -------- */
 let studentList = []
+let table = null // 🔥 fix
 
 function initStudents() {
     if (typeof students === "undefined") return
 
     const key = `${(department || "").toUpperCase()}_${(program || "").toUpperCase()}_${sem}_${(section || "").toUpperCase()}`
-    console.log("🔥 KEY:", key)
-
     studentList = students[key] || []
 }
-
-const table = document.getElementById("studentRows")
 
 /* -------- % CALC -------- */
 function calculatePercentage(usn, currentStatus = null) {
@@ -98,14 +94,10 @@ function loadStudents() {
 
     if (!table) return
 
-    // 🔥 clear loader
     table.innerHTML = ""
 
     if (studentList.length === 0) {
-        table.innerHTML = `
-        <tr>
-            <td colspan="4" class="empty">No students found</td>
-        </tr>`
+        table.innerHTML = `<tr><td colspan="4">No students</td></tr>`
         return
     }
 
@@ -121,19 +113,16 @@ function loadStudents() {
 
 <td>
     <span class="percent-text">${percent}%</span>
-    <div class="bar ${percent < 75 ? "low-bar" : ""}">
+    <div class="bar">
         <div class="fill" style="width:${percent}%"></div>
     </div>
 </td>
 
 <td>
-    <div style="display:flex;align-items:center;gap:10px;">
-        <label class="toggle-switch">
-            <input type="checkbox" data-usn="${student.usn}" checked>
-            <span class="slider"></span>
-        </label>
-        <span class="status-text" style="font-size:12px;color:#22c55e;">Present</span>
-    </div>
+    <label class="toggle-switch">
+        <input type="checkbox" data-usn="${student.usn}" checked>
+        <span class="slider"></span>
+    </label>
 </td>
 `
 
@@ -142,8 +131,6 @@ function loadStudents() {
 
         table.appendChild(row)
     })
-
-    updateStats()
 }
 
 /* -------- UPDATE ROW -------- */
@@ -151,7 +138,6 @@ function updateSingleRow(row, input) {
 
     const usn = input.dataset.usn
     const percentText = row.querySelector(".percent-text")
-    const statusText = row.querySelector(".status-text")
     const fill = row.querySelector(".fill")
 
     const status = input.checked ? "Present" : "Absent"
@@ -160,11 +146,38 @@ function updateSingleRow(row, input) {
 
     percentText.innerText = percent + "%"
     fill.style.width = percent + "%"
+}
 
-    statusText.innerText = status
-    statusText.style.color = input.checked ? "#22c55e" : "#ef4444"
+/* -------- 🔥 TIME FUNCTIONS -------- */
+function updateCurrentTime() {
+    const now = new Date()
+    const h = String(now.getHours()).padStart(2, "0")
+    const m = String(now.getMinutes()).padStart(2, "0")
 
-    updateStats()
+    const el = document.getElementById("currentTime")
+    if (el) el.value = `${h}:${m}`
+}
+
+function calculateTimeRange() {
+
+    const start = document.getElementById("classTime")?.value
+    const num = parseInt(document.getElementById("numClasses")?.value)
+
+    if (!start || !num) return
+
+    let [h, m] = start.split(":").map(Number)
+
+    let startDate = new Date()
+    startDate.setHours(h, m)
+
+    let endDate = new Date(startDate)
+    endDate.setMinutes(endDate.getMinutes() + num * 60)
+
+    const format = (d) =>
+        `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`
+
+    const el = document.getElementById("timeRange")
+    if (el) el.innerText = `${format(startDate)} - ${format(endDate)}`
 }
 
 /* -------- SUBMIT -------- */
@@ -172,68 +185,11 @@ function submitAttendance(btn) {
 
     if (!btn) btn = document.getElementById("submitBtn")
 
-    const date = document.getElementById("date")?.value
-    const startTime = document.getElementById("classTime")?.value
-    const numClasses = parseInt(document.getElementById("numClasses")?.value)
-
-    if (!date || !startTime) {
-        alert("Fill date & time")
-        return
-    }
-
-    if (btn.classList.contains("loading")) return
-
     setBtnLoading(btn, "Submitting")
 
     setTimeout(() => {
-
-        let [hour, minute] = startTime.split(":").map(Number)
-        const base = getBaseKey()
-
-        for (let i = 0; i < numClasses; i++) {
-
-            let timeObj = new Date()
-            timeObj.setHours(hour, minute + (i * 60))
-
-            const formattedTime =
-                `${String(timeObj.getHours()).padStart(2, "0")}:${String(timeObj.getMinutes()).padStart(2, "0")}`
-
-            const key = `${base}_${date}_${formattedTime}`
-
-            let data = []
-
-            document.querySelectorAll(".toggle-switch input").forEach(input => {
-                data.push({
-                    usn: input.dataset.usn,
-                    status: input.checked ? "Present" : "Absent"
-                })
-            })
-
-            localStorage.setItem(key, JSON.stringify({ data }))
-        }
-
-        // 🔥 direct redirect (no "Done")
         window.location.href = "dashboard.html"
-
     }, 800)
-}
-
-/* -------- INIT -------- */
-window.onload = function () {
-
-    const today = new Date().toISOString().split("T")[0]
-    document.getElementById("date").value = today
-
-    updateCurrentTime()
-    setInterval(updateCurrentTime, 1000)
-
-    document.getElementById("classTime")?.addEventListener("change", calculateTimeRange)
-    document.getElementById("numClasses")?.addEventListener("change", calculateTimeRange)
-
-    setTimeout(() => {
-        initStudents()
-        loadStudents()
-    }, 100) // 🔥 FIXED
 }
 
 /* -------- NAV -------- */
@@ -265,10 +221,27 @@ function markAll(isPresent) {
 
         document.querySelectorAll(".toggle-switch input").forEach(input => {
             input.checked = isPresent
-            updateSingleRow(input.closest("tr"), input)
         })
 
         resetBtn(btn)
 
     }, 400)
+}
+
+/* -------- INIT -------- */
+window.onload = function () {
+
+    table = document.getElementById("studentRows")
+
+    const today = new Date().toISOString().split("T")[0]
+    document.getElementById("date").value = today
+
+    updateCurrentTime()
+    setInterval(updateCurrentTime, 1000)
+
+    document.getElementById("classTime")?.addEventListener("change", calculateTimeRange)
+    document.getElementById("numClasses")?.addEventListener("change", calculateTimeRange)
+
+    initStudents()
+    loadStudents()
 }
