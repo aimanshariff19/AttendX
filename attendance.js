@@ -342,3 +342,24 @@ function markAll(isPresent) {
         updateSingleRow(row, input)
     })
 }
+
+function submitAttendance(btn) {
+
+            btn.classList.add("loading")
+            const original = btn.innerHTML
+
+            btn.innerHTML = "Submitting <span class='btn-spinner'></span>"
+
+            setTimeout(() => {
+
+                console.log("Submitted")
+
+                btn.classList.remove("loading")
+                btn.innerHTML = "✔ Submitted"
+
+                setTimeout(() => {
+                    btn.innerHTML = original
+                }, 1500)
+
+            }, 1500)
+        }

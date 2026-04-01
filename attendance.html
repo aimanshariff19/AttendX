@@ -30,7 +30,7 @@
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
         }
 
-        /* ===== HEADER FIX ===== */
+        /* ===== HEADER ===== */
         .header {
             display: flex;
             flex-direction: column;
@@ -44,16 +44,11 @@
             align-items: center;
         }
 
-        .header-top h1 {
-            font-size: 28px;
-            font-weight: 600;
-        }
-
         .back-btn {
             align-self: flex-start;
         }
 
-        /* BUTTON */
+        /* ===== BUTTON ===== */
         .btn {
             padding: 8px 14px;
             border-radius: 8px;
@@ -70,12 +65,29 @@
             transform: scale(1.05);
         }
 
+        .btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .btn-spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: inline-block;
+            margin-left: 8px;
+        }
+
         #submitBtn {
             display: block;
             margin: 20px auto 0;
             padding: 10px 20px;
         }
 
+        /* ===== CARD ===== */
         .card {
             background: rgba(255, 255, 255, 0.06);
             padding: 16px;
@@ -89,35 +101,25 @@
             gap: 10px;
         }
 
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            font-size: 13px;
-        }
-
         .input-group input {
             margin-top: 4px;
             padding: 9px;
             border-radius: 8px;
             border: none;
-            outline: none;
             background: rgba(255, 255, 255, 0.15);
             color: white;
-            max-width: 260px;
         }
 
-        /* ===== TABLE FIX (REAL BORDERS) ===== */
+        /* ===== TABLE ===== */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
         }
 
         th,
         td {
             border: 1px solid rgba(255, 255, 255, 0.15);
             padding: 12px;
-            text-align: left;
         }
 
         th {
@@ -128,65 +130,26 @@
             background: rgba(255, 255, 255, 0.05);
         }
 
-        .empty {
+        /* ===== LOADER ===== */
+        .loader-row {
             text-align: center;
             padding: 20px;
-            opacity: 0.7;
         }
 
-        .bar {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            margin-top: 6px;
-        }
-
-        .fill {
-            height: 100%;
-            border-radius: 10px;
-            background: linear-gradient(90deg, #6366f1, #8b5cf6);
-        }
-
-        .low-bar .fill {
-            background: linear-gradient(90deg, #ef4444, #f87171);
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 36px;
-            height: 18px;
-        }
-
-        .toggle-switch input {
-            display: none;
-        }
-
-        .slider {
-            position: absolute;
-            inset: 0;
-            background: #ccc;
-            border-radius: 20px;
-        }
-
-        .slider::before {
-            content: "";
-            position: absolute;
-            height: 14px;
-            width: 14px;
-            left: 2px;
-            top: 2px;
-            background: white;
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top: 3px solid #8b5cf6;
             border-radius: 50%;
-            transition: .3s;
+            animation: spin 0.7s linear infinite;
+            margin: auto;
         }
 
-        input:checked+.slider {
-            background: #22c55e;
-            box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
-        }
-
-        input:checked+.slider::before {
-            transform: translateX(18px);
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .time-info {
@@ -202,7 +165,7 @@
 
     <div class="dashboard">
 
-        <!-- ✅ NEW HEADER -->
+        <!-- HEADER -->
         <div class="header">
 
             <div class="header-top">
@@ -226,31 +189,14 @@
         <!-- DATE -->
         <div class="card">
             <div class="input-grid">
-
-                <div class="input-group">
-                    <label>Date</label>
-                    <input type="date" id="date">
-                </div>
-
-                <div class="input-group">
-                    <label>Start Time</label>
-                    <input type="time" id="classTime">
-                </div>
-
-                <div class="input-group">
-                    <label>No. of Classes</label>
-                    <input type="number" id="numClasses" value="1">
-                </div>
-
-                <div class="input-group">
-                    <label>Current Time</label>
-                    <input type="text" id="currentTime" readonly>
-                </div>
-
+                <input type="date" id="date">
+                <input type="time" id="classTime">
+                <input type="number" id="numClasses" value="1">
+                <input type="text" id="currentTime" readonly>
             </div>
 
             <div class="time-info">
-                <p><b>Time Range:</b> <span id="timeRange">--</span></p>
+                <b>Time Range:</b> <span id="timeRange">--</span>
             </div>
         </div>
 
@@ -274,7 +220,10 @@
 
                 <tbody id="studentRows">
                     <tr>
-                        <td colspan="4" class="empty">Loading students...</td>
+                        <td colspan="4" class="loader-row">
+                            <div class="spinner"></div>
+                            <p>Loading students...</p>
+                        </td>
                     </tr>
                 </tbody>
             </table>
