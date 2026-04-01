@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <title>AttendX / Take Attendance</title>
 
+    <link rel="icon" href="assets/logo.png">
+
     <style>
         * {
             margin: 0;
@@ -52,6 +54,33 @@
             margin-bottom: 18px;
         }
 
+        /* 🔥 INPUT GRID */
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            font-size: 13px;
+        }
+
+        .input-group input {
+            margin-top: 4px;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
         table {
             width: 100%;
             border-collapse: separate;
@@ -64,16 +93,10 @@
             opacity: 0.8;
         }
 
-        tbody tr {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-        }
-
         tbody td {
             padding: 14px;
         }
 
-        /* 🔥 EMPTY STATE */
         .empty {
             text-align: center;
             padding: 20px;
@@ -96,10 +119,6 @@
 
         .low-bar .fill {
             background: linear-gradient(90deg, #ef4444, #f87171);
-        }
-
-        .percent-text {
-            font-weight: 600;
         }
 
         .toggle-switch {
@@ -138,6 +157,12 @@
         input:checked+.slider::before {
             transform: translateX(18px);
         }
+
+        .time-info {
+            margin-top: 10px;
+            font-size: 13px;
+            opacity: 0.8;
+        }
     </style>
 
 </head>
@@ -151,6 +176,7 @@
             <button class="btn" onclick="goBack()">← Back</button>
         </div>
 
+        <!-- COURSE INFO -->
         <div class="card">
             <p><b>Course:</b> <span id="subject"></span></p>
             <p><b>Department:</b> <span id="department"></span></p>
@@ -159,6 +185,40 @@
             <p><b>Section:</b> <span id="section"></span></p>
         </div>
 
+        <!-- 🔥 DATE + TIME CONTROLS -->
+        <div class="card">
+
+            <div class="input-grid">
+
+                <div class="input-group">
+                    <label>Date</label>
+                    <input type="date" id="date">
+                </div>
+
+                <div class="input-group">
+                    <label>Start Time</label>
+                    <input type="time" id="classTime">
+                </div>
+
+                <div class="input-group">
+                    <label>No. of Classes</label>
+                    <input type="number" id="numClasses" min="1" max="8" value="1">
+                </div>
+
+                <div class="input-group">
+                    <label>Current Time</label>
+                    <input type="text" id="currentTime" readonly>
+                </div>
+
+            </div>
+
+            <div class="time-info">
+                <p><b>Time Range:</b> <span id="timeRange">--</span></p>
+            </div>
+
+        </div>
+
+        <!-- TABLE -->
         <div class="card">
             <table>
                 <thead>
@@ -171,7 +231,6 @@
                 </thead>
 
                 <tbody id="studentRows">
-                    <!-- 🔥 fallback if JS fails -->
                     <tr>
                         <td colspan="4" class="empty">
                             Loading students...
