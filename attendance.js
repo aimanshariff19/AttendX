@@ -179,11 +179,20 @@ function calculateTimeRange() {
     let endDate = new Date(startDate)
     endDate.setMinutes(endDate.getMinutes() + num * 60)
 
-    const format = (d) =>
-        `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`
+    // 🔥 12hr format function
+    const format12 = (d) => {
+        let hr = d.getHours()
+        const min = String(d.getMinutes()).padStart(2, "0")
+        const ampm = hr >= 12 ? "PM" : "AM"
+
+        hr = hr % 12
+        hr = hr ? hr : 12
+
+        return `${hr}:${min} ${ampm}`
+    }
 
     const el = document.getElementById("timeRange")
-    if (el) el.innerText = `${format(startDate)} - ${format(endDate)}`
+    if (el) el.innerText = `${format12(startDate)} - ${format12(endDate)}`
 }
 
 /* -------- SUBMIT -------- */
