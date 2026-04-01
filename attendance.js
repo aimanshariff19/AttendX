@@ -3,7 +3,7 @@ function normalize(str) {
     return (str || "").toString().toLowerCase().replace(/\s+/g, "")
 }
 
-/* -------- 🔥 BUTTON SPINNER (ADDED) -------- */
+/* -------- 🔥 BUTTON SPINNER -------- */
 function setBtnLoading(btn, text) {
     if (!btn || btn.classList.contains("loading")) return
     btn.dataset.original = btn.innerHTML
@@ -11,17 +11,9 @@ function setBtnLoading(btn, text) {
     btn.innerHTML = `${text} <span class="btn-spinner"></span>`
 }
 
-function resetBtn(btn, redirect = null) {
-    btn.innerHTML = "✔ Done"
-
-    setTimeout(() => {
-        if (redirect) {
-            window.location.href = redirect
-        } else {
-            btn.classList.remove("loading")
-            btn.innerHTML = btn.dataset.original
-        }
-    }, 700)
+function resetBtn(btn) {
+    btn.classList.remove("loading")
+    btn.innerHTML = btn.dataset.original
 }
 
 /* -------- CLASS DETAILS -------- */
@@ -106,6 +98,9 @@ function loadStudents() {
 
     if (!table) return
 
+    // 🔥 clear loader
+    table.innerHTML = ""
+
     if (studentList.length === 0) {
         table.innerHTML = `
         <tr>
@@ -114,9 +109,7 @@ function loadStudents() {
         return
     }
 
-    table.innerHTML = ""
-
-    studentList.forEach((student, index) => {
+    studentList.forEach((student) => {
 
         let percent = calculatePercentage(student.usn, "Present")
 
@@ -174,7 +167,7 @@ function updateSingleRow(row, input) {
     updateStats()
 }
 
-/* -------- SUBMIT (EDITED) -------- */
+/* -------- SUBMIT -------- */
 function submitAttendance(btn) {
 
     if (!btn) btn = document.getElementById("submitBtn")
@@ -219,7 +212,8 @@ function submitAttendance(btn) {
             localStorage.setItem(key, JSON.stringify({ data }))
         }
 
-        resetBtn(btn, "dashboard.html")
+        // 🔥 direct redirect (no "Done")
+        window.location.href = "dashboard.html"
 
     }, 800)
 }
@@ -239,36 +233,42 @@ window.onload = function () {
     setTimeout(() => {
         initStudents()
         loadStudents()
-    }, 300)
+    }, 100) // 🔥 FIXED
 }
 
-/* -------- NAV (EDITED) -------- */
+/* -------- NAV -------- */
 function goBack() {
     const btn = event.target.closest(".btn")
     setBtnLoading(btn, "Going back")
-    resetBtn(btn, "dashboard.html")
+
+    setTimeout(() => {
+        window.location.href = "dashboard.html"
+    }, 200)
 }
 
 function editAttendance() {
     const btn = event.target.closest(".btn")
     setBtnLoading(btn, "Opening")
-    resetBtn(btn, "edit-attendance.html")
+
+    setTimeout(() => {
+        window.location.href = "edit-attendance.html"
+    }, 200)
 }
 
-/* -------- BULK (EDITED) -------- */
+/* -------- BULK -------- */
 function markAll(isPresent) {
 
     const btn = event.target.closest(".btn")
     setBtnLoading(btn, "Updating")
 
     setTimeout(() => {
+
         document.querySelectorAll(".toggle-switch input").forEach(input => {
             input.checked = isPresent
             updateSingleRow(input.closest("tr"), input)
         })
 
-        btn.classList.remove("loading")
-        btn.innerHTML = btn.dataset.original
+        resetBtn(btn)
 
     }, 400)
 }
