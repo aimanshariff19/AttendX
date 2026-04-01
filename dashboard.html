@@ -11,7 +11,6 @@
         body {
             margin: 0;
             font-family: 'Inter', sans-serif;
-
             background: linear-gradient(135deg, #0f172a, #1e293b);
             color: white;
         }
@@ -43,20 +42,14 @@
         .dashboard {
             position: relative;
             z-index: 2;
-
             max-width: 1100px;
             margin: 40px auto;
             padding: 30px;
-
             border-radius: 20px;
-
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
-
             border: 1px solid rgba(255, 255, 255, 0.1);
-
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
-
             animation: fadeIn 0.6s ease;
         }
 
@@ -78,10 +71,8 @@
             padding: 10px 18px;
             border-radius: 12px;
             border: none;
-
             background: linear-gradient(135deg, #5f5cff, #7c3aed);
             color: white;
-
             cursor: pointer;
             transition: 0.3s;
         }
@@ -115,9 +106,7 @@
             padding: 18px;
             border-radius: 16px;
             text-align: center;
-
             border: 1px solid rgba(255, 255, 255, 0.1);
-
             transition: 0.3s;
         }
 
@@ -141,7 +130,6 @@
             padding: 18px;
             border-radius: 16px;
             margin-bottom: 25px;
-
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
@@ -156,9 +144,7 @@
             background: rgba(255, 255, 255, 0.05);
             padding: 20px;
             border-radius: 16px;
-
             border: 1px solid rgba(255, 255, 255, 0.1);
-
             transition: 0.3s;
         }
 
@@ -182,20 +168,39 @@
             padding: 10px 16px;
             border-radius: 10px;
             border: none;
-
             background: linear-gradient(135deg, #5f5cff, #7c3aed);
             color: white;
             font-weight: 600;
-
             cursor: pointer;
             transition: 0.3s;
-
             width: 100%;
         }
 
         button:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(95, 92, 255, 0.5);
+        }
+
+        /* ===== 🔥 LOADING SYSTEM (ADDED) ===== */
+        button.loading {
+            pointer-events: none;
+            opacity: 0.9;
+        }
+
+        .btn-spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* ===== ANIMATION ===== */
@@ -220,7 +225,11 @@
         <!-- HEADER -->
         <div class="header-actions">
             <h1>AttendX / Faculty Dashboard</h1>
-            <button class="logout-btn" onclick="logout()">Logout</button>
+
+            <!-- 🔥 MODIFIED -->
+            <button class="logout-btn" onclick="logout(this)">
+                <span>Logout</span>
+            </button>
         </div>
 
         <!-- PROFILE -->
@@ -265,7 +274,11 @@
             <div class="subject-card">
                 <h4>Data Structures</h4>
                 <p>CSE • Sem 3 • Sec A</p>
-                <button>Take Attendance</button>
+
+                <!-- 🔥 READY FOR SPINNER -->
+                <button onclick="openAttendance(this)">
+                    <span>Take Attendance</span>
+                </button>
             </div>
         </div>
 
