@@ -40,20 +40,11 @@ function getAttendanceRecords(key) {
 /* -------- STUDENTS -------- */
 let studentList = []
 
-const classKey = `${department}_${program}_${sem}_${section}`
-
 function initStudents() {
     if (typeof students === "undefined") return
 
-    const dept = (department || "").trim().toUpperCase()
-    const prog = (program || "").trim().toUpperCase()
-    const s = (sem || "").toString().trim()
-    const sec = (section || "").trim().toUpperCase()
-
-    const key = `${dept}_${prog}_${s}_${sec}`
-
-    console.log("🔥 FINAL KEY:", key)
-    console.log("📦 AVAILABLE KEYS:", Object.keys(students))
+    const key = `${(department || "").toUpperCase()}_${(program || "").toUpperCase()}_${sem}_${(section || "").toUpperCase()}`
+    console.log("🔥 KEY:", key)
 
     studentList = students[key] || []
 }
@@ -91,7 +82,16 @@ function calculatePercentage(usn, currentStatus = null) {
 
 /* -------- LOAD STUDENTS -------- */
 function loadStudents() {
-    if (!table || studentList.length === 0) return
+
+    if (!table) return
+
+    if (studentList.length === 0) {
+        table.innerHTML = `
+        <tr>
+            <td colspan="4" class="empty">No students found</td>
+        </tr>`
+        return
+    }
 
     table.innerHTML = ""
 
@@ -136,7 +136,7 @@ function loadStudents() {
             row.style.transition = "0.3s ease"
             row.style.opacity = "1"
             row.style.transform = "translateY(0)"
-        }, index * 60)
+        }, index * 50)
 
         const input = row.querySelector("input")
         input.addEventListener("change", () => updateSingleRow(row, input))
@@ -176,20 +176,17 @@ function updateSingleRow(row, input) {
     updateStats()
 }
 
-/* -------- 🔥 FIXED ROW STYLE -------- */
+/* -------- ROW STYLE -------- */
 function updateRowStyle(row, percent, isPresent) {
 
-    /* base dark */
     row.style.background = "rgba(255,255,255,0.05)"
     row.style.borderLeft = "4px solid transparent"
 
-    /* absent = subtle red */
     if (!isPresent) {
         row.style.borderLeft = "4px solid #ef4444"
         row.style.background = "rgba(239,68,68,0.08)"
     }
 
-    /* low attendance warning */
     if (percent < 75) {
         row.style.borderLeft = "4px solid #f59e0b"
     }
@@ -211,7 +208,7 @@ function updateStats() {
     setText("absentCount", total - present)
 }
 
-/* -------- TIME RANGE -------- */
+/* -------- TIME -------- */
 function calculateTimeRange() {
 
     const startTime = document.getElementById("classTime")?.value
@@ -235,11 +232,10 @@ function calculateTimeRange() {
         return `${h}:${String(m).padStart(2, "0")} ${ampm}`
     }
 
-    const el = document.getElementById("timeRange")
-    if (el) el.innerText = `${format12(start)} - ${format12(end)}`
+    document.getElementById("timeRange").innerText =
+        `${format12(start)} - ${format12(end)}`
 }
 
-/* -------- CURRENT TIME -------- */
 function updateCurrentTime() {
     const now = new Date()
     let h = now.getHours()
@@ -247,11 +243,11 @@ function updateCurrentTime() {
     let ampm = h >= 12 ? "PM" : "AM"
     h = h % 12 || 12
 
-    const el = document.getElementById("currentTime")
-    if (el) el.value = `${h}:${String(m).padStart(2, "0")} ${ampm}`
+    document.getElementById("currentTime").value =
+        `${h}:${String(m).padStart(2, "0")} ${ampm}`
 }
 
-/* -------- SUBMIT -------- */
+/* -------- SUBMIT (FIXED + SPINNER) -------- */
 function submitAttendance(btn) {
 
     if (!btn) btn = document.getElementById("submitBtn")
@@ -266,6 +262,8 @@ function submitAttendance(btn) {
     }
 
     btn.classList.add("loading")
+    const original = btn.innerHTML
+    btn.innerHTML = "Submitting <span class='btn-spinner'></span>"
 
     setTimeout(() => {
 
@@ -294,33 +292,31 @@ function submitAttendance(btn) {
             localStorage.setItem(key, JSON.stringify({ data }))
         }
 
-        btn.classList.remove("loading")
-        window.location.href = "dashboard.html"
+        btn.innerHTML = "✔ Submitted"
 
-    }, 600)
+        setTimeout(() => {
+            window.location.href = "dashboard.html"
+        }, 800)
+
+    }, 800)
 }
 
 /* -------- INIT -------- */
 window.onload = function () {
 
     const today = new Date().toISOString().split("T")[0]
-
-    const dateInput = document.getElementById("date")
-    if (dateInput) dateInput.value = today
+    document.getElementById("date").value = today
 
     updateCurrentTime()
     setInterval(updateCurrentTime, 1000)
 
-    const classTime = document.getElementById("classTime")
-    const numClasses = document.getElementById("numClasses")
-
-    if (classTime) classTime.addEventListener("change", calculateTimeRange)
-    if (numClasses) numClasses.addEventListener("change", calculateTimeRange)
+    document.getElementById("classTime")?.addEventListener("change", calculateTimeRange)
+    document.getElementById("numClasses")?.addEventListener("change", calculateTimeRange)
 
     setTimeout(() => {
         initStudents()
         loadStudents()
-    }, 100)
+    }, 300)
 }
 
 /* -------- NAV -------- */
@@ -332,34 +328,11 @@ function editAttendance() {
     window.location.href = "edit-attendance.html"
 }
 
-/* ⚡ BULK MARK */
+/* -------- BULK -------- */
 function markAll(isPresent) {
 
     document.querySelectorAll(".toggle-switch input").forEach(input => {
         input.checked = isPresent
-
-        const row = input.closest("tr")
-        updateSingleRow(row, input)
+        updateSingleRow(input.closest("tr"), input)
     })
 }
-
-function submitAttendance(btn) {
-
-            btn.classList.add("loading")
-            const original = btn.innerHTML
-
-            btn.innerHTML = "Submitting <span class='btn-spinner'></span>"
-
-            setTimeout(() => {
-
-                console.log("Submitted")
-
-                btn.classList.remove("loading")
-                btn.innerHTML = "✔ Submitted"
-
-                setTimeout(() => {
-                    btn.innerHTML = original
-                }, 1500)
-
-            }, 1500)
-        }
