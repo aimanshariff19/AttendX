@@ -236,35 +236,28 @@ function submitAttendance(btn) {
     if (!btn) btn = document.getElementById("submitBtn")
 
     const time = document.getElementById("classTime")?.value
+    const date = document.getElementById("date")?.value
 
+    // ❌ DATE NOT SELECTED
+    if (!date) {
+        triggerShake(document.getElementById("date"))
+        triggerShake(btn)
+
+        showError("Select Date")
+        return
+    }
+
+    // ❌ TIME NOT SELECTED
     if (!time) {
         triggerShake(document.getElementById("classTime"))
         triggerShake(btn)
+
+        showError("Select Time")
         return
     }
 
     setBtnLoading(btn, "Submitting")
 
-    setTimeout(() => {
-
-        let data = []
-
-        document.querySelectorAll("#studentRows tr").forEach(row => {
-
-            const btn = row.querySelector(".status-btn")
-            if (!btn) return
-
-            data.push({
-                usn: row.children[0].innerText,
-                status: btn.classList.contains("present") ? "Present" : "Absent"
-            })
-        })
-
-        console.log("Saved:", data)
-
-        window.location.href = "dashboard.html"
-
-    }, 800)
 }
 
 /* -------- INIT -------- */
@@ -283,4 +276,32 @@ window.onload = function () {
 
     initStudents()
     loadStudents()
+}
+
+function showError(msg) {
+
+    let box = document.getElementById("errorBox")
+
+    if (!box) {
+        box = document.createElement("div")
+        box.id = "errorBox"
+        box.style.position = "fixed"
+        box.style.top = "20px"
+        box.style.left = "50%"
+        box.style.transform = "translateX(-50%)"
+        box.style.background = "#ef4444"
+        box.style.color = "white"
+        box.style.padding = "10px 16px"
+        box.style.borderRadius = "8px"
+        box.style.fontSize = "13px"
+        box.style.zIndex = "999"
+        document.body.appendChild(box)
+    }
+
+    box.innerText = msg
+    box.style.display = "block"
+
+    setTimeout(() => {
+        box.style.display = "none"
+    }, 2000)
 }
