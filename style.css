@@ -115,17 +115,29 @@ form {
     gap: 18px;
 }
 
-/* ===== LOGO ===== */
+/* ===== LOGO (FIXED CLEAN) ===== */
 .college-logo {
     width: 65px;
     margin: 0 auto 12px;
+
     filter: brightness(1.2) contrast(1.1);
     opacity: 0.95;
+
     transition: 0.3s ease;
 }
 
 .college-logo:hover {
     transform: scale(1.05);
+}
+
+/* faculty glow */
+body.login-page.faculty .college-logo:hover {
+    filter: brightness(1.4) drop-shadow(0 0 12px rgba(124, 124, 255, 0.6));
+}
+
+/* student glow */
+body.login-page.student .college-logo:hover {
+    filter: brightness(1.4) drop-shadow(0 0 14px rgba(139, 92, 246, 0.7));
 }
 
 /* ===== TEXT ===== */
@@ -156,13 +168,85 @@ form {
     gap: 6px;
 }
 
+.input-group label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
 .input-group input {
     width: 100%;
     padding: 13px 12px;
     border-radius: 12px;
+
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.08);
+
     color: white;
+    font-size: 14px;
+
+    backdrop-filter: blur(10px);
+    transition: 0.25s;
+}
+
+.input-group input:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* ===== FOCUS ===== */
+body.login-page.faculty .input-group input:focus {
+    border-color: #7c7cff;
+    box-shadow:
+        0 0 0 2px rgba(124, 124, 255, 0.2),
+        0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+body.login-page.student .input-group input:focus {
+    border-color: #8b5cf6;
+    box-shadow:
+        0 0 0 2px rgba(139, 92, 246, 0.25),
+        0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* ===== PASSWORD ===== */
+.password-field {
+    position: relative;
+}
+
+.password-field input {
+    padding-right: 48px;
+}
+
+.eye {
+    position: absolute;
+    right: 14px;
+    top: 65%;
+    transform: translateY(-50%);
+    color: rgba(14, 14, 14, 0.7);
+    cursor: pointer;
+}
+
+.eye:hover {
+    color: #fff;
+}
+
+/* ===== EXTRA ===== */
+.form-extra {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #aaa;
+}
+
+.forgot {
+    text-decoration: none;
+}
+
+body.login-page.faculty .forgot {
+    color: #7c7cff;
+}
+
+body.login-page.student .forgot {
+    color: #a78bfa;
 }
 
 /* ===== BUTTON ===== */
@@ -190,9 +274,17 @@ body.login-page.faculty button {
     background: linear-gradient(135deg, #5f5cff, #7c3aed);
 }
 
+body.login-page.faculty button:hover {
+    box-shadow: 0 10px 25px rgba(95, 92, 255, 0.5);
+}
+
 /* STUDENT BTN */
 body.login-page.student button {
     background: linear-gradient(135deg, #8b5cf6, #6366f1);
+}
+
+body.login-page.student button:hover {
+    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.5);
 }
 
 /* CLICK */
@@ -200,7 +292,7 @@ button:active {
     transform: scale(0.97);
 }
 
-/* ===== 🔥 FINAL FIXED LOADER ===== */
+/* ===== LOADER ===== */
 .btn-loader {
     display: none;
     width: 14px;
@@ -214,7 +306,6 @@ button:active {
     margin-left: 8px;
 }
 
-/* ===== LOADING STATE ===== */
 button.loading .btn-loader {
     display: inline-block;
 }
@@ -231,15 +322,13 @@ button.loading {
     color: #ff4d4d;
 }
 
-/* ===== 🔥 FIXED SPIN (IMPORTANT) ===== */
+/* ===== ANIMATIONS ===== */
 @keyframes spin {
     to {
-        transform: rotate(360deg);
-        /* ✅ FIXED (no translate bug) */
+        transform: translate(-50%, -50%) rotate(360deg);
     }
 }
 
-/* ===== FADE ===== */
 @keyframes fadeIn {
     from {
         opacity: 0;
