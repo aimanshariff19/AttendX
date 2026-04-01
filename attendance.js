@@ -232,30 +232,30 @@ function submitAttendance(btn) {
 }
 
 /* -------- 🔥 BULK (FIXED %) -------- */
-function markAll(isPresent, e) {
+function markAll(isPresent, btn) {
 
-    const mainBtn = e.target.closest(".btn")
+    const mainBtn = btn
     setBtnLoading(mainBtn, "Updating")
 
     setTimeout(() => {
 
         document.querySelectorAll("#studentRows tr").forEach(row => {
 
-            const btn = row.querySelector(".status-btn")
-            if (!btn) return
+            const b = row.querySelector(".status-btn")
+            if (!b) return
 
-            btn.classList.remove("present", "absent", "active")
+            b.classList.remove("present", "absent", "active")
 
             let status
 
             if (isPresent) {
-                btn.classList.add("present", "active")
-                btn.innerText = "Present"
+                b.classList.add("present", "active")
+                b.innerText = "Present"
                 status = "Present"
                 row.style.background = "rgba(34,197,94,0.08)"
             } else {
-                btn.classList.add("absent", "active")
-                btn.innerText = "Absent"
+                b.classList.add("absent", "active")
+                b.innerText = "Absent"
                 status = "Absent"
                 row.style.background = "rgba(239,68,68,0.08)"
             }
