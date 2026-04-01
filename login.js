@@ -21,8 +21,8 @@
 
         /* -------- SHAKE -------- */
         function shake() {
-            loginCard.classList.remove("shake") // reset
-            void loginCard.offsetWidth // force reflow
+            loginCard.classList.remove("shake")
+            void loginCard.offsetWidth
             loginCard.classList.add("shake")
 
             setTimeout(() => loginCard.classList.remove("shake"), 400)
@@ -41,24 +41,27 @@
         /* -------- LOADING START -------- */
         btn.classList.add("loading")
 
-        /* slight delay so user FEELS click */
+        const text = btn.querySelector(".btn-text")
+        const loader = btn.querySelector(".btn-loader")
+
+        if (text) text.innerText = "Logging in..."
+        if (loader) loader.style.display = "inline-block"
+
+        /* delay */
         setTimeout(() => {
 
             /* -------- SUCCESS FUNCTION -------- */
             function successLogin(data, redirectPage) {
 
-                /* SAVE SESSION */
                 localStorage.clear()
                 Object.keys(data).forEach(key => {
                     localStorage.setItem(key, data[key])
                 })
 
-                /* 🎬 PAGE EXIT ANIMATION */
                 loginCard.style.transition = "all 0.4s ease"
                 loginCard.style.opacity = "0"
                 loginCard.style.transform = "scale(0.95)"
 
-                /* REDIRECT */
                 setTimeout(() => {
                     window.location.href = redirectPage
                 }, 400)
@@ -103,9 +106,12 @@
             error.innerText = "❌ Invalid Credentials"
             shake()
 
+            /* 🔥 RESET BUTTON */
             btn.classList.remove("loading")
+            if (text) text.innerText = "Login"
+            if (loader) loader.style.display = "none"
 
-        }, 1200) // 🔥 realistic delay
+        }, 1200)
 
     }
 
@@ -132,7 +138,7 @@
             if (e.key === "Enter") login(e)
         })
 
-        /* 👁 PASSWORD TOGGLE */
+        /* PASSWORD TOGGLE */
         if (eye && password) {
             eye.onclick = function () {
                 password.type = password.type === "password" ? "text" : "password"
@@ -140,7 +146,7 @@
             }
         }
 
-        /* 💧 RIPPLE */
+        /* RIPPLE */
         document.addEventListener("click", function (e) {
             const btn = e.target.closest("button")
             if (!btn) return
