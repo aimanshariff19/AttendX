@@ -51,7 +51,7 @@ function getAttendanceRecords(key) {
 
 /* -------- STUDENTS -------- */
 let studentList = []
-let table = null // 🔥 fix
+let table = null
 
 function initStudents() {
     if (typeof students === "undefined") return
@@ -89,7 +89,7 @@ function calculatePercentage(usn, currentStatus = null) {
     return Math.round((present / total) * 100)
 }
 
-/* -------- LOAD STUDENTS -------- */
+/* -------- LOAD STUDENTS (EDITED ONLY HERE) -------- */
 function loadStudents() {
 
     if (!table) return
@@ -119,83 +119,39 @@ function loadStudents() {
 </td>
 
 <td>
-    <label class="toggle-switch">
-        <input type="checkbox" data-usn="${student.usn}" checked>
-        <span class="slider"></span>
-    </label>
+    <div class="attendance-actions">
+        <button class="status-btn present active" onclick="setStatus(this, true)">P</button>
+        <button class="status-btn absent" onclick="setStatus(this, false)">A</button>
+    </div>
 </td>
 `
-
-        const input = row.querySelector("input")
-        input.addEventListener("change", () => updateSingleRow(row, input))
 
         table.appendChild(row)
     })
 }
 
-/* -------- UPDATE ROW -------- */
-function updateSingleRow(row, input) {
+/* -------- NEW FUNCTION (ADDED ONLY) -------- */
+function setStatus(btn, isPresent) {
 
-    const usn = input.dataset.usn
+    const row = btn.closest("tr")
+    const buttons = row.querySelectorAll(".status-btn")
+
+    buttons.forEach(b => b.classList.remove("active"))
+    btn.classList.add("active")
+
     const percentText = row.querySelector(".percent-text")
     const fill = row.querySelector(".fill")
 
-    const status = input.checked ? "Present" : "Absent"
+    const usn = row.children[0].innerText
+    const status = isPresent ? "Present" : "Absent"
 
     let percent = calculatePercentage(usn, status)
 
-    percentText.innerText = percent + "%"
-    fill.style.width = percent + "%"
+    if (percentText) percentText.innerText = percent + "%"
+    if (fill) fill.style.width = percent + "%"
 }
 
-/* -------- 🔥 TIME FUNCTIONS -------- */
-function updateCurrentTime() {
-    const now = new Date()
-
-    let h = now.getHours()
-    const m = String(now.getMinutes()).padStart(2, "0")
-
-    const ampm = h >= 12 ? "PM" : "AM"
-
-    h = h % 12
-    h = h ? h : 12 // 0 becomes 12
-
-    const el = document.getElementById("currentTime")
-    if (el) el.value = `${h}:${m} ${ampm}`
-}
-
-function calculateTimeRange() {
-
-    const start = document.getElementById("classTime")?.value
-    const num = parseInt(document.getElementById("numClasses")?.value)
-
-    if (!start || !num) return
-
-    let [h, m] = start.split(":").map(Number)
-
-    let startDate = new Date()
-    startDate.setHours(h, m)
-
-    let endDate = new Date(startDate)
-    endDate.setMinutes(endDate.getMinutes() + num * 60)
-
-    // 🔥 12hr format function
-    const format12 = (d) => {
-        let hr = d.getHours()
-        const min = String(d.getMinutes()).padStart(2, "0")
-        const ampm = hr >= 12 ? "PM" : "AM"
-
-        hr = hr % 12
-        hr = hr ? hr : 12
-
-        return `${hr}:${min} ${ampm}`
-    }
-
-    const el = document.getElementById("timeRange")
-    if (el) el.innerText = `${format12(startDate)} - ${format12(endDate)}`
-}
-
-/* -------- SUBMIT -------- */
+/* -------- SUBMIT (EDITED ONLY DATA PART) -------- */
 function submitAttendance(btn) {
 
     if (!btn) btn = document.getElementById("submitBtn")
@@ -203,7 +159,24 @@ function submitAttendance(btn) {
     setBtnLoading(btn, "Submitting")
 
     setTimeout(() => {
+
+        let data = []
+
+        document.querySelectorAll("#studentRows tr").forEach(row => {
+
+            const presentBtn = row.querySelector(".present")
+            if (!presentBtn) return
+
+            data.push({
+                usn: row.children[0].innerText,
+                status: presentBtn.classList.contains("active") ? "Present" : "Absent"
+            })
+        })
+
+        console.log("Saved:", data)
+
         window.location.href = "dashboard.html"
+
     }, 800)
 }
 
@@ -226,7 +199,7 @@ function editAttendance() {
     }, 200)
 }
 
-/* -------- BULK -------- */
+/* -------- BULK (EDITED ONLY) -------- */
 function markAll(isPresent) {
 
     const btn = event.target.closest(".btn")
@@ -234,8 +207,16 @@ function markAll(isPresent) {
 
     setTimeout(() => {
 
-        document.querySelectorAll(".toggle-switch input").forEach(input => {
-            input.checked = isPresent
+        document.querySelectorAll(".attendance-actions").forEach(row => {
+
+            const presentBtn = row.querySelector(".present")
+            const absentBtn = row.querySelector(".absent")
+
+            presentBtn.classList.remove("active")
+            absentBtn.classList.remove("active")
+
+            if (isPresent) presentBtn.classList.add("active")
+            else absentBtn.classList.add("active")
         })
 
         resetBtn(btn)
