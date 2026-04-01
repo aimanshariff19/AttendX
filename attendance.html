@@ -255,7 +255,6 @@
             animation: shake 0.3s ease;
             border: 1px solid #ef4444 !important;
         }
-        
     </style>
 </head>
 
@@ -266,10 +265,11 @@
         <div class="header">
             <div class="header-top">
                 <h1>AttendX / Take Attendance</h1>
-                <button class="btn" onclick="editAttendance()">Edit Attendance</button>
+                <button class="btn" onclick="editAttendance(event)">Edit Attendance</button>
             </div>
 
-            <button class="btn back-btn" onclick="goBack()">← Back</button>
+            <button class="btn" onclick="goBack(event)">← Back</button>
+
         </div>
 
         <div class="card">
@@ -309,8 +309,8 @@
         </div>
 
         <div style="display:flex; gap:10px; margin-bottom:15px;">
-            <button class="btn" onclick="markAll(true)">Mark All Present</button>
-            <button class="btn" onclick="markAll(false)">Mark All Absent</button>
+            <button class="btn" onclick="markAll(true, event)">Mark All Present</button>
+            <button class="btn" onclick="markAll(false, event)">Mark All Absent</button>
         </div>
 
         <div class="card">
