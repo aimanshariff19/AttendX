@@ -23,9 +23,8 @@ function triggerShake(el) {
     setTimeout(() => el.classList.remove("shake"), 400)
 }
 
-/* -------- 🔥 ERROR MESSAGE (ADDED) -------- */
+/* -------- 🔥 ERROR MESSAGE -------- */
 function showError(msg) {
-
     let box = document.getElementById("errorBox")
 
     if (!box) {
@@ -67,7 +66,6 @@ function updateCurrentTime() {
 
 /* -------- 🔥 TIME RANGE -------- */
 function calculateTimeRange() {
-
     const start = document.getElementById("classTime")?.value
     const num = parseInt(document.getElementById("numClasses")?.value)
 
@@ -122,6 +120,12 @@ function initStudents() {
     studentList = students[key] || []
 }
 
+/* -------- % CALC -------- */
+function calculatePercentage(usn, status) {
+    // simple logic (can upgrade later)
+    return status === "Present" ? 100 : 0
+}
+
 /* -------- LOAD STUDENTS -------- */
 function loadStudents() {
 
@@ -158,46 +162,63 @@ function loadStudents() {
     })
 }
 
-/* -------- TOGGLE -------- */
+/* -------- 🔥 TOGGLE WITH % -------- */
 function toggleStatus(btn) {
 
     const row = btn.closest("tr")
+    const percentText = row.querySelector(".percent-text")
+    const fill = row.querySelector(".fill")
+    const usn = row.children[0].innerText
+
     const isPresent = btn.classList.contains("present")
 
     btn.classList.remove("present", "absent", "active")
 
+    let status
+
     if (isPresent) {
         btn.classList.add("absent", "active")
         btn.innerText = "Absent"
+        status = "Absent"
     } else {
         btn.classList.add("present", "active")
         btn.innerText = "Present"
+        status = "Present"
     }
 
-    row.style.background = btn.classList.contains("present")
+    let percent = calculatePercentage(usn, status)
+
+    if (percentText) percentText.innerText = percent + "%"
+    if (fill) fill.style.width = percent + "%"
+
+    row.style.background = status === "Present"
         ? "rgba(34,197,94,0.08)"
         : "rgba(239,68,68,0.08)"
 }
 
-/* -------- SUBMIT (FINAL FIX) -------- */
+/* -------- SUBMIT -------- */
 function submitAttendance(btn) {
 
     if (!btn) btn = document.getElementById("submitBtn")
 
-    const date = document.getElementById("date")?.value
-    const time = document.getElementById("classTime")?.value
+    const dateInput = document.getElementById("date")
+    const timeInput = document.getElementById("classTime")
+
+    const date = dateInput?.value
+    const time = timeInput?.value
 
     if (!date) {
-        triggerShake(document.getElementById("date"))
+        triggerShake(dateInput)
         triggerShake(btn)
         showError("Select Date")
         return
     }
 
     if (!time) {
-        triggerShake(document.getElementById("classTime"))
+        triggerShake(timeInput)
         triggerShake(btn)
-        showError("Select Time")
+        timeInput.focus()
+        showError("Select Time Slot")
         return
     }
 
@@ -208,21 +229,7 @@ function submitAttendance(btn) {
     }, 800)
 }
 
-/* -------- INIT -------- */
-window.onload = function () {
-
-    table = document.getElementById("studentRows")
-
-    updateCurrentTime()
-    setInterval(updateCurrentTime, 1000)
-
-    document.getElementById("classTime")?.addEventListener("change", calculateTimeRange)
-    document.getElementById("numClasses")?.addEventListener("change", calculateTimeRange)
-
-    initStudents()
-    loadStudents()
-}
-
+/* -------- BULK -------- */
 function markAll(isPresent, e) {
 
     const mainBtn = e.target.closest(".btn")
@@ -237,15 +244,27 @@ function markAll(isPresent, e) {
 
             btn.classList.remove("present", "absent", "active")
 
+            let status
+
             if (isPresent) {
                 btn.classList.add("present", "active")
                 btn.innerText = "Present"
+                status = "Present"
                 row.style.background = "rgba(34,197,94,0.08)"
             } else {
                 btn.classList.add("absent", "active")
                 btn.innerText = "Absent"
+                status = "Absent"
                 row.style.background = "rgba(239,68,68,0.08)"
             }
+
+            const percentText = row.querySelector(".percent-text")
+            const fill = row.querySelector(".fill")
+
+            let percent = calculatePercentage("", status)
+
+            if (percentText) percentText.innerText = percent + "%"
+            if (fill) fill.style.width = percent + "%"
         })
 
         resetBtn(mainBtn)
@@ -253,6 +272,7 @@ function markAll(isPresent, e) {
     }, 400)
 }
 
+/* -------- NAV -------- */
 function goBack(e) {
     const btn = e.target.closest(".btn")
     setBtnLoading(btn, "Going back")
@@ -269,4 +289,27 @@ function editAttendance(e) {
     setTimeout(() => {
         window.location.href = "edit-attendance.html"
     }, 200)
+}
+
+/* -------- INIT -------- */
+window.onload = function () {
+
+    table = document.getElementById("studentRows")
+
+    // 🔥 LOCK DATE
+    const dateInput = document.getElementById("date")
+    const today = new Date().toISOString().split("T")[0]
+    if (dateInput) {
+        dateInput.value = today
+        dateInput.setAttribute("readonly", true)
+    }
+
+    updateCurrentTime()
+    setInterval(updateCurrentTime, 1000)
+
+    document.getElementById("classTime")?.addEventListener("change", calculateTimeRange)
+    document.getElementById("numClasses")?.addEventListener("change", calculateTimeRange)
+
+    initStudents()
+    loadStudents()
 }
