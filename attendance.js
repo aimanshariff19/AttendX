@@ -16,6 +16,17 @@ function resetBtn(btn) {
     btn.innerHTML = btn.dataset.original
 }
 
+/* -------- 🔥 SHAKE FUNCTION (ADDED) -------- */
+function triggerShake(el) {
+    if (!el) return
+
+    el.classList.add("shake")
+
+    setTimeout(() => {
+        el.classList.remove("shake")
+    }, 400)
+}
+
 /* -------- 🔥 CURRENT TIME -------- */
 function updateCurrentTime() {
     const now = new Date()
@@ -187,7 +198,7 @@ function loadStudents() {
     })
 }
 
-/* -------- 🔥 TOGGLE STATUS (NEW) -------- */
+/* -------- TOGGLE STATUS -------- */
 function toggleStatus(btn) {
 
     const row = btn.closest("tr")
@@ -197,15 +208,12 @@ function toggleStatus(btn) {
 
     const isPresent = btn.classList.contains("present")
 
-    // 🔥 RESET
     btn.classList.remove("present", "absent", "active")
 
     if (isPresent) {
-        // 👉 switch to Absent
         btn.classList.add("absent", "active")
         btn.innerText = "Absent"
     } else {
-        // 👉 switch to Present
         btn.classList.add("present", "active")
         btn.innerText = "Present"
     }
@@ -222,10 +230,18 @@ function toggleStatus(btn) {
         : "rgba(239,68,68,0.08)"
 }
 
-/* -------- SUBMIT -------- */
+/* -------- SUBMIT (EDITED) -------- */
 function submitAttendance(btn) {
 
     if (!btn) btn = document.getElementById("submitBtn")
+
+    const time = document.getElementById("classTime")?.value
+
+    if (!time) {
+        triggerShake(document.getElementById("classTime"))
+        triggerShake(btn)
+        return
+    }
 
     setBtnLoading(btn, "Submitting")
 
@@ -249,37 +265,6 @@ function submitAttendance(btn) {
         window.location.href = "dashboard.html"
 
     }, 800)
-}
-
-/* -------- BULK -------- */
-function markAll(isPresent) {
-
-    const btn = event.target.closest(".btn")
-    setBtnLoading(btn, "Updating")
-
-    setTimeout(() => {
-
-        document.querySelectorAll("#studentRows tr").forEach(row => {
-
-            const btn = row.querySelector(".status-btn")
-            if (!btn) return
-
-            if (isPresent) {
-                btn.classList.remove("absent")
-                btn.classList.add("present")
-                btn.innerText = "Present"
-            } else {
-                btn.classList.remove("present")
-                btn.classList.add("absent")
-                btn.innerText = "Absent"
-            }
-
-            toggleStatus(btn) // reuse logic
-        })
-
-        resetBtn(btn)
-
-    }, 400)
 }
 
 /* -------- INIT -------- */
