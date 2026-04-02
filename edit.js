@@ -35,7 +35,7 @@ function formatTo12Hour(time24) {
 
 const subject = localStorage.getItem("subject")
 const department = localStorage.getItem("department")
-const program = localStorage.getItem("program")
+const program = localStorage.getItem("program") || ""   // ✅ FIX
 const sem = localStorage.getItem("sem")
 const section = localStorage.getItem("section")
 
@@ -99,7 +99,7 @@ function loadTimesForDate() {
             const keyTime = parts[parts.length - 1]
 
             if (keyDate === date) {
-                times.push(keyTime)
+                times.push(keyTime.trim())   // ✅ FIX
             }
         }
     }
@@ -183,7 +183,7 @@ function loadAttendance() {
     setTimeout(() => {
 
         const date = dateDropdown.value
-        const time = timeDropdown.value
+        const time = timeDropdown.value.trim()   // ✅ FIX
 
         if (!date || !time) {
             showMessage("Select date & time", "error")
@@ -193,6 +193,8 @@ function loadAttendance() {
         }
 
         const key = `${subject}_${department}_${program}_${sem}_${section}_${date}_${time}`
+
+        console.log("Loading Key:", key)   // ✅ DEBUG
 
         const saved = JSON.parse(localStorage.getItem(key))
 
@@ -279,7 +281,7 @@ function updateAttendance() {
     setTimeout(() => {
 
         const date = dateDropdown.value
-        const time = timeDropdown.value
+        const time = timeDropdown.value.trim()   // ✅ FIX
 
         if (!date || !time) {
             showMessage("Select date & time", "error")
