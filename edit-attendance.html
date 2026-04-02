@@ -1,46 +1,62 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
-
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Attendance</title>
 
     <style>
+        /* ===== RESET ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        /* ===== BODY ===== */
         body {
             font-family: 'Inter', sans-serif;
-            background: #f5f7ff;
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            color: white;
         }
 
+        /* ===== DASHBOARD ===== */
         .dashboard {
             max-width: 950px;
             margin: 40px auto;
             padding: 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
         }
 
+        /* ===== TITLE ===== */
         h1 {
             margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 600;
+
+            background: linear-gradient(90deg, #c7d2fe, #a78bfa, #6366f1);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+
+            text-shadow: 0 0 12px rgba(139, 92, 246, 0.25);
         }
 
-        /* CARD */
+        /* ===== CARD ===== */
         .card {
-            background: white;
+            background: rgba(255, 255, 255, 0.06);
             padding: 16px;
-            border-radius: 12px;
+            border-radius: 14px;
             margin-bottom: 18px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
         }
 
-        /* CONTROLS */
+        /* ===== CONTROLS ===== */
         .attendance-controls {
             display: grid;
             grid-template-columns: 1fr 1fr auto;
@@ -59,21 +75,28 @@
         .attendance-controls select {
             width: 100%;
             padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
         }
 
         .attendance-controls button {
             padding: 10px 16px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: none;
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
             color: white;
             cursor: pointer;
             font-weight: 600;
+            transition: 0.2s;
         }
 
-        /* BULK BUTTONS */
+        .attendance-controls button:hover {
+            transform: scale(1.05);
+        }
+
+        /* ===== BULK BUTTONS ===== */
         .bulk-actions {
             display: flex;
             gap: 12px;
@@ -83,78 +106,143 @@
         .bulk-actions button {
             flex: 1;
             padding: 10px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: none;
             font-weight: 600;
             cursor: pointer;
+            transition: 0.2s;
         }
 
         .bulk-actions button:first-child {
-            background: #22c55e;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
             color: white;
         }
 
         .bulk-actions button:last-child {
-            background: #ef4444;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
         }
 
-        /* TABLE */
+        .bulk-actions button:hover {
+            transform: scale(1.05);
+        }
+
+        /* ===== TABLE ===== */
         table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 0 8px;
-            margin-bottom: 20px;
+            border-spacing: 0 10px;
         }
 
         thead th {
             text-align: left;
             padding: 12px;
+            opacity: 0.8;
         }
 
         tbody tr {
-            background: #f8fafc;
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            transition: 0.25s;
+        }
+
+        tbody tr:hover {
+            transform: scale(1.01);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         tbody td {
             padding: 14px 12px;
         }
 
-        tbody tr td:first-child {
-            border-left: 4px solid red;
-            border-radius: 10px 0 0 10px;
+        /* ===== ROW COLORS ===== */
+        tr.present-row {
+            border-left: 4px solid #22c55e;
+            background: rgba(34, 197, 94, 0.12);
         }
 
-        tbody tr td:last-child {
-            border-radius: 0 10px 10px 0;
+        tr.absent-row {
+            border-left: 4px solid #ef4444;
+            background: rgba(239, 68, 68, 0.12);
         }
 
-        tbody tr:hover {
-            background: #eef2ff;
+        /* ===== STATUS BUTTON ===== */
+        .status-btn {
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
         }
 
-        /* UPDATE BUTTON */
+        .status-btn.present {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+
+        .status-btn.absent {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .status-btn:hover {
+            transform: scale(1.08);
+        }
+
+        /* ===== TEXTAREA ===== */
+        .reasonBox {
+            width: 100%;
+            padding: 8px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* ===== UPDATE BUTTON ===== */
         .update-btn-container {
             margin-top: 10px;
         }
 
         .update-btn {
             width: 100%;
-            padding: 12px;
-            border-radius: 10px;
+            padding: 14px;
+            border-radius: 14px;
             border: none;
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
             color: white;
             font-weight: 600;
             cursor: pointer;
+            transition: 0.2s;
         }
 
         .update-btn:hover {
-            transform: translateY(-1px);
+            transform: scale(1.02);
+        }
+
+        /* ===== SPINNER ===== */
+        .btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .btn-spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: inline-block;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
-
 
 </head>
 
@@ -172,7 +260,6 @@
             <p><strong>Section:</strong> <span id="section"></span></p>
         </div>
 
-        <!-- CONTROLS -->
         <div class="attendance-controls">
 
             <div>
@@ -193,13 +280,11 @@
 
         </div>
 
-        <!-- BULK -->
         <div class="bulk-actions">
             <button onclick="markAllEdit('Present')">All Present</button>
             <button onclick="markAllEdit('Absent')">All Absent</button>
         </div>
 
-        <!-- TABLE -->
         <table>
             <thead>
                 <tr>
@@ -213,7 +298,6 @@
             <tbody id="studentRows"></tbody>
         </table>
 
-        <!-- UPDATE -->
         <div class="update-btn-container">
             <button class="update-btn" onclick="updateAttendance()">
                 Update Attendance
