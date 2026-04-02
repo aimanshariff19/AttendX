@@ -23,20 +23,25 @@ document.addEventListener("click", function (e) {
     setTimeout(() => circle.remove(), 600)
 })
 
-/* -------- 🔥 BUTTON LOADING HELPER -------- */
+/* -------- 🔥 BUTTON LOADING HELPER (FIXED) -------- */
 function setBtnLoading(btn, textValue) {
     if (!btn) return
 
     btn.classList.add("loading")
 
+    /* get or create text span */
     let text = btn.querySelector("span")
-    if (!text) {
-        text = document.createElement("span")
-        btn.appendChild(text)
+    if (text) {
+        text.innerText = textValue
+    } else {
+        btn.innerHTML = `<span>${textValue}</span>`
     }
 
-    text.innerText = textValue
+    /* remove old spinner if exists */
+    let old = btn.querySelector(".btn-spinner")
+    if (old) old.remove()
 
+    /* create spinner */
     let spinner = document.createElement("span")
     spinner.className = "btn-spinner"
 
@@ -158,13 +163,12 @@ function loadCourseCards() {
             </button>
         `
 
-        /* 🔥 BUTTON SPINNER */
+        /* 🔥 FIXED CLICK */
         card.querySelector("button").onclick = function () {
             setBtnLoading(this, "Opening...")
             openCourse(course.subject, course.program, course.sem, course.section)
         }
 
-        /* animation */
         card.style.opacity = "0"
         card.style.transform = "translateY(20px)"
 
