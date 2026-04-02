@@ -277,7 +277,7 @@ function goBack(btn) {
     if (btn && btn.target) btn = btn.target
     if (!btn) btn = document.querySelector(".back-btn") || document.activeElement
 
-    setBtnLoading(btn, "Going")
+    setBtnLoading(btn, "Going back")
 
     setTimeout(() => {
         window.history.back()
