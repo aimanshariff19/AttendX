@@ -1,5 +1,12 @@
-window.addEventListener("beforeunload", () => {
-    document.querySelectorAll(".loading").forEach(b => b.classList.remove("loading"))
+
+/* -------- 🔥 FIX STUCK SPINNER (BFCACHE) -------- */
+window.addEventListener("pageshow", function () {
+    document.querySelectorAll(".loading").forEach(btn => {
+        btn.classList.remove("loading")
+        if (btn.dataset.original) {
+            btn.innerHTML = btn.dataset.original
+        }
+    })
 })
 
 /* -------- 🔥 NORMALIZE -------- */
@@ -18,7 +25,9 @@ function setBtnLoading(btn, text = "Loading") {
 function resetBtn(btn) {
     if (!btn) return
     btn.classList.remove("loading")
-    btn.innerHTML = btn.dataset.original
+    if (btn.dataset.original) {
+        btn.innerHTML = btn.dataset.original
+    }
 }
 
 /* -------- 🔥 SHAKE FUNCTION -------- */
@@ -139,13 +148,6 @@ function initStudents() {
     studentList = students[key] || []
 }
 
-/* -------- 🔥 % CALC -------- */
-function calculatePercentage(usn, status) {
-    if (status === "Present") return 100
-    if (status === "Absent") return 0
-    return 100
-}
-
 /* -------- LOAD STUDENTS -------- */
 function loadStudents() {
 
@@ -205,7 +207,7 @@ function toggleStatus(btn) {
         status = "Present"
     }
 
-    let percent = calculatePercentage(null, status)
+    const percent = status === "Present" ? 100 : 0
 
     if (percentText) percentText.innerText = percent + "%"
     if (fill) fill.style.width = percent + "%"
@@ -262,9 +264,8 @@ function submitAttendance(btn) {
     }, 800)
 }
 
-/* -------- 🔥 EDIT ATTENDANCE -------- */
+/* -------- 🔥 EDIT -------- */
 function editAttendance(btn) {
-
     if (btn && btn.target) btn = btn.target
     if (!btn) btn = document.querySelector(".btn")
 
@@ -275,22 +276,62 @@ function editAttendance(btn) {
     }, 400)
 }
 
-/* -------- 🔥 BACK BUTTON FIXED -------- */
+/* -------- 🔥 BACK -------- */
 function goBack(btn) {
 
     if (btn && btn.target) btn = btn.target
-    if (!btn) btn = document.querySelector(".back-btn") || document.activeElement
+    if (!btn) btn = document.querySelector(".back-btn")
 
-    // 🔥 RESET ALL OTHER LOADING BUTTONS
+    // reset others
     document.querySelectorAll(".loading").forEach(b => {
         if (b !== btn) resetBtn(b)
     })
 
-    setBtnLoading(btn, "Going back")
+    setBtnLoading(btn, "Going")
 
     setTimeout(() => {
         window.history.back()
     }, 250)
+}
+
+/* -------- 🔥 BULK -------- */
+function markAll(isPresent, event) {
+
+    let btn = event?.target || document.activeElement
+
+    setBtnLoading(btn, isPresent ? "Marking Present" : "Marking Absent")
+
+    setTimeout(() => {
+
+        document.querySelectorAll("#studentRows tr").forEach(row => {
+
+            const b = row.querySelector(".status-btn")
+            if (!b) return
+
+            b.classList.remove("present", "absent", "active")
+
+            if (isPresent) {
+                b.classList.add("present", "active")
+                b.innerText = "Present"
+                row.style.background = "rgba(34,197,94,0.08)"
+            } else {
+                b.classList.add("absent", "active")
+                b.innerText = "Absent"
+                row.style.background = "rgba(239,68,68,0.08)"
+            }
+
+            const percentText = row.querySelector(".percent-text")
+            const fill = row.querySelector(".fill")
+
+            const percent = isPresent ? 100 : 0
+
+            if (percentText) percentText.innerText = percent + "%"
+            if (fill) fill.style.width = percent + "%"
+        })
+
+        resetBtn(btn)
+
+    }, 400)
 }
 
 /* -------- INIT -------- */
@@ -314,48 +355,4 @@ window.onload = function () {
 
     initStudents()
     loadStudents()
-}
-
-// 🔥 MARK ALL PRESENT/ABSENT
-function markAll(isPresent, event) {
-
-    // 🔥 get button from click
-    let btn = event?.target
-
-    if (!btn) btn = document.activeElement
-
-    setBtnLoading(btn, isPresent ? "Marking Present" : "Marking Absent")
-
-    setTimeout(() => {
-
-        document.querySelectorAll("#studentRows tr").forEach(row => {
-
-            const b = row.querySelector(".status-btn")
-            if (!b) return
-
-            b.classList.remove("present", "absent", "active")
-
-            if (isPresent) {
-                b.classList.add("present", "active")
-                b.innerText = "Present"
-                row.style.background = "rgba(34,197,94,0.08)"
-            } else {
-                b.classList.add("absent", "active")
-                b.innerText = "Absent"
-                row.style.background = "rgba(239,68,68,0.08)"
-            }
-
-            // 🔥 update %
-            const percentText = row.querySelector(".percent-text")
-            const fill = row.querySelector(".fill")
-
-            const percent = isPresent ? 100 : 0
-
-            if (percentText) percentText.innerText = percent + "%"
-            if (fill) fill.style.width = percent + "%"
-        })
-
-        resetBtn(btn)
-
-    }, 400) // smooth delay
 }
