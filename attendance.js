@@ -241,8 +241,8 @@ function submitAttendance(btn) {
         localStorage.setItem(key, JSON.stringify({
             data: attendanceData
         }))
-
-        window.location.href = "dashboard.html"
+        resetBtn(btn)
+        showError("Attendance Submitted!")
 
     }, 800)
 }
