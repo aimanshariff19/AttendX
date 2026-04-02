@@ -132,11 +132,18 @@
             if (e.key === "Enter") login(e)
         })
 
-        /* 🔥 FIXED PASSWORD TOGGLE (STUDENT STYLE) */
+        // TOGGLE PASSWORD VISIBILITY
         if (eye && password) {
             eye.addEventListener("click", () => {
-                password.type = password.type === "password" ? "text" : "password"
-                eye.classList.toggle("fa-eye-slash")
+                if (password.type === "password") {
+                    password.type = "text"
+                    eye.classList.remove("fa-eye")
+                    eye.classList.add("fa-eye-slash")
+                } else {
+                    password.type = "password"
+                    eye.classList.remove("fa-eye-slash")
+                    eye.classList.add("fa-eye")
+                }
             })
         }
 
