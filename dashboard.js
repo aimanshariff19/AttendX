@@ -234,3 +234,16 @@ document.addEventListener("DOMContentLoaded", () => {
         loadCourseCards()
     }, 300)
 })
+
+/* 🔥 FIX STUCK SPINNER WHEN RETURNING FROM BACK */
+window.addEventListener("pageshow", function () {
+
+    document.querySelectorAll(".loading").forEach(btn => {
+        btn.classList.remove("loading")
+
+        if (btn.dataset.original) {
+            btn.innerHTML = btn.dataset.original
+        }
+    })
+
+})
