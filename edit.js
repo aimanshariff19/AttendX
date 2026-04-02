@@ -15,6 +15,21 @@ document.addEventListener("click", function (e) {
     setTimeout(() => circle.remove(), 600)
 })
 
+/* -------- 🔥 ADDED: BUTTON SPINNER (ONLY ADDITION) -------- */
+
+function setBtnLoading(btn) {
+    if (!btn || btn.classList.contains("loading")) return
+    btn.dataset.original = btn.innerText
+    btn.classList.add("loading")
+    btn.innerText = ""
+}
+
+function resetBtn(btn) {
+    if (!btn) return
+    btn.classList.remove("loading")
+    btn.innerText = btn.dataset.original
+}
+
 /* -------- FORMAT TIME -------- */
 
 function formatTo12Hour(time24) {
@@ -129,10 +144,7 @@ function loadTimesForDate() {
 function loadAttendance() {
 
     const btn = event?.target || document.activeElement
-    const originalText = btn.innerText
-
-    btn.classList.add("loading")
-    btn.innerText = ""
+    setBtnLoading(btn)   // ✅ ADDED
 
     setTimeout(() => {
 
@@ -143,21 +155,17 @@ function loadAttendance() {
 
         if (!date || !time) {
             showMessage("Select date & time", "error")
-            btn.classList.remove("loading")
-            btn.innerText = originalText
+            resetBtn(btn)   // ✅ ADDED
             return
         }
 
         const key = `${subject}_${department}_${program}_${sem}_${section}_${date}_${time}`
 
-        console.log("Loading Key:", key)
-
         const saved = JSON.parse(localStorage.getItem(key))
 
         if (!saved) {
             showMessage("Attendance not found", "error")
-            btn.classList.remove("loading")
-            btn.innerText = originalText
+            resetBtn(btn)   // ✅ ADDED
             return
         }
 
@@ -197,9 +205,7 @@ function loadAttendance() {
             handleToggle(toggle)
         })
 
-        btn.classList.remove("loading")
-        btn.innerText = originalText
-
+        resetBtn(btn)   // ✅ ADDED
         showMessage("Attendance loaded 🎉", "success")
 
     }, 600)
@@ -227,10 +233,7 @@ function handleToggle(toggle) {
 function updateAttendance() {
 
     const btn = document.querySelector(".update-btn")
-    const originalText = btn.innerText
-
-    btn.classList.add("loading")
-    btn.innerText = ""
+    setBtnLoading(btn)   // ✅ ADDED
 
     setTimeout(() => {
 
@@ -241,8 +244,7 @@ function updateAttendance() {
 
         if (!date || !time) {
             showMessage("Select date & time", "error")
-            btn.classList.remove("loading")
-            btn.innerText = originalText
+            resetBtn(btn)   // ✅ ADDED
             return
         }
 
@@ -261,6 +263,7 @@ function updateAttendance() {
 
         localStorage.setItem(key, JSON.stringify({ data: attendanceData }))
 
+        resetBtn(btn)   // ✅ ADDED
         showMessage("Updated successfully ✅", "success")
 
         setTimeout(() => {
