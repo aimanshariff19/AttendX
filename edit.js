@@ -15,26 +15,22 @@ document.addEventListener("click", function (e) {
     setTimeout(() => circle.remove(), 600)
 })
 
-
 /* -------- FORMAT TIME -------- */
 
 function formatTo12Hour(time24) {
-
     if (!time24) return "--"
 
     let [hour, minute] = time24.split(":").map(Number)
-
     let ampm = hour >= 12 ? "PM" : "AM"
     hour = hour % 12 || 12
 
     return `${hour}:${String(minute).padStart(2, "0")} ${ampm}`
 }
 
-/* -------- 🔥 NEW: CONVERT 12 → 24 -------- */
+/* -------- CONVERT 12 → 24 -------- */
 
 function convertTo24Hour(time12) {
     if (!time12) return ""
-
     if (!time12.includes("AM") && !time12.includes("PM")) return time12
 
     const [time, modifier] = time12.split(" ")
@@ -45,7 +41,6 @@ function convertTo24Hour(time12) {
 
     return `${String(hours).padStart(2, "0")}:${minutes}`
 }
-
 
 /* -------- CLASS DETAILS -------- */
 
@@ -68,11 +63,9 @@ const dateDropdown = document.getElementById("attendanceDate")
 const table = document.getElementById("studentRows")
 const timeDropdown = document.getElementById("timeSelect")
 
-
 /* -------- MESSAGE -------- */
 
 function showMessage(text, type) {
-
     const box = document.getElementById("messageBox")
     if (!box) return
 
@@ -80,11 +73,8 @@ function showMessage(text, type) {
     box.className = "message-box " + type
     box.style.display = "block"
 
-    setTimeout(() => {
-        box.style.display = "none"
-    }, 2500)
+    setTimeout(() => box.style.display = "none", 2500)
 }
-
 
 /* -------- LOAD TIMES -------- */
 
@@ -108,9 +98,6 @@ function loadTimesForDate() {
         if (key.includes(subject) && key.includes(date)) {
 
             const parts = key.split("_")
-
-            if (parts.length < 2) continue
-
             const keyDate = parts[parts.length - 2]
             const keyTime = parts[parts.length - 1]
 
@@ -120,8 +107,7 @@ function loadTimesForDate() {
         }
     }
 
-    times = [...new Set(times)]
-    times.sort((a, b) => a.localeCompare(b))
+    times = [...new Set(times)].sort((a, b) => a.localeCompare(b))
 
     if (times.length === 0) {
         timeDropdown.innerHTML = "<option value=''>No classes available</option>"
@@ -131,68 +117,18 @@ function loadTimesForDate() {
     timeDropdown.innerHTML = "<option value=''>Select time</option>"
 
     times.forEach((time, index) => {
-
         const option = document.createElement("option")
         option.value = time
         option.textContent = `${formatTo12Hour(time)} (Class ${index + 1})`
-
         timeDropdown.appendChild(option)
     })
 }
-
-
-/* -------- PERCENTAGE -------- */
-
-function calculatePercentage(usn) {
-
-    let present = 0
-    let total = 0
-
-    for (let i = 0; i < localStorage.length; i++) {
-
-        let key = localStorage.key(i)
-
-        if (key && key.includes(subject)) {
-
-            let stored = JSON.parse(localStorage.getItem(key) || "{}")
-            let records = stored.data || stored
-
-            let record = records.find(r => r.usn === usn)
-
-            if (record) {
-                total++
-                if (record.status === "Present") present++
-            }
-        }
-    }
-
-    return total === 0 ? 0 : Math.round((present / total) * 100)
-}
-
-
-/* -------- TOGGLE -------- */
-
-function handleToggle(toggle) {
-
-    const row = toggle.closest("tr")
-    const reasonBox = row.querySelector(".reasonBox")
-
-    if (toggle.checked !== toggle.defaultChecked) {
-        reasonBox.style.display = "block"
-    } else {
-        reasonBox.style.display = "none"
-        reasonBox.value = ""
-    }
-
-    row.style.background = toggle.checked ? "#dcfce7" : "#fee2e2"
-}
-
 
 /* -------- LOAD ATTENDANCE -------- */
 
 function loadAttendance() {
 
-    const btn = event.target
+    const btn = event?.target || document.activeElement
     const originalText = btn.innerText
 
     btn.classList.add("loading")
@@ -203,9 +139,9 @@ function loadAttendance() {
         const date = dateDropdown.value
         let time = timeDropdown.value.trim()
 
-        time = convertTo24Hour(time)   // 🔥 FIX
+        time = convertTo24Hour(time)
 
-        if (!date || !time || time.includes("No classes")) {
+        if (!date || !time) {
             showMessage("Select date & time", "error")
             btn.classList.remove("loading")
             btn.innerText = originalText
@@ -228,19 +164,17 @@ function loadAttendance() {
         const records = saved.data || saved
         table.innerHTML = ""
 
-        studentsList.forEach((student, index) => {
+        studentsList.forEach((student) => {
 
             const record = records.find(r => r.usn === student.usn)
             const isPresent = record && record.status === "Present"
-
-            const percent = calculatePercentage(student.usn)
 
             let row = document.createElement("tr")
 
             row.innerHTML = `
 <td>${student.usn}</td>
 <td>${student.name}</td>
-<td>${percent}%</td>
+<td>--</td>
 
 <td>
 <label class="toggle-switch">
@@ -253,8 +187,6 @@ function loadAttendance() {
 <textarea class="reasonBox" placeholder="Enter reason" style="display:none"></textarea>
 </td>
 `
-
-            row.style.animation = `fadeUp ${0.3 + index * 0.05}s ease`
 
             table.appendChild(row)
         })
@@ -273,20 +205,22 @@ function loadAttendance() {
     }, 600)
 }
 
+/* -------- TOGGLE -------- */
 
-/* -------- BULK -------- */
+function handleToggle(toggle) {
 
-function markAllEdit(status) {
+    const row = toggle.closest("tr")
+    const reasonBox = row.querySelector(".reasonBox")
 
-    document.querySelectorAll(".toggle-switch input").forEach(toggle => {
+    if (toggle.checked !== toggle.defaultChecked) {
+        reasonBox.style.display = "block"
+    } else {
+        reasonBox.style.display = "none"
+        reasonBox.value = ""
+    }
 
-        toggle.checked = (status === "Present")
-        handleToggle(toggle)
-    })
-
-    showMessage(`All marked ${status} ✅`, "success")
+    row.style.background = toggle.checked ? "#dcfce7" : "#fee2e2"
 }
-
 
 /* -------- UPDATE -------- */
 
@@ -303,9 +237,9 @@ function updateAttendance() {
         const date = dateDropdown.value
         let time = timeDropdown.value.trim()
 
-        time = convertTo24Hour(time)   // 🔥 FIX
+        time = convertTo24Hour(time)
 
-        if (!date || !time || time.includes("No classes")) {
+        if (!date || !time) {
             showMessage("Select date & time", "error")
             btn.classList.remove("loading")
             btn.innerText = originalText
@@ -313,17 +247,9 @@ function updateAttendance() {
         }
 
         let attendanceData = []
-        let reasonMissing = false
 
         document.querySelectorAll("#studentRows tr").forEach(row => {
-
             const toggle = row.querySelector(".toggle-switch input")
-            const reasonBox = row.querySelector(".reasonBox")
-
-            if (toggle.checked !== toggle.defaultChecked && reasonBox.value.trim() === "") {
-                reasonMissing = true
-                reasonBox.style.border = "1px solid red"
-            }
 
             attendanceData.push({
                 usn: toggle.dataset.usn,
@@ -331,22 +257,11 @@ function updateAttendance() {
             })
         })
 
-        if (reasonMissing) {
-            showMessage("Enter reason for changes", "error")
-            btn.classList.remove("loading")
-            btn.innerText = originalText
-            return
-        }
-
         const key = `${subject}_${department}_${program}_${sem}_${section}_${date}_${time}`
 
-        localStorage.setItem(key, JSON.stringify({
-            data: attendanceData
-        }))
+        localStorage.setItem(key, JSON.stringify({ data: attendanceData }))
 
         showMessage("Updated successfully ✅", "success")
-
-        document.querySelector(".dashboard").classList.add("page-exit")
 
         setTimeout(() => {
             window.location.href = "attendance.html"
@@ -355,16 +270,6 @@ function updateAttendance() {
     }, 800)
 }
 
-
 /* -------- INIT -------- */
 
 dateDropdown.addEventListener("change", loadTimesForDate)
-
-function markAllEdit(status) {
-    document.querySelectorAll(".toggle-switch input").forEach(input => {
-        input.checked = (status === "Present")
-
-        const row = input.closest("tr")
-        updateSingleRow(row, input)
-    })
-}
