@@ -4,7 +4,7 @@ function normalize(str) {
 }
 
 /* -------- 🔥 BUTTON SPINNER -------- */
-function setBtnLoading(btn, text) {
+function setBtnLoading(btn, text = "Loading") {
     if (!btn || btn.classList.contains("loading")) return
     btn.dataset.original = btn.innerHTML
     btn.classList.add("loading")
@@ -12,6 +12,7 @@ function setBtnLoading(btn, text) {
 }
 
 function resetBtn(btn) {
+    if (!btn) return
     btn.classList.remove("loading")
     btn.innerHTML = btn.dataset.original
 }
@@ -67,7 +68,6 @@ function updateCurrentTime() {
 /* -------- 🔥 CONVERT 12 → 24 -------- */
 function convertTo24Hour(time12) {
     if (!time12) return ""
-
     if (!time12.includes("AM") && !time12.includes("PM")) return time12
 
     const [time, modifier] = time12.split(" ")
@@ -258,12 +258,10 @@ function submitAttendance(btn) {
     }, 800)
 }
 
-/* -------- 🔥 EDIT ATTENDANCE (SPINNER ADDED ONLY) -------- */
+/* -------- 🔥 EDIT ATTENDANCE -------- */
 function editAttendance(btn) {
 
-    // 🔥 safety if event was passed accidentally
     if (btn && btn.target) btn = btn.target
-
     if (!btn) btn = document.querySelector(".btn")
 
     setBtnLoading(btn, "Opening")
@@ -271,6 +269,19 @@ function editAttendance(btn) {
     setTimeout(() => {
         window.location.href = "edit-attendance.html"
     }, 400)
+}
+
+/* -------- 🔥 BACK BUTTON FIXED -------- */
+function goBack(btn) {
+
+    if (btn && btn.target) btn = btn.target
+    if (!btn) btn = document.querySelector(".back-btn") || document.activeElement
+
+    setBtnLoading(btn, "Going")
+
+    setTimeout(() => {
+        window.history.back()
+    }, 250)
 }
 
 /* -------- INIT -------- */
@@ -294,16 +305,4 @@ window.onload = function () {
 
     initStudents()
     loadStudents()
-}
-
-function goBack(btn) {
-
-    // 🔥 fallback if btn not passed
-    if (!btn) btn = document.querySelector(".back-btn") || document.activeElement
-
-    setBtnLoading(btn, "Going")
-
-    setTimeout(() => {
-        window.history.back()
-    }, 250)
 }
