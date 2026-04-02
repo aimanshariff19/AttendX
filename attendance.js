@@ -290,3 +290,7 @@ window.onload = function () {
     initStudents()
     loadStudents()
 }
+
+editAttendance = function (){
+    window.location.href = "edit.html"
+}
