@@ -175,6 +175,8 @@ function handleToggle(toggle) {
 function loadAttendance() {
 
     const btn = event.target
+    const originalText = btn.innerText
+
     btn.classList.add("loading")
     btn.innerText = ""
 
@@ -186,7 +188,7 @@ function loadAttendance() {
         if (!date || !time) {
             showMessage("Select date & time", "error")
             btn.classList.remove("loading")
-            btn.innerText = "Load"
+            btn.innerText = originalText
             return
         }
 
@@ -197,7 +199,7 @@ function loadAttendance() {
         if (!saved) {
             showMessage("Attendance not found", "error")
             btn.classList.remove("loading")
-            btn.innerText = "Load"
+            btn.innerText = originalText
             return
         }
 
@@ -242,7 +244,7 @@ function loadAttendance() {
         })
 
         btn.classList.remove("loading")
-        btn.innerText = "Load"
+        btn.innerText = originalText
 
         showMessage("Attendance loaded 🎉", "success")
 
@@ -269,6 +271,7 @@ function markAllEdit(status) {
 function updateAttendance() {
 
     const btn = document.querySelector(".update-btn")
+    const originalText = btn.innerText
 
     btn.classList.add("loading")
     btn.innerText = ""
@@ -281,7 +284,7 @@ function updateAttendance() {
         if (!date || !time) {
             showMessage("Select date & time", "error")
             btn.classList.remove("loading")
-            btn.innerText = "Update Attendance"
+            btn.innerText = originalText
             return
         }
 
@@ -307,7 +310,7 @@ function updateAttendance() {
         if (reasonMissing) {
             showMessage("Enter reason for changes", "error")
             btn.classList.remove("loading")
-            btn.innerText = "Update Attendance"
+            btn.innerText = originalText
             return
         }
 
