@@ -266,7 +266,7 @@ function editAttendance(btn) {
     setBtnLoading(btn, "Opening")   // ✅ ONLY ADDITION
 
     setTimeout(() => {
-        window.location.href = "edit.html"
+        window.location.href = "edit-attendance.html"
     }, 400)
 }
 
