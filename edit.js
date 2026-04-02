@@ -30,12 +30,28 @@ function formatTo12Hour(time24) {
     return `${hour}:${String(minute).padStart(2, "0")} ${ampm}`
 }
 
+/* -------- 🔥 NEW: CONVERT 12 → 24 -------- */
+
+function convertTo24Hour(time12) {
+    if (!time12) return ""
+
+    if (!time12.includes("AM") && !time12.includes("PM")) return time12
+
+    const [time, modifier] = time12.split(" ")
+    let [hours, minutes] = time.split(":").map(Number)
+
+    if (modifier === "PM" && hours !== 12) hours += 12
+    if (modifier === "AM" && hours === 12) hours = 0
+
+    return `${String(hours).padStart(2, "0")}:${minutes}`
+}
+
 
 /* -------- CLASS DETAILS -------- */
 
 const subject = localStorage.getItem("subject")
 const department = localStorage.getItem("department")
-const program = localStorage.getItem("program") || ""   // ✅ FIX
+const program = localStorage.getItem("program") || ""
 const sem = localStorage.getItem("sem")
 const section = localStorage.getItem("section")
 
@@ -77,7 +93,7 @@ function loadTimesForDate() {
     const date = dateDropdown.value
 
     if (!date) {
-        timeDropdown.innerHTML = "<option value=''>No classes on this date</option>"
+        timeDropdown.innerHTML = "<option value=''>Select date first</option>"
         return
     }
 
@@ -99,7 +115,7 @@ function loadTimesForDate() {
             const keyTime = parts[parts.length - 1]
 
             if (keyDate === date) {
-                times.push(keyTime.trim())   // ✅ FIX
+                times.push(keyTime.trim())
             }
         }
     }
@@ -108,9 +124,11 @@ function loadTimesForDate() {
     times.sort((a, b) => a.localeCompare(b))
 
     if (times.length === 0) {
-        timeDropdown.innerHTML = "<option>No classes on this date</option>"
+        timeDropdown.innerHTML = "<option value=''>No classes available</option>"
         return
     }
+
+    timeDropdown.innerHTML = "<option value=''>Select time</option>"
 
     times.forEach((time, index) => {
 
@@ -183,9 +201,11 @@ function loadAttendance() {
     setTimeout(() => {
 
         const date = dateDropdown.value
-        const time = timeDropdown.value.trim()   // ✅ FIX
+        let time = timeDropdown.value.trim()
 
-        if (!date || !time) {
+        time = convertTo24Hour(time)   // 🔥 FIX
+
+        if (!date || !time || time.includes("No classes")) {
             showMessage("Select date & time", "error")
             btn.classList.remove("loading")
             btn.innerText = originalText
@@ -194,7 +214,7 @@ function loadAttendance() {
 
         const key = `${subject}_${department}_${program}_${sem}_${section}_${date}_${time}`
 
-        console.log("Loading Key:", key)   // ✅ DEBUG
+        console.log("Loading Key:", key)
 
         const saved = JSON.parse(localStorage.getItem(key))
 
@@ -281,7 +301,9 @@ function updateAttendance() {
     setTimeout(() => {
 
         const date = dateDropdown.value
-        const time = timeDropdown.value.trim()   // ✅ FIX
+        let time = timeDropdown.value.trim()
+
+        time = convertTo24Hour(time)   // 🔥 FIX
 
         if (!date || !time || time.includes("No classes")) {
             showMessage("Select date & time", "error")
