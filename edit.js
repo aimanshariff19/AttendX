@@ -261,6 +261,3 @@ function updateAttendance() {
 
 /* -------- INIT -------- */
 dateDropdown.addEventListener("change", loadTimesForDate)
-
-btn.classList.add("present", "active")
-btn.classList.add("absent", "active")
