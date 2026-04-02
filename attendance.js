@@ -306,3 +306,46 @@ window.onload = function () {
     initStudents()
     loadStudents()
 }
+
+function markAll(isPresent, event) {
+
+    // 🔥 get button from click
+    let btn = event?.target
+
+    if (!btn) btn = document.activeElement
+
+    setBtnLoading(btn, isPresent ? "Marking Present" : "Marking Absent")
+
+    setTimeout(() => {
+
+        document.querySelectorAll("#studentRows tr").forEach(row => {
+
+            const b = row.querySelector(".status-btn")
+            if (!b) return
+
+            b.classList.remove("present", "absent", "active")
+
+            if (isPresent) {
+                b.classList.add("present", "active")
+                b.innerText = "Present"
+                row.style.background = "rgba(34,197,94,0.08)"
+            } else {
+                b.classList.add("absent", "active")
+                b.innerText = "Absent"
+                row.style.background = "rgba(239,68,68,0.08)"
+            }
+
+            // 🔥 update %
+            const percentText = row.querySelector(".percent-text")
+            const fill = row.querySelector(".fill")
+
+            const percent = isPresent ? 100 : 0
+
+            if (percentText) percentText.innerText = percent + "%"
+            if (fill) fill.style.width = percent + "%"
+        })
+
+        resetBtn(btn)
+
+    }, 400) // smooth delay
+}
