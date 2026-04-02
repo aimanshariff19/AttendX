@@ -184,7 +184,6 @@ function toggleStatus(btn) {
     const row = btn.closest("tr")
     const percentText = row.querySelector(".percent-text")
     const fill = row.querySelector(".fill")
-    const usn = row.children[0].innerText
 
     const isPresent = btn.classList.contains("present")
 
@@ -202,7 +201,7 @@ function toggleStatus(btn) {
         status = "Present"
     }
 
-    let percent = calculatePercentage(usn, status)
+    let percent = calculatePercentage(null, status)
 
     if (percentText) percentText.innerText = percent + "%"
     if (fill) fill.style.width = percent + "%"
@@ -212,28 +211,22 @@ function toggleStatus(btn) {
         : "rgba(239,68,68,0.08)"
 }
 
-/* -------- 🔥 SUBMIT (FIXED SAVE) -------- */
+/* -------- 🔥 SUBMIT -------- */
 function submitAttendance(btn) {
 
     if (!btn) btn = document.getElementById("submitBtn")
 
-    const dateInput = document.getElementById("date")
-    const timeInput = document.getElementById("classTime")
-
-    const date = dateInput?.value
-    const time = timeInput?.value
+    const date = document.getElementById("date")?.value
+    const time = document.getElementById("classTime")?.value
 
     if (!date) {
-        triggerShake(dateInput)
-        triggerShake(btn)
+        triggerShake(document.getElementById("date"))
         showError("Select Date")
         return
     }
 
     if (!time) {
-        triggerShake(timeInput)
-        triggerShake(btn)
-        timeInput.focus()
+        triggerShake(document.getElementById("classTime"))
         showError("Select Time Slot")
         return
     }
@@ -258,15 +251,23 @@ function submitAttendance(btn) {
 
         const key = `${subject}_${department}_${program}_${sem}_${section}_${date}_${time24}`
 
-        console.log("Saving Key:", key)
-
-        localStorage.setItem(key, JSON.stringify({
-            data: attendanceData
-        }))
+        localStorage.setItem(key, JSON.stringify({ data: attendanceData }))
 
         window.location.href = "dashboard.html"
 
     }, 800)
+}
+
+/* -------- 🔥 EDIT ATTENDANCE (SPINNER ADDED ONLY) -------- */
+function editAttendance(btn) {
+
+    if (!btn) btn = document.querySelector(".edit-btn")
+
+    setBtnLoading(btn, "Opening")   // ✅ ONLY ADDITION
+
+    setTimeout(() => {
+        window.location.href = "edit.html"
+    }, 400)
 }
 
 /* -------- INIT -------- */
@@ -276,6 +277,7 @@ window.onload = function () {
 
     const dateInput = document.getElementById("date")
     const today = new Date().toISOString().split("T")[0]
+
     if (dateInput) {
         dateInput.value = today
         dateInput.setAttribute("readonly", true)
@@ -289,8 +291,4 @@ window.onload = function () {
 
     initStudents()
     loadStudents()
-}
-
-editAttendance = function (){
-    window.location.href = "edit.html"
 }
