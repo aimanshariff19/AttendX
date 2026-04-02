@@ -277,6 +277,11 @@ function goBack(btn) {
     if (btn && btn.target) btn = btn.target
     if (!btn) btn = document.querySelector(".back-btn") || document.activeElement
 
+    // 🔥 RESET ALL OTHER LOADING BUTTONS
+    document.querySelectorAll(".loading").forEach(b => {
+        if (b !== btn) resetBtn(b)
+    })
+
     setBtnLoading(btn, "Going back")
 
     setTimeout(() => {
@@ -307,6 +312,7 @@ window.onload = function () {
     loadStudents()
 }
 
+// 🔥 MARK ALL PRESENT/ABSENT
 function markAll(isPresent, event) {
 
     // 🔥 get button from click
