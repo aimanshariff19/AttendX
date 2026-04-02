@@ -40,11 +40,8 @@
             font-weight: 600;
 
             background: linear-gradient(90deg, #c7d2fe, #a78bfa, #6366f1);
-            background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            -webkit-text-fill-color: transparent;
-
             text-shadow: 0 0 12px rgba(139, 92, 246, 0.3);
         }
 
@@ -68,7 +65,6 @@
         .attendance-controls label {
             font-size: 13px;
             margin-bottom: 4px;
-            display: block;
         }
 
         .attendance-controls input,
@@ -116,7 +112,8 @@
             border-radius: 12px;
             border: none;
             font-weight: 600;
-            transition: 0.25s;
+            color: white;
+            /* FIXED */
         }
 
         .bulk-actions button:first-child {
@@ -131,40 +128,50 @@
             transform: scale(1.05);
         }
 
-        /* ===== TABLE ===== */
+        /* ===== TABLE (FIXED PROPER STRUCTURE) ===== */
         table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 12px;
+            border-collapse: collapse;
         }
 
+        /* HEADER */
         thead th {
-            padding: 12px;
-            opacity: 0.7;
-        }
-
-        tbody tr {
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 14px;
-            transition: 0.25s;
-        }
-
-        tbody tr:hover {
-            transform: scale(1.01);
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        tbody td {
+            text-align: left;
             padding: 14px 12px;
+            opacity: 0.7;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* ROW */
+        tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: 0.2s;
+        }
+
+        /* HOVER */
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* CELLS */
+        tbody td {
+            padding: 16px 12px;
+            vertical-align: middle;
+        }
+
+        /* ALIGNMENT */
+        td:nth-child(3),
+        td:nth-child(4) {
+            text-align: center;
         }
 
         /* ===== ROW COLORS ===== */
         tr.present-row {
-            background: rgba(34, 197, 94, 0.12);
+            background: rgba(34, 197, 94, 0.08);
         }
 
         tr.absent-row {
-            background: rgba(239, 68, 68, 0.12);
+            background: rgba(239, 68, 68, 0.08);
         }
 
         /* ===== STATUS BUTTON ===== */
@@ -176,10 +183,9 @@
             font-weight: 600;
             background: rgba(255, 255, 255, 0.08);
             color: white;
-            transition: 0.2s;
         }
 
-        /* ONLY THESE GLOW */
+        /* GLOW ONLY HERE */
         .status-btn.present.active {
             background: linear-gradient(135deg, #22c55e, #16a34a);
             box-shadow: 0 0 10px rgba(34, 197, 94, 0.7);
@@ -190,8 +196,9 @@
             box-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
         }
 
-        .status-btn:hover {
-            transform: scale(1.05);
+        /* CENTER BUTTON */
+        td .status-btn {
+            display: inline-block;
         }
 
         /* ===== TEXTAREA ===== */
@@ -213,14 +220,9 @@
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
             color: white;
             font-weight: 600;
-            transition: 0.25s;
         }
 
-        .update-btn:hover {
-            transform: scale(1.02);
-        }
-
-        /* ===== SPINNER FOR ALL BUTTONS ===== */
+        /* ===== SPINNER ===== */
         button.loading {
             pointer-events: none;
             color: transparent !important;
@@ -251,10 +253,11 @@
             transform: scale(0.96);
         }
 
-        /* FIX DROPDOWN */
+        /* DROPDOWN FIX */
         select option {
             color: black;
         }
+        
     </style>
 
 </head>
