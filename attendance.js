@@ -295,3 +295,12 @@ window.onload = function () {
     initStudents()
     loadStudents()
 }
+
+function goBack(btn) {
+
+    setBtnLoading(btn)   // show spinner
+
+    setTimeout(() => {
+        window.history.back()
+    }, 200)  // small delay so spinner appears
+}
