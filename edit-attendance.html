@@ -1,8 +1,10 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
 
+    ```
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Attendance</title>
@@ -22,67 +24,68 @@
             color: white;
         }
 
-        /* ===== DASHBOARD ===== */
+        /* ===== DASHBOARD (FIXED WIDTH) ===== */
         .dashboard {
-            max-width: 950px;
-            margin: 40px auto;
-            padding: 24px;
+            max-width: 780px;
+            margin: 30px auto;
+            padding: 20px;
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
+            border-radius: 18px;
             backdrop-filter: blur(20px);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
         }
 
         /* ===== TITLE ===== */
         h1 {
-            margin-bottom: 20px;
-            font-size: 28px;
+            margin-bottom: 18px;
+            font-size: 26px;
             font-weight: 600;
 
-            /* fallback */
-            color: #e0e7ff;
-
-            /* gradient */
             background: linear-gradient(90deg, #c7d2fe, #a78bfa, #6366f1);
             background-clip: text;
             -webkit-background-clip: text;
-
-            /* required for gradient text */
             color: transparent;
             -webkit-text-fill-color: transparent;
 
-            /* smoother glow */
             text-shadow: 0 0 8px rgba(139, 92, 246, 0.25);
         }
 
-        /* ===== CARD ===== */
+        /* ===== CARD (GRID STYLE) ===== */
         .card {
-            background: rgba(255, 255, 255, 0.06);
-            padding: 16px;
-            border-radius: 14px;
-            margin-bottom: 18px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px 20px;
+            font-size: 13px;
+            opacity: 0.9;
         }
 
         /* ===== CONTROLS ===== */
         .attendance-controls {
             display: grid;
             grid-template-columns: 1fr 1fr auto;
-            gap: 14px;
+            gap: 10px;
             align-items: end;
-            margin-bottom: 18px;
+            margin-bottom: 14px;
         }
 
         .attendance-controls label {
-            font-size: 13px;
+            font-size: 12px;
             margin-bottom: 4px;
+            opacity: 0.8;
         }
 
         .attendance-controls input,
         .attendance-controls select {
             width: 100%;
-            padding: 10px;
-            border-radius: 10px;
+            padding: 8px;
+            border-radius: 8px;
             border: none;
+            font-size: 13px;
             background: rgba(255, 255, 255, 0.1);
             color: white;
         }
@@ -96,12 +99,13 @@
 
         /* ===== LOAD BUTTON ===== */
         .attendance-controls button {
-            padding: 10px 16px;
-            border-radius: 10px;
+            padding: 8px 14px;
+            border-radius: 8px;
             border: none;
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
             color: white;
             font-weight: 600;
+            font-size: 13px;
             transition: 0.25s;
         }
 
@@ -112,18 +116,18 @@
         /* ===== BULK BUTTONS ===== */
         .bulk-actions {
             display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 10px;
+            margin-bottom: 14px;
         }
 
         .bulk-actions button {
             flex: 1;
-            padding: 10px;
-            border-radius: 12px;
-            border: none;
+            padding: 8px;
+            border-radius: 10px;
             font-weight: 600;
+            font-size: 13px;
+            border: none;
             color: white;
-            /* FIXED */
         }
 
         .bulk-actions button:first-child {
@@ -138,38 +142,33 @@
             transform: scale(1.05);
         }
 
-        /* ===== TABLE (FIXED PROPER STRUCTURE) ===== */
+        /* ===== TABLE ===== */
         table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 13px;
         }
 
-        /* HEADER */
         thead th {
             text-align: left;
-            padding: 14px 12px;
+            padding: 12px 10px;
             opacity: 0.7;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* ROW */
         tbody tr {
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             transition: 0.2s;
         }
 
-        /* HOVER */
         tbody tr:hover {
             background: rgba(255, 255, 255, 0.05);
         }
 
-        /* CELLS */
         tbody td {
-            padding: 16px 12px;
-            vertical-align: middle;
+            padding: 12px 10px;
         }
 
-        /* ALIGNMENT */
         td:nth-child(3),
         td:nth-child(4) {
             text-align: center;
@@ -186,16 +185,15 @@
 
         /* ===== STATUS BUTTON ===== */
         .status-btn {
-            padding: 5px 12px;
-            border-radius: 10px;
-            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 10px;
             border: none;
             font-weight: 600;
             background: rgba(255, 255, 255, 0.08);
             color: white;
         }
 
-        /* GLOW ONLY HERE */
         .status-btn.present.active {
             background: linear-gradient(135deg, #22c55e, #16a34a);
             box-shadow: 0 0 10px rgba(34, 197, 94, 0.7);
@@ -206,30 +204,35 @@
             box-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
         }
 
-        /* CENTER BUTTON */
-        td .status-btn {
-            display: inline-block;
-        }
-
         /* ===== TEXTAREA ===== */
         .reasonBox {
             width: 100%;
-            padding: 8px;
+            padding: 6px;
             border-radius: 8px;
             border: none;
+            font-size: 12px;
             background: rgba(255, 255, 255, 0.1);
             color: white;
         }
 
         /* ===== UPDATE BUTTON ===== */
         .update-btn {
+            margin-top: 16px;
             width: 100%;
-            padding: 14px;
-            border-radius: 16px;
+            padding: 12px;
+            border-radius: 14px;
             border: none;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: white;
+            font-size: 14px;
             font-weight: 600;
+
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+
+            transition: 0.25s;
+        }
+
+        .update-btn:hover {
+            transform: translateY(-2px);
         }
 
         /* ===== SPINNER ===== */
@@ -258,21 +261,21 @@
             }
         }
 
-        /* CLICK FEEDBACK */
         button:active {
             transform: scale(0.96);
         }
 
-        /* DROPDOWN FIX */
         select option {
             color: black;
         }
     </style>
+    ```
 
 </head>
 
 <body>
 
+    ```
     <div class="dashboard">
 
         <h1>AttendX / Edit Attendance</h1>
@@ -306,8 +309,8 @@
         </div>
 
         <div class="bulk-actions">
-            <button class="btn" onclick="markAll(true, event)">Mark All Present</button>
-            <button class="btn" onclick="markAll(false, event)">Mark All Absent</button>
+            <button onclick="markAll(true, event)">Mark All Present</button>
+            <button onclick="markAll(false, event)">Mark All Absent</button>
         </div>
 
         <table>
@@ -332,6 +335,7 @@
     <script src="mockData.js"></script>
     <script src="utils.js"></script>
     <script src="edit.js"></script>
+    ```
 
 </body>
 
