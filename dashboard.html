@@ -74,14 +74,91 @@
             background: linear-gradient(135deg, #5f5cff, #7c3aed);
             color: white;
             cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(95, 92, 255, 0.5);
         }
 
         /* ===== PROFILE ===== */
         .faculty-panel h2 {
             font-size: 26px;
+            margin-bottom: 5px;
         }
 
         .dept {
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+
+        /* ===== STATS ===== */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .course-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 18px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s;
+        }
+
+        .course-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .course-card h3 {
+            font-size: 26px;
+        }
+
+        .course-card p {
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        /* ===== CARD ===== */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 18px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* ===== SUBJECTS ===== */
+        .subjects {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 18px;
+        }
+
+        .subject-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .subject-card h4 {
+            margin-bottom: 8px;
+        }
+
+        .subject-card p {
+            font-size: 13px;
             color: #aaa;
         }
 
@@ -95,22 +172,22 @@
             color: white;
             font-weight: 600;
             cursor: pointer;
+            transition: 0.3s;
             width: 100%;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
-        /* 🔥 LOADING */
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(95, 92, 255, 0.5);
+        }
+
+        /* ===== 🔥 LOADING SYSTEM (ADDED) ===== */
         button.loading {
             pointer-events: none;
             opacity: 0.9;
         }
 
-        /* 🔥 FORCE SPINNER */
         .btn-spinner {
-            display: inline-block;
             width: 14px;
             height: 14px;
             border: 2px solid rgba(255, 255, 255, 0.3);
@@ -126,6 +203,7 @@
             }
         }
 
+        /* ===== ANIMATION ===== */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -144,20 +222,52 @@
 
     <div class="dashboard">
 
+        <!-- HEADER -->
         <div class="header-actions">
             <h1>AttendX / Faculty Dashboard</h1>
 
-            <!-- ✅ FIXED STRUCTURE -->
+            <!-- 🔥 MODIFIED -->
             <button class="logout-btn" onclick="logout(this)">
                 <span>Logout</span>
             </button>
         </div>
 
+        <!-- PROFILE -->
         <div class="faculty-panel">
             <h2 id="facultyName">Dr. Kumar</h2>
             <p id="facultyDept" class="dept">Department: CSE</p>
         </div>
 
+        <!-- STATS -->
+        <div class="cards faculty-stats">
+            <div class="course-card">
+                <h3 id="courseCount">3</h3>
+                <p>Courses</p>
+            </div>
+
+            <div class="course-card">
+                <h3 id="sectionCount">2</h3>
+                <p>Sections</p>
+            </div>
+
+            <div class="course-card">
+                <h3 id="studentCount">7</h3>
+                <p>Students</p>
+            </div>
+
+            <div class="course-card">
+                <h3 id="facultyId">faculty1</h3>
+                <p>Faculty ID</p>
+            </div>
+        </div>
+
+        <!-- SCHEDULE -->
+        <div class="card">
+            <h3>Today's Schedule</h3>
+            <div id="todaySchedule">No classes today</div>
+        </div>
+
+        <!-- SUBJECTS -->
         <h3 style="margin-bottom:10px;">Your Courses</h3>
 
         <div class="subjects" id="courseCards">
@@ -165,8 +275,8 @@
                 <h4>Data Structures</h4>
                 <p>CSE • Sem 3 • Sec A</p>
 
-                <!-- ✅ FIXED STRUCTURE -->
-                <button onclick="openCourse('DS','CSE',3,'A', this)">
+                <!-- 🔥 READY FOR SPINNER -->
+                <button onclick="openAttendance(this)">
                     <span>Take Attendance</span>
                 </button>
             </div>
