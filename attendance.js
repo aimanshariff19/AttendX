@@ -51,20 +51,19 @@ function showError(msg) {
     }, 2000)
 }
 
-/* -------- 🔥 CURRENT TIME -------- */
+/* -------- 🔥 CURRENT TIME (12HR UI) -------- */
 function updateCurrentTime() {
     const now = new Date()
     let h = now.getHours()
     const m = String(now.getMinutes()).padStart(2, "0")
     const ampm = h >= 12 ? "PM" : "AM"
-    h = h % 12
-    h = h ? h : 12
+    h = h % 12 || 12
 
     const el = document.getElementById("currentTime")
     if (el) el.value = `${h}:${m} ${ampm}`
 }
 
-/* -------- 🔥 CONVERT 12 → 24 -------- */
+/* -------- 🔥 CONVERT 12 → 24 (FOR STORAGE) -------- */
 function convertTo24Hour(time12) {
     if (!time12) return ""
 
@@ -98,8 +97,7 @@ function calculateTimeRange() {
         let hr = d.getHours()
         const min = String(d.getMinutes()).padStart(2, "0")
         const ampm = hr >= 12 ? "PM" : "AM"
-        hr = hr % 12
-        hr = hr ? hr : 12
+        hr = hr % 12 || 12
         return `${hr}:${min} ${ampm}`
     }
 
@@ -133,13 +131,6 @@ function initStudents() {
     if (typeof students === "undefined") return
     const key = `${department}_${program}_${sem}_${section}`
     studentList = students[key] || []
-}
-
-/* -------- 🔥 % CALC -------- */
-function calculatePercentage(usn, status) {
-    if (status === "Present") return 100
-    if (status === "Absent") return 0
-    return 100
 }
 
 /* -------- LOAD STUDENTS -------- */
@@ -178,62 +169,48 @@ function loadStudents() {
     })
 }
 
-/* -------- 🔥 TOGGLE -------- */
+/* -------- TOGGLE -------- */
 function toggleStatus(btn) {
 
     const row = btn.closest("tr")
     const percentText = row.querySelector(".percent-text")
     const fill = row.querySelector(".fill")
-    const usn = row.children[0].innerText
 
     const isPresent = btn.classList.contains("present")
 
     btn.classList.remove("present", "absent", "active")
 
-    let status
-
     if (isPresent) {
         btn.classList.add("absent", "active")
         btn.innerText = "Absent"
-        status = "Absent"
+        row.style.background = "rgba(239,68,68,0.08)"
+        percentText.innerText = "0%"
+        fill.style.width = "0%"
     } else {
         btn.classList.add("present", "active")
         btn.innerText = "Present"
-        status = "Present"
+        row.style.background = "rgba(34,197,94,0.08)"
+        percentText.innerText = "100%"
+        fill.style.width = "100%"
     }
-
-    let percent = calculatePercentage(usn, status)
-
-    if (percentText) percentText.innerText = percent + "%"
-    if (fill) fill.style.width = percent + "%"
-
-    row.style.background = status === "Present"
-        ? "rgba(34,197,94,0.08)"
-        : "rgba(239,68,68,0.08)"
 }
 
-/* -------- 🔥 SUBMIT (FIXED SAVE) -------- */
+/* -------- 🔥 SUBMIT (FINAL SAVE) -------- */
 function submitAttendance(btn) {
 
     if (!btn) btn = document.getElementById("submitBtn")
 
-    const dateInput = document.getElementById("date")
-    const timeInput = document.getElementById("classTime")
-
-    const date = dateInput?.value
-    const time = timeInput?.value
+    const date = document.getElementById("date")?.value
+    const time = document.getElementById("classTime")?.value
 
     if (!date) {
-        triggerShake(dateInput)
-        triggerShake(btn)
+        triggerShake(document.getElementById("date"))
         showError("Select Date")
         return
     }
 
     if (!time) {
-        triggerShake(timeInput)
-        triggerShake(btn)
-        timeInput.focus()
+        triggerShake(document.getElementById("classTime"))
         showError("Select Time Slot")
         return
     }
@@ -249,12 +226,13 @@ function submitAttendance(btn) {
         rows.forEach(row => {
             const usn = row.children[0].innerText
             const b = row.querySelector(".status-btn")
+
             const status = b.classList.contains("present") ? "Present" : "Absent"
 
             attendanceData.push({ usn, status })
         })
 
-        let time24 = convertTo24Hour(time)
+        const time24 = convertTo24Hour(time)
 
         const key = `${subject}_${department}_${program}_${sem}_${section}_${date}_${time24}`
 
@@ -276,6 +254,7 @@ window.onload = function () {
 
     const dateInput = document.getElementById("date")
     const today = new Date().toISOString().split("T")[0]
+
     if (dateInput) {
         dateInput.value = today
         dateInput.setAttribute("readonly", true)
