@@ -55,10 +55,7 @@
 
         /* ===== HEADER ===== */
         .header-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
 
         .header-actions h1 {
@@ -220,6 +217,11 @@
                 transform: translateY(0);
             }
         }
+
+        .logout-btn {
+            margin-bottom: 25px;
+            width: fit-content;
+        }
     </style>
 </head>
 
@@ -230,11 +232,11 @@
         <!-- HEADER -->
         <div class="header-actions">
             <h1>AttendX / Faculty Dashboard</h1>
-
-            <button class="logout-btn" onclick="logout(this)">
-                <span>Logout</span>
-            </button>
         </div>
+
+        <button class="logout-btn" onclick="logout(this)">
+            <span>Logout</span>
+        </button>
 
         <!-- PROFILE -->
         <div class="faculty-panel">
