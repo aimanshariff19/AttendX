@@ -261,9 +261,12 @@ function submitAttendance(btn) {
 /* -------- 🔥 EDIT ATTENDANCE (SPINNER ADDED ONLY) -------- */
 function editAttendance(btn) {
 
-    if (!btn) btn = document.querySelector(".edit-btn")
+    // 🔥 safety if event was passed accidentally
+    if (btn && btn.target) btn = btn.target
 
-    setBtnLoading(btn, "Opening")   // ✅ ONLY ADDITION
+    if (!btn) btn = document.querySelector(".btn")
+
+    setBtnLoading(btn, "Opening")
 
     setTimeout(() => {
         window.location.href = "edit-attendance.html"
