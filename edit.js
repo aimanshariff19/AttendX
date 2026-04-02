@@ -1,5 +1,4 @@
 /* -------- 💧 RIPPLE -------- */
-
 document.addEventListener("click", function (e) {
     const btn = e.target.closest("button")
     if (!btn) return
@@ -15,8 +14,7 @@ document.addEventListener("click", function (e) {
     setTimeout(() => circle.remove(), 600)
 })
 
-/* -------- 🔥 ADDED: BUTTON SPINNER (ONLY ADDITION) -------- */
-
+/* -------- 🔥 BUTTON SPINNER -------- */
 function setBtnLoading(btn) {
     if (!btn || btn.classList.contains("loading")) return
     btn.dataset.original = btn.innerText
@@ -31,19 +29,15 @@ function resetBtn(btn) {
 }
 
 /* -------- FORMAT TIME -------- */
-
 function formatTo12Hour(time24) {
     if (!time24) return "--"
-
     let [hour, minute] = time24.split(":").map(Number)
     let ampm = hour >= 12 ? "PM" : "AM"
     hour = hour % 12 || 12
-
     return `${hour}:${String(minute).padStart(2, "0")} ${ampm}`
 }
 
-/* -------- CONVERT 12 → 24 -------- */
-
+/* -------- CONVERT -------- */
 function convertTo24Hour(time12) {
     if (!time12) return ""
     if (!time12.includes("AM") && !time12.includes("PM")) return time12
@@ -58,7 +52,6 @@ function convertTo24Hour(time12) {
 }
 
 /* -------- CLASS DETAILS -------- */
-
 const subject = localStorage.getItem("subject")
 const department = localStorage.getItem("department")
 const program = localStorage.getItem("program") || ""
@@ -79,7 +72,6 @@ const table = document.getElementById("studentRows")
 const timeDropdown = document.getElementById("timeSelect")
 
 /* -------- MESSAGE -------- */
-
 function showMessage(text, type) {
     const box = document.getElementById("messageBox")
     if (!box) return
@@ -92,9 +84,7 @@ function showMessage(text, type) {
 }
 
 /* -------- LOAD TIMES -------- */
-
 function loadTimesForDate() {
-
     const date = dateDropdown.value
 
     if (!date) {
@@ -106,12 +96,10 @@ function loadTimesForDate() {
     timeDropdown.innerHTML = ""
 
     for (let i = 0; i < localStorage.length; i++) {
-
         const key = localStorage.key(i)
         if (!key) continue
 
         if (key.includes(subject) && key.includes(date)) {
-
             const parts = key.split("_")
             const keyDate = parts[parts.length - 2]
             const keyTime = parts[parts.length - 1]
@@ -140,32 +128,29 @@ function loadTimesForDate() {
 }
 
 /* -------- LOAD ATTENDANCE -------- */
-
 function loadAttendance() {
 
     const btn = event?.target || document.activeElement
-    setBtnLoading(btn)   // ✅ ADDED
+    setBtnLoading(btn)
 
     setTimeout(() => {
 
         const date = dateDropdown.value
         let time = timeDropdown.value.trim()
-
         time = convertTo24Hour(time)
 
         if (!date || !time) {
             showMessage("Select date & time", "error")
-            resetBtn(btn)   // ✅ ADDED
+            resetBtn(btn)
             return
         }
 
         const key = `${subject}_${department}_${program}_${sem}_${section}_${date}_${time}`
-
         const saved = JSON.parse(localStorage.getItem(key))
 
         if (!saved) {
             showMessage("Attendance not found", "error")
-            resetBtn(btn)   // ✅ ADDED
+            resetBtn(btn)
             return
         }
 
@@ -178,6 +163,7 @@ function loadAttendance() {
             const isPresent = record && record.status === "Present"
 
             let row = document.createElement("tr")
+            row.className = isPresent ? "present-row" : "absent-row"
 
             row.innerHTML = `
 <td>${student.usn}</td>
@@ -185,77 +171,77 @@ function loadAttendance() {
 <td>--</td>
 
 <td>
-<label class="toggle-switch">
-<input type="checkbox" data-usn="${student.usn}" ${isPresent ? "checked" : ""}>
-<span class="slider"></span>
-</label>
+<button class="status-btn ${isPresent ? "present active" : "absent active"}"
+onclick="toggleStatus(this)">
+${isPresent ? "Present" : "Absent"}
+</button>
 </td>
 
 <td>
-<textarea class="reasonBox" placeholder="Enter reason" style="display:none"></textarea>
+<textarea class="reasonBox" style="display:none"></textarea>
 </td>
 `
 
             table.appendChild(row)
         })
 
-        document.querySelectorAll(".toggle-switch input").forEach(toggle => {
-            toggle.defaultChecked = toggle.checked
-            toggle.addEventListener("change", () => handleToggle(toggle))
-            handleToggle(toggle)
-        })
-
-        resetBtn(btn)   // ✅ ADDED
+        resetBtn(btn)
         showMessage("Attendance loaded 🎉", "success")
 
     }, 600)
 }
 
 /* -------- TOGGLE -------- */
+function toggleStatus(btn) {
 
-function handleToggle(toggle) {
-
-    const row = toggle.closest("tr")
+    const row = btn.closest("tr")
     const reasonBox = row.querySelector(".reasonBox")
 
-    if (toggle.checked !== toggle.defaultChecked) {
+    const isPresent = btn.classList.contains("present")
+
+    btn.classList.remove("present", "absent", "active")
+
+    if (isPresent) {
+        btn.classList.add("absent", "active")
+        btn.innerText = "Absent"
+        row.className = "absent-row"
         reasonBox.style.display = "block"
     } else {
+        btn.classList.add("present", "active")
+        btn.innerText = "Present"
+        row.className = "present-row"
         reasonBox.style.display = "none"
         reasonBox.value = ""
     }
-
-    row.style.background = toggle.checked ? "#dcfce7" : "#fee2e2"
 }
 
 /* -------- UPDATE -------- */
-
 function updateAttendance() {
 
     const btn = document.querySelector(".update-btn")
-    setBtnLoading(btn)   // ✅ ADDED
+    setBtnLoading(btn)
 
     setTimeout(() => {
 
         const date = dateDropdown.value
         let time = timeDropdown.value.trim()
-
         time = convertTo24Hour(time)
 
         if (!date || !time) {
             showMessage("Select date & time", "error")
-            resetBtn(btn)   // ✅ ADDED
+            resetBtn(btn)
             return
         }
 
         let attendanceData = []
 
         document.querySelectorAll("#studentRows tr").forEach(row => {
-            const toggle = row.querySelector(".toggle-switch input")
+
+            const btn = row.querySelector(".status-btn")
 
             attendanceData.push({
-                usn: toggle.dataset.usn,
-                status: toggle.checked ? "Present" : "Absent"
+                usn: row.children[0].innerText,
+                status: btn.classList.contains("present") ? "Present" : "Absent"
             })
         })
 
@@ -263,7 +249,7 @@ function updateAttendance() {
 
         localStorage.setItem(key, JSON.stringify({ data: attendanceData }))
 
-        resetBtn(btn)   // ✅ ADDED
+        resetBtn(btn)
         showMessage("Updated successfully ✅", "success")
 
         setTimeout(() => {
@@ -274,5 +260,4 @@ function updateAttendance() {
 }
 
 /* -------- INIT -------- */
-
 dateDropdown.addEventListener("change", loadTimesForDate)
