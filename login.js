@@ -47,10 +47,8 @@
         if (text) text.innerText = "Logging in..."
         if (loader) loader.style.display = "inline-block"
 
-        /* delay */
         setTimeout(() => {
 
-            /* -------- SUCCESS FUNCTION -------- */
             function successLogin(data, redirectPage) {
 
                 localStorage.clear()
@@ -66,8 +64,6 @@
                     window.location.href = redirectPage
                 }, 400)
             }
-
-            /* -------- LOGIN LOGIC -------- */
 
             /* FACULTY LOGIN */
             if (typeof facultyList !== "undefined") {
@@ -102,11 +98,9 @@
                 }
             }
 
-            /* -------- ERROR -------- */
             error.innerText = "❌ Invalid Credentials"
             shake()
 
-            /* 🔥 RESET BUTTON */
             btn.classList.remove("loading")
             if (text) text.innerText = "Login"
             if (loader) loader.style.display = "none"
@@ -138,12 +132,12 @@
             if (e.key === "Enter") login(e)
         })
 
-        /* PASSWORD TOGGLE */
+        /* 🔥 FIXED PASSWORD TOGGLE (STUDENT STYLE) */
         if (eye && password) {
-            eye.onclick = function () {
+            eye.addEventListener("click", () => {
                 password.type = password.type === "password" ? "text" : "password"
                 eye.classList.toggle("fa-eye-slash")
-            }
+            })
         }
 
         /* RIPPLE */
