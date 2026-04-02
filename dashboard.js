@@ -27,9 +27,13 @@ document.addEventListener("click", function (e) {
 function setBtnLoading(btn, textValue) {
     if (!btn) return
 
+    /* ✅ STORE ORIGINAL CONTENT ONCE */
+    if (!btn.dataset.original) {
+        btn.dataset.original = btn.innerHTML
+    }
+
     btn.classList.add("loading")
 
-    /* get or create text span */
     let text = btn.querySelector("span")
     if (text) {
         text.innerText = textValue
@@ -37,7 +41,7 @@ function setBtnLoading(btn, textValue) {
         btn.innerHTML = `<span>${textValue}</span>`
     }
 
-    /* remove old spinner if exists */
+    /* remove old spinner */
     let old = btn.querySelector(".btn-spinner")
     if (old) old.remove()
 
