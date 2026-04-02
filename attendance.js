@@ -64,6 +64,21 @@ function updateCurrentTime() {
     if (el) el.value = `${h}:${m} ${ampm}`
 }
 
+/* -------- 🔥 CONVERT 12 → 24 -------- */
+function convertTo24Hour(time12) {
+    if (!time12) return ""
+
+    if (!time12.includes("AM") && !time12.includes("PM")) return time12
+
+    const [time, modifier] = time12.split(" ")
+    let [hours, minutes] = time.split(":").map(Number)
+
+    if (modifier === "PM" && hours !== 12) hours += 12
+    if (modifier === "AM" && hours === 12) hours = 0
+
+    return `${String(hours).padStart(2, "0")}:${minutes}`
+}
+
 /* -------- 🔥 TIME RANGE -------- */
 function calculateTimeRange() {
     const start = document.getElementById("classTime")?.value
@@ -120,9 +135,8 @@ function initStudents() {
     studentList = students[key] || []
 }
 
-/* -------- 🔥 % CALC (MODIFIED) -------- */
+/* -------- 🔥 % CALC -------- */
 function calculatePercentage(usn, status) {
-    // 🔥 basic dynamic logic
     if (status === "Present") return 100
     if (status === "Absent") return 0
     return 100
@@ -164,7 +178,7 @@ function loadStudents() {
     })
 }
 
-/* -------- 🔥 TOGGLE WITH % -------- */
+/* -------- 🔥 TOGGLE -------- */
 function toggleStatus(btn) {
 
     const row = btn.closest("tr")
@@ -198,7 +212,7 @@ function toggleStatus(btn) {
         : "rgba(239,68,68,0.08)"
 }
 
-/* -------- SUBMIT -------- */
+/* -------- 🔥 SUBMIT (FIXED SAVE) -------- */
 function submitAttendance(btn) {
 
     if (!btn) btn = document.getElementById("submitBtn")
@@ -227,70 +241,32 @@ function submitAttendance(btn) {
     setBtnLoading(btn, "Submitting")
 
     setTimeout(() => {
-        window.location.href = "dashboard.html"
-    }, 800)
-}
 
-/* -------- 🔥 BULK (FIXED %) -------- */
-function markAll(isPresent, btn) {
+        const rows = document.querySelectorAll("#studentRows tr")
 
-    const mainBtn = btn
-    setBtnLoading(mainBtn, "Updating")
+        let attendanceData = []
 
-    setTimeout(() => {
-
-        document.querySelectorAll("#studentRows tr").forEach(row => {
-
+        rows.forEach(row => {
+            const usn = row.children[0].innerText
             const b = row.querySelector(".status-btn")
-            if (!b) return
+            const status = b.classList.contains("present") ? "Present" : "Absent"
 
-            b.classList.remove("present", "absent", "active")
-
-            let status
-
-            if (isPresent) {
-                b.classList.add("present", "active")
-                b.innerText = "Present"
-                status = "Present"
-                row.style.background = "rgba(34,197,94,0.08)"
-            } else {
-                b.classList.add("absent", "active")
-                b.innerText = "Absent"
-                status = "Absent"
-                row.style.background = "rgba(239,68,68,0.08)"
-            }
-
-            const percentText = row.querySelector(".percent-text")
-            const fill = row.querySelector(".fill")
-
-            let percent = calculatePercentage(row.children[0].innerText, status)
-
-            if (percentText) percentText.innerText = percent + "%"
-            if (fill) fill.style.width = percent + "%"
+            attendanceData.push({ usn, status })
         })
 
-        resetBtn(mainBtn)
+        let time24 = convertTo24Hour(time)
 
-    }, 400)
-}
+        const key = `${subject}_${department}_${program}_${sem}_${section}_${date}_${time24}`
 
-/* -------- NAV -------- */
-function goBack(e) {
-    const btn = e.target.closest(".btn")
-    setBtnLoading(btn, "Going back")
+        console.log("Saving Key:", key)
 
-    setTimeout(() => {
+        localStorage.setItem(key, JSON.stringify({
+            data: attendanceData
+        }))
+
         window.location.href = "dashboard.html"
-    }, 200)
-}
 
-function editAttendance(e) {
-    const btn = e.target.closest(".btn")
-    setBtnLoading(btn, "Opening")
-
-    setTimeout(() => {
-        window.location.href = "edit-attendance.html"
-    }, 200)
+    }, 800)
 }
 
 /* -------- INIT -------- */
