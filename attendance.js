@@ -298,9 +298,12 @@ window.onload = function () {
 
 function goBack(btn) {
 
-    setBtnLoading(btn)   // show spinner
+    // 🔥 fallback if btn not passed
+    if (!btn) btn = document.querySelector(".back-btn") || document.activeElement
+
+    setBtnLoading(btn, "Going")
 
     setTimeout(() => {
         window.history.back()
-    }, 200)  // small delay so spinner appears
+    }, 250)
 }
