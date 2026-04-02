@@ -77,7 +77,7 @@ function loadTimesForDate() {
     const date = dateDropdown.value
 
     if (!date) {
-        timeDropdown.innerHTML = "<option>Select date first</option>"
+        timeDropdown.innerHTML = "<option value=''>No classes on this date</option>"
         return
     }
 
@@ -283,7 +283,7 @@ function updateAttendance() {
         const date = dateDropdown.value
         const time = timeDropdown.value.trim()   // ✅ FIX
 
-        if (!date || !time) {
+        if (!date || !time || time.includes("No classes")) {
             showMessage("Select date & time", "error")
             btn.classList.remove("loading")
             btn.innerText = originalText
