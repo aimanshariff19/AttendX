@@ -39,10 +39,20 @@
             font-size: 28px;
             font-weight: 600;
 
+            /* fallback */
+            color: #e0e7ff;
+
+            /* gradient */
             background: linear-gradient(90deg, #c7d2fe, #a78bfa, #6366f1);
+            background-clip: text;
             -webkit-background-clip: text;
+
+            /* required for gradient text */
             color: transparent;
-            text-shadow: 0 0 12px rgba(139, 92, 246, 0.3);
+            -webkit-text-fill-color: transparent;
+
+            /* smoother glow */
+            text-shadow: 0 0 8px rgba(139, 92, 246, 0.25);
         }
 
         /* ===== CARD ===== */
@@ -257,7 +267,6 @@
         select option {
             color: black;
         }
-        
     </style>
 
 </head>
