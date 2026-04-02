@@ -1,3 +1,7 @@
+window.addEventListener("beforeunload", () => {
+    document.querySelectorAll(".loading").forEach(b => b.classList.remove("loading"))
+})
+
 /* -------- 🔥 NORMALIZE -------- */
 function normalize(str) {
     return (str || "").toString().toLowerCase().replace(/\s+/g, "")
