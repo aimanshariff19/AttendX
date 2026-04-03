@@ -7,14 +7,14 @@ window.DASHBOARD_RUNNING = true
 /* -------- 🔥 BUTTON SPINNER SYSTEM -------- */
 function setBtnLoading(btn, text = "Loading...") {
     if (!btn) return;
-
     if (!btn.dataset.original) {
         btn.dataset.original = btn.innerHTML;
     }
 
     btn.classList.add("loading");
-    btn.innerHTML = `<span>${text}</span>`;
 
+    /* ✅ FIXED */
+    btn.innerHTML = `< span > ${text}</span > `;
 }
 
 function resetBtn(btn) {
@@ -26,13 +26,13 @@ function resetBtn(btn) {
         btn.innerHTML = btn.dataset.original;
     }
 
+
 }
 
 /* -------- 💧 RIPPLE -------- */
 document.addEventListener("click", function (e) {
     const btn = e.target.closest("button")
     if (!btn) return
-
     if (btn.querySelector(".ripple")) return
 
     const circle = document.createElement("span")
@@ -44,7 +44,6 @@ document.addEventListener("click", function (e) {
 
     btn.appendChild(circle)
     setTimeout(() => circle.remove(), 600)
-
 })
 
 /* -------- 🧠 PREDICTION -------- */
@@ -79,15 +78,18 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("sem").innerText = sem
     document.getElementById("section").innerText = section
 
-    /* 🔥 BUTTON EVENTS */
+    /* 🔥 BUTTON EVENTS WITH SPINNER */
     document.getElementById("changePasswordBtn")?.addEventListener("click", function () {
         setBtnLoading(this, "Opening...")
-        setTimeout(() => openChangePassword(), 300)
+
+        setTimeout(() => {
+            openChangePassword()
+        }, 300)
     })
 
     document.getElementById("logoutBtn")?.addEventListener("click", function () {
         setBtnLoading(this, "Logging out...")
-        studentLogout()
+        studentLogout(this)
     })
 
     const table = document.getElementById("subjectRows")
@@ -115,7 +117,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function calculateAttendance(subject) {
-        const key = `${subject}_${department}_${program}_${sem}_${section}`
+
+        /* ✅ FIXED (removed space) */
+        const key = `${subject}_${department}_${program}_${sem}_${section} `
+
         const records = attendanceData[key] || []
 
         let present = 0
@@ -150,61 +155,100 @@ document.addEventListener("DOMContentLoaded", () => {
         const row = document.createElement("tr")
 
         row.innerHTML = `
-<div class="bar ${stats.percent < 75 ? "low-bar" : ""}">
-    <div class="fill" style="width:${stats.percent}%"></div>
-</div>
+        
 
-<div style="font-size:11px;margin-top:6px;color:${stats.percent < 75 ? "#ef4444" : "#aaa"}">
-    ${stats.percent < 75 ? `Need ${needed} more classes` : "On track"}
-</div>
-    row.style.opacity = "0"
-    row.style.transform = "translateY(10px)"
+<td>${sub.subject}</td>
+<td>${sub.subjectCode || "-"}</td>
+<td>${stats.conducted}</td>
+<td>${stats.present}</td>
+<td>${stats.absent}</td>
 
-    setTimeout(() => {
-        row.style.transition = "0.3s ease"
-        row.style.opacity = "1"
-        row.style.transform = "translateY(0)"
-    }, index * 80)
+<td>
+    <!-- 🔵 CIRCLE (UNCHANGED - WORKS) -->
+    <div class="circle ${stats.percent < 75 ? "low" : ""}"
+        style="--percent:${stats.percent * 3.6}deg"
+        data-text="${stats.percent}%">
+    </div>
 
-    table.appendChild(row)
-})
+        < !-- 📊 BAR-- >
+            <div class="bar ${stats.percent < 75 ? " low-bar" : ""}" >
+                <div class="fill" style="width:${stats.percent}%"></div>
+</div >
 
-/* -------- OVERALL -------- */
-const overall = classSubjects.length
-    ? Math.round(totalPercent / classSubjects.length)
-    : 0
+< !-- 🧠 PREDICTION-- >
+        <div style="font-size:11px;margin-top:6px;color:${stats.percent < 75 ? " #ef4444" : "#aaa"}" >
+            ${stats.percent < 75 ? `Need ${needed} more classes` : "On track"}
+</div >
 
-let overallBox = document.getElementById("overallBox")
 
-if (!overallBox) {
-    overallBox = document.createElement("div")
-    overallBox.id = "overallBox"
-    overallBox.className = "card"
-    document.querySelector(".dashboard").prepend(overallBox)
-}
+</td >
+    
+        row.style.opacity = "0"
+        row.style.transform = "translateY(10px)"
 
-overallBox.innerHTML = `
+        setTimeout(() => {
+            row.style.transition = "0.3s ease"
+            row.style.opacity = "1"
+            row.style.transform = "translateY(0)"
+        }, index * 80)
 
-        /* -------- NAV -------- */
-        function openChangePassword() {
-            window.location.href = "change-password.html"
-        }
+        table.appendChild(row)
+    })
 
-        /* -------- LOGOUT -------- */
-        function studentLogout() {
-            document.querySelector(".dashboard").style.opacity = "0"
-            document.querySelector(".dashboard").style.transform = "scale(0.95)"
+    /* -------- OVERALL -------- */
+    const overall = classSubjects.length
+        ? Math.round(totalPercent / classSubjects.length)
+        : 0
 
-            setTimeout(() => {
-                localStorage.clear()
-                window.location.href = "student-login.html"
-            }, 400)
+    let overallBox = document.getElementById("overallBox")
 
-        }
+    if (!overallBox) {
+        overallBox = document.createElement("div")
+        overallBox.id = "overallBox"
+        overallBox.className = "card"
+        document.querySelector(".dashboard").prepend(overallBox)
+    }
 
-        /* -------- 🔥 FIX BACK BUTTON -------- */
-        window.addEventListener("pageshow", () => {
-            document.querySelectorAll("button.loading").forEach(btn => {
-                resetBtn(btn)
-            })
+    /* ✅ FIXED HTML */
+    overallBox.innerHTML = 
+
+<p><strong>Overall Attendance:</strong> ${overall}%</p>
+
+<div class="bar ${overall < 75 ? "low-bar" : ""}" >
+        <div class="fill" style="width:${overall}%"></div>
+</div >
+
+        <p style="margin-top:8px;font-weight:600;color:${overall < 75 ? " #ef4444" :
+                overall < 85 ? "#f59e0b" :
+                    "#22c55e"
+            }">
+    ${overall < 75 ? "⚠ Low Attendance" :
+                overall < 85 ? "⚠ Average" :
+                    "✅ Excellent"}
+</p >
+    `
+    })
+
+    /* -------- NAV -------- */
+    function openChangePassword() {
+        window.location.href = "change-password.html"
+    }
+
+    /* -------- LOGOUT -------- */
+    function studentLogout(btn) {
+
+        document.querySelector(".dashboard").style.opacity = "0"
+        document.querySelector(".dashboard").style.transform = "scale(0.95)"
+
+        setTimeout(() => {
+            localStorage.clear()
+            window.location.href = "student-login.html"
+        }, 400)
+    }
+
+    /* -------- 🔥 FIX BACK BUTTON SPINNER -------- */
+    window.addEventListener("pageshow", () => {
+        document.querySelectorAll("button.loading").forEach(btn => {
+            resetBtn(btn)
         })
+    })
