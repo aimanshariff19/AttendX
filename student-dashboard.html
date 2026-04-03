@@ -49,7 +49,6 @@
             position: relative;
             z-index: 2;
             max-width: 900px;
-            /* 🔥 tighter */
             margin: 30px auto;
             padding: 20px;
             border-radius: 18px;
@@ -73,15 +72,11 @@
 
             background: linear-gradient(90deg, #c7d2fe, #a78bfa, #6366f1);
             background-clip: text;
-
-            /* ✅ important */
             -webkit-background-clip: text;
-
             color: transparent;
             -webkit-text-fill-color: transparent;
 
             display: inline-block;
-            /* 🔥 FIX rendering bug */
         }
 
         /* ===== BUTTON ===== */
@@ -95,10 +90,42 @@
             font-size: 13px;
             font-weight: 600;
             transition: 0.25s;
+            position: relative;
+            overflow: hidden;
         }
 
         button:hover {
             transform: translateY(-2px);
+        }
+
+        /* ===== 🔥 GLOBAL SPINNER ===== */
+        button.loading {
+            pointer-events: none;
+            color: transparent !important;
+        }
+
+        button.loading::after {
+            content: "";
+            width: 14px;
+            height: 14px;
+
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+
+            border-radius: 50%;
+
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
         }
 
         /* ===== CARD ===== */
@@ -115,7 +142,7 @@
             font-size: 13px;
         }
 
-        /* ===== TABLE (SYNCED STYLE) ===== */
+        /* ===== TABLE ===== */
         table {
             width: 100%;
             border-collapse: separate;
@@ -153,55 +180,6 @@
             border-right: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        /* ===== BAR ===== */
-        .bar {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            margin-top: 6px;
-        }
-
-        .fill {
-            height: 100%;
-            border-radius: 10px;
-            background: linear-gradient(90deg, #8b5cf6, #6366f1);
-        }
-
-        .low-bar .fill {
-            background: linear-gradient(90deg, #ef4444, #f87171);
-        }
-
-        /* ===== CIRCLE ===== */
-        .circle {
-            width: 50px;
-            height: 50px;
-            margin: auto;
-            border-radius: 50%;
-            position: relative;
-            background: conic-gradient(#6366f1 var(--percent), rgba(255, 255, 255, 0.1) 0);
-        }
-
-        .circle.low {
-            background: conic-gradient(#ef4444 var(--percent), rgba(255, 255, 255, 0.1) 0);
-        }
-
-        .circle::after {
-            content: attr(data-text);
-            position: absolute;
-            inset: 5px;
-            background: #1e1b4b;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-        }
-
-        .prediction {
-            font-size: 11px;
-            margin-top: 6px;
-        }
-
         /* ===== LOGOUT ===== */
         .logout-btn {
             margin-top: 16px;
@@ -217,7 +195,9 @@
 
         <div class="header-actions">
             <h1>AttendX / Student Dashboard</h1>
-            <button id="changePasswordBtn">Change Password</button>
+            <button id="changePasswordBtn">
+                <span>Change Password</span>
+            </button>
         </div>
 
         <div class="card">
@@ -233,7 +213,7 @@
             <thead>
                 <tr>
                     <th>Subject</th>
-                    <th>Code</th>
+                    <th>Subject Code</th>
                     <th>Classes</th>
                     <th>Present</th>
                     <th>Absent</th>
@@ -244,7 +224,9 @@
             <tbody id="subjectRows"></tbody>
         </table>
 
-        <button id="logoutBtn" class="logout-btn">Logout</button>
+        <button id="logoutBtn" class="logout-btn">
+            <span>Logout</span>
+        </button>
 
     </div>
 
