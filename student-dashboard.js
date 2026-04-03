@@ -152,8 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const row = document.createElement("tr")
 
         row.innerHTML = `
-
-        < td > ${sub.subject}</td >
+<td>${sub.subject}</td>
 <td>${sub.subjectCode || "-"}</td>
 <td>${stats.conducted}</td>
 <td>${stats.present}</td>
@@ -165,16 +164,15 @@ document.addEventListener("DOMContentLoaded", () => {
         data-text="${stats.percent}%">
     </div>
 
-        < div class="bar ${stats.percent < 75 ? "low - bar" : ""}" >
+    <div class="bar ${stats.percent < 75 ? "low-bar" : ""}">
         <div class="fill" style="width:${stats.percent}%"></div>
-</div >
+    </div>
 
-        <div style="font-size:11px;margin-top:6px;color:${stats.percent < 75 ? " #ef4444" : "#aaa"}" >
-            ${stats.percent < 75 ? `Need ${needed} more classes` : "On track"}
-</div >
-
-</td >
-        `
+    <div style="font-size:11px;margin-top:6px;color:${stats.percent < 75 ? "#ef4444" : "#aaa"}">
+        ${stats.percent < 75 ? `Need ${needed} more classes` : "On track"}
+    </div>
+</td>
+`
         row.style.opacity = "0"
         row.style.transform = "translateY(10px)"
 
