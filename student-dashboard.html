@@ -72,11 +72,16 @@
             font-weight: 600;
 
             background: linear-gradient(90deg, #c7d2fe, #a78bfa, #6366f1);
+            background-clip: text;
+
+            /* ✅ important */
             -webkit-background-clip: text;
+
             color: transparent;
             -webkit-text-fill-color: transparent;
 
-            text-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+            display: inline-block;
+            /* 🔥 FIX rendering bug */
         }
 
         /* ===== BUTTON ===== */
