@@ -115,18 +115,23 @@
         /* ===== BULK BUTTONS ===== */
         .bulk-actions {
             display: flex;
-            gap: 10px;
-            margin-bottom: 14px;
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
+        /* 🔥 REMOVE flex:1 */
         .bulk-actions button {
-            flex: 1;
-            padding: 8px;
-            border-radius: 10px;
+            padding: 6px 12px;
+            border-radius: 8px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             border: none;
             color: white;
+
+            width: auto;
+            /* 🔥 important */
+            min-width: 140px;
+            /* keeps balance */
         }
 
         .bulk-actions button:first-child {
