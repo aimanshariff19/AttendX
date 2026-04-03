@@ -1,38 +1,15 @@
 /* -------- 🛑 STOP DUPLICATE -------- */
-if (window.DASHBOARD_RUNNING) {
+if (window.__DASHBOARD_RUNNING__) {
     throw new Error("Duplicate dashboard JS blocked")
 }
-window.DASHBOARD_RUNNING = true
+window.__DASHBOARD_RUNNING__ = true
 
-/* -------- 🔥 BUTTON SPINNER SYSTEM -------- */
-function setBtnLoading(btn, text = "Loading...") {
-    if (!btn) return;
-    if (!btn.dataset.original) {
-        btn.dataset.original = btn.innerHTML;
-    }
-
-    btn.classList.add("loading");
-
-    /* ✅ FIXED */
-    btn.innerHTML = `< span > ${text}</span > `;
-}
-
-function resetBtn(btn) {
-    if (!btn) return;
-
-    btn.classList.remove("loading");
-
-    if (btn.dataset.original) {
-        btn.innerHTML = btn.dataset.original;
-    }
-
-
-}
 
 /* -------- 💧 RIPPLE -------- */
 document.addEventListener("click", function (e) {
     const btn = e.target.closest("button")
     if (!btn) return
+
     if (btn.querySelector(".ripple")) return
 
     const circle = document.createElement("span")
@@ -46,6 +23,7 @@ document.addEventListener("click", function (e) {
     setTimeout(() => circle.remove(), 600)
 })
 
+
 /* -------- 🧠 PREDICTION -------- */
 function predictAttendance(present, total, target = 75) {
     let needed = 0
@@ -55,6 +33,7 @@ function predictAttendance(present, total, target = 75) {
         needed++
     }
 }
+
 
 /* -------- INIT -------- */
 document.addEventListener("DOMContentLoaded", () => {
@@ -78,19 +57,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("sem").innerText = sem
     document.getElementById("section").innerText = section
 
-    /* 🔥 BUTTON EVENTS WITH SPINNER */
-    document.getElementById("changePasswordBtn")?.addEventListener("click", function () {
-        setBtnLoading(this, "Opening...")
-
-        setTimeout(() => {
-            openChangePassword()
-        }, 300)
-    })
-
-    document.getElementById("logoutBtn")?.addEventListener("click", function () {
-        setBtnLoading(this, "Logging out...")
-        studentLogout(this)
-    })
+    document.getElementById("changePasswordBtn")?.addEventListener("click", openChangePassword)
+    document.getElementById("logoutBtn")?.addEventListener("click", studentLogout)
 
     const table = document.getElementById("subjectRows")
     if (!table || typeof courses === "undefined") return
@@ -118,9 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function calculateAttendance(subject) {
 
-        /* ✅ FIXED (removed space) */
-        const key = `${subject}_${department}_${program}_${sem}_${section} `
-
+        const key = `${subject}_${department}_${program}_${sem}_${section}`
         const records = attendanceData[key] || []
 
         let present = 0
@@ -155,8 +121,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const row = document.createElement("tr")
 
         row.innerHTML = `
-        
-
 <td>${sub.subject}</td>
 <td>${sub.subjectCode || "-"}</td>
 <td>${stats.conducted}</td>
@@ -164,25 +128,25 @@ document.addEventListener("DOMContentLoaded", () => {
 <td>${stats.absent}</td>
 
 <td>
-    <!-- 🔵 CIRCLE (UNCHANGED - WORKS) -->
+    <!-- 🔵 CIRCLE -->
     <div class="circle ${stats.percent < 75 ? "low" : ""}"
         style="--percent:${stats.percent * 3.6}deg"
         data-text="${stats.percent}%">
     </div>
 
-        < !-- 📊 BAR-- >
-            <div class="bar ${stats.percent < 75 ? " low-bar" : ""}" >
-                <div class="fill" style="width:${stats.percent}%"></div>
-</div >
+    <!-- 📊 BAR -->
+    <div class="bar ${stats.percent < 75 ? "low-bar" : ""}">
+        <div class="fill" style="width:${stats.percent}%"></div>
+    </div>
 
-< !-- 🧠 PREDICTION-- >
-        <div style="font-size:11px;margin-top:6px;color:${stats.percent < 75 ? " #ef4444" : "#aaa"}" >
-            ${stats.percent < 75 ? `Need ${needed} more classes` : "On track"}
-</div >
+    <!-- 🧠 PREDICTION -->
+    <div style="font-size:11px;margin-top:6px;color:${stats.percent < 75 ? "#ef4444" : "#aaa"}">
+        ${stats.percent < 75 ? `Need ${needed} more classes` : "On track"}
+    </div>
+</td>
+`
 
-
-</td >
-    
+        /* ✨ animation */
         row.style.opacity = "0"
         row.style.transform = "translateY(10px)"
 
@@ -209,46 +173,39 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector(".dashboard").prepend(overallBox)
     }
 
-    /* ✅ FIXED HTML */
-    overallBox.innerHTML = 
-
+    overallBox.innerHTML = `
 <p><strong>Overall Attendance:</strong> ${overall}%</p>
 
-<div class="bar ${overall < 75 ? "low-bar" : ""}" >
-        <div class="fill" style="width:${overall}%"></div>
-</div >
+<div class="bar ${overall < 75 ? "low-bar" : ""}">
+    <div class="fill" style="width:${overall}%"></div>
+</div>
 
-        <p style="margin-top:8px;font-weight:600;color:${overall < 75 ? " #ef4444" :
-                overall < 85 ? "#f59e0b" :
-                    "#22c55e"
-            }">
+<p style="margin-top:8px;font-weight:600;color:${overall < 75 ? "#ef4444" :
+            overall < 85 ? "#f59e0b" :
+                "#22c55e"
+        }">
     ${overall < 75 ? "⚠ Low Attendance" :
-                overall < 85 ? "⚠ Average" :
-                    "✅ Excellent"}
-</p >
-    `
-    })
+            overall < 85 ? "⚠ Average" :
+                "✅ Excellent"
+        }
+</p>
+`
+})
 
-    /* -------- NAV -------- */
-    function openChangePassword() {
-        window.location.href = "change-password.html"
-    }
 
-    /* -------- LOGOUT -------- */
-    function studentLogout(btn) {
+/* -------- NAV -------- */
+function openChangePassword() {
+    window.location.href = "change-password.html"
+}
 
-        document.querySelector(".dashboard").style.opacity = "0"
-        document.querySelector(".dashboard").style.transform = "scale(0.95)"
 
-        setTimeout(() => {
-            localStorage.clear()
-            window.location.href = "student-login.html"
-        }, 400)
-    }
+/* -------- LOGOUT -------- */
+function studentLogout() {
+    document.querySelector(".dashboard").style.opacity = "0"
+    document.querySelector(".dashboard").style.transform = "scale(0.95)"
 
-    /* -------- 🔥 FIX BACK BUTTON SPINNER -------- */
-    window.addEventListener("pageshow", () => {
-        document.querySelectorAll("button.loading").forEach(btn => {
-            resetBtn(btn)
-        })
-    })
+    setTimeout(() => {
+        localStorage.clear()
+        window.location.href = "student-login.html"
+    }, 400)
+}
