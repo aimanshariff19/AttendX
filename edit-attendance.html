@@ -180,17 +180,22 @@
 
         /* ===== UPDATE BUTTON (FIXED) ===== */
         .update-btn {
-            display: block;
-            margin: 22px auto 0;
-            /* 🔥 center */
-            padding: 14px 18px;
+            display: inline-block;
+            /* 🔥 no center */
+            margin-top: 22px;
+
+            padding: 12px 22px;
+            /* 🔥 balanced padding */
             border-radius: 14px;
             font-size: 15px;
             font-weight: 600;
 
-            min-width: 20px;
+            min-width: 200px;
+            /* 🔥 proper width */
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
             box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+
+            transition: 0.25s;
         }
 
         /* ===== ERROR ===== */
