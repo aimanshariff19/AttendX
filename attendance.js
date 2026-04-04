@@ -301,7 +301,7 @@ function submitAttendance(btn) {
 
         localStorage.setItem("attendanceDB", JSON.stringify(db))
 
-        window.location.href = "dashboard.html"
+        window.location.href = "attendance.html"
 
     }, 800)
 }
