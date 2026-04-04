@@ -316,20 +316,20 @@
 
         <div class="attendance-controls">
 
-            <div>
+            <div class="input-group">
                 <label>📅 Date</label>
                 <input type="date" id="attendanceDate">
             </div>
 
-            <div>
+            <div class="input-group">
                 <label>⏰ Class Time</label>
                 <select id="timeSelect">
-                    <option>Select date first</option>
+                    <option value="">Select date first</option>
                 </select>
             </div>
 
             <div>
-                <button onclick="loadAttendance()">Load</button>
+                <button onclick="loadAttendance(event)">Load</button>
             </div>
 
         </div>
