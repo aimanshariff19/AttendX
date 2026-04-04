@@ -1,3 +1,21 @@
+/* -------- 🔥 GET % -------- */
+function getStudentPercent(usn) {
+    let db = JSON.parse(localStorage.getItem("attendanceDB")) || {}
+    const subjectData = db?.[classKey]?.[subject] || []
+
+    let total = 0
+    let present = 0
+
+    subjectData.forEach(day => {
+        if (day.records[usn]) {
+            total++
+            if (day.records[usn] === "Present") present++
+        }
+    })
+
+    return total === 0 ? 100 : Math.round((present / total) * 100)
+}
+
 /* -------- 💧 RIPPLE -------- */
 document.addEventListener("click", function (e) {
     const btn = e.target.closest("button")
@@ -231,12 +249,20 @@ function loadAttendance(event) {
         studentsList.forEach(student => {
 
             const status = entry.records[student.usn] || "Absent"
+            const percent = getStudentPercent(student.usn) // 🔥 FIX
 
             let row = document.createElement("tr")
 
             row.innerHTML = `
 <td>${student.usn}</td>
 <td>${student.name}</td>
+
+<td>
+    <span class="percent-text">${percent}%</span>
+    <div class="bar">
+        <div class="fill" style="width:${percent}%"></div>
+    </div>
+</td>
 
 <td>
 <button class="status-btn ${status === "Present" ? "present" : "absent"} active"
