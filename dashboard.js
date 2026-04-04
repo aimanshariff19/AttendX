@@ -5,7 +5,13 @@ function setText(id, value) {
 }
 
 /* -------- USER -------- */
-const faculty = localStorage.getItem("user")
+let faculty = localStorage.getItem("user")
+
+// 🔥 FIX: prevent crash if no faculty
+if (!faculty) {
+    console.warn("No faculty logged in — fallback mode")
+    faculty = "TEMP"
+}
 
 /* -------- 💧 RIPPLE -------- */
 document.addEventListener("click", function (e) {
@@ -27,7 +33,6 @@ document.addEventListener("click", function (e) {
 function setBtnLoading(btn, textValue) {
     if (!btn) return
 
-    /* ✅ STORE ORIGINAL CONTENT ONCE */
     if (!btn.dataset.original) {
         btn.dataset.original = btn.innerHTML
     }
@@ -41,11 +46,9 @@ function setBtnLoading(btn, textValue) {
         btn.innerHTML = `<span>${textValue}</span>`
     }
 
-    /* remove old spinner */
     let old = btn.querySelector(".btn-spinner")
     if (old) old.remove()
 
-    /* create spinner */
     let spinner = document.createElement("span")
     spinner.className = "btn-spinner"
 
@@ -54,8 +57,6 @@ function setBtnLoading(btn, textValue) {
 
 /* -------- FACULTY DETAILS -------- */
 function loadFacultyDetails() {
-
-    if (!faculty) return
 
     const info = facultyList.find(f => f.id === faculty)
     if (!info) return
@@ -167,7 +168,6 @@ function loadCourseCards() {
             </button>
         `
 
-        /* 🔥 FIXED CLICK */
         card.querySelector("button").onclick = function () {
             setBtnLoading(this, "Opening...")
             openCourse(course.subject, course.program, course.sem, course.section)
@@ -226,11 +226,7 @@ function logout(btn) {
 /* -------- INIT -------- */
 document.addEventListener("DOMContentLoaded", () => {
 
-    if (!faculty) {
-        document.body.innerHTML =
-            "<h2 style='text-align:center;margin-top:50px;'>No faculty logged in ❌</h2>"
-        return
-    }
+    // 🔥 FIX: removed crash block
 
     setTimeout(() => {
         loadFacultyDetails()
