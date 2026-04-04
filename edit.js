@@ -60,21 +60,34 @@ function triggerShake(el) {
     setTimeout(() => el.classList.remove("shake"), 400)
 }
 
-/* -------- 🔥 FIELD ERROR -------- */
+/* -------- 🔥 FIELD ERROR (TOP FIXED) -------- */
 function showFieldError(input, message) {
     if (!input) return
 
     triggerShake(input)
     input.classList.add("input-error")
 
-    let old = input.parentElement.querySelector(".field-error")
+    let parent = input.parentElement
+
+    // remove old
+    let old = parent.querySelector(".field-error")
     if (old) old.remove()
 
     const err = document.createElement("div")
     err.className = "field-error"
     err.innerText = message
 
-    input.parentElement.appendChild(err)
+    // 🔥 KEY FIX: top overlay positioning
+    parent.style.position = "relative"
+
+    err.style.position = "absolute"
+    err.style.top = "-20px"
+    err.style.right = "0"
+    err.style.fontSize = "12px"
+    err.style.color = "#ef4444"
+    err.style.pointerEvents = "none"
+
+    parent.appendChild(err)
 
     setTimeout(() => {
         input.classList.remove("input-error")
@@ -216,7 +229,6 @@ function loadAttendance(event) {
     const date = dateDropdown.value
     const time = normalizeTime(timeDropdown.value)
 
-    // 🔥 VALIDATION WITH SHAKE
     if (!date || !time) {
 
         if (!date) showFieldError(dateDropdown, "Select Date")
@@ -249,7 +261,7 @@ function loadAttendance(event) {
         studentsList.forEach(student => {
 
             const status = entry.records[student.usn] || "Absent"
-            const percent = getStudentPercent(student.usn) // 🔥 FIX
+            const percent = getStudentPercent(student.usn)
 
             let row = document.createElement("tr")
 
@@ -279,6 +291,21 @@ ${status}
         showMessage("Loaded ✅", "success")
 
     }, 500)
+}
+
+/* -------- TOGGLE -------- */
+function toggleStatus(btn) {
+    const isPresent = btn.classList.contains("present")
+
+    btn.classList.remove("present", "absent")
+
+    if (isPresent) {
+        btn.classList.add("absent")
+        btn.innerText = "Absent"
+    } else {
+        btn.classList.add("present")
+        btn.innerText = "Present"
+    }
 }
 
 /* -------- UPDATE -------- */
