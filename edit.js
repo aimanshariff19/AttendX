@@ -28,16 +28,36 @@ function resetBtn(btn) {
     btn.innerText = btn.dataset.original
 }
 
-/* -------- 🔥 TIME NORMALIZE (NEW) -------- */
+/* -------- 🔥 TIME NORMALIZE -------- */
 function normalizeTime(t) {
     if (!t) return ""
-
     t = t.trim()
-
     let [h, m] = t.split(":")
     h = String(parseInt(h)).padStart(2, "0")
-
     return `${h}:${m}`
+}
+
+/* -------- 🔥 FORMAT RANGE -------- */
+function formatTimeRange(time) {
+    if (!time) return "--"
+
+    let [h, m] = time.split(":").map(Number)
+
+    let start = new Date()
+    start.setHours(h, m)
+
+    let end = new Date(start)
+    end.setHours(end.getHours() + 1)
+
+    const format = (d) => {
+        let hr = d.getHours()
+        const min = String(d.getMinutes()).padStart(2, "0")
+        const ampm = hr >= 12 ? "PM" : "AM"
+        hr = hr % 12 || 12
+        return `${hr}:${min} ${ampm}`
+    }
+
+    return `${format(start)} - ${format(end)}`
 }
 
 /* -------- CLASS DETAILS -------- */
@@ -54,6 +74,7 @@ const studentsList = students[classKey] || []
 const dateDropdown = document.getElementById("attendanceDate")
 const table = document.getElementById("studentRows")
 const timeDropdown = document.getElementById("timeSelect")
+const updateBtn = document.querySelector(".update-btn")
 
 /* -------- MESSAGE -------- */
 function showMessage(text, type) {
@@ -67,6 +88,19 @@ function showMessage(text, type) {
     setTimeout(() => box.style.display = "none", 2500)
 }
 
+/* -------- 🔥 DISABLE BUTTON -------- */
+function checkEnableUpdate() {
+    if (!updateBtn) return
+
+    if (dateDropdown.value && timeDropdown.value) {
+        updateBtn.disabled = false
+        updateBtn.style.opacity = "1"
+    } else {
+        updateBtn.disabled = true
+        updateBtn.style.opacity = "0.5"
+    }
+}
+
 /* -------- LOAD TIMES -------- */
 function loadTimesForDate() {
 
@@ -77,7 +111,7 @@ function loadTimesForDate() {
 
     let times = subjectData
         .filter(a => a.date === date)
-        .map(a => normalizeTime(a.time))   // 🔥 FIX
+        .map(a => normalizeTime(a.time))
 
     times = [...new Set(times)]
 
@@ -88,14 +122,16 @@ function loadTimesForDate() {
         return
     }
 
-    timeDropdown.innerHTML = "<option>Select time</option>"
+    timeDropdown.innerHTML = "<option value=''>Select time</option>"
 
     times.forEach(time => {
         const option = document.createElement("option")
         option.value = time
-        option.textContent = time
+        option.textContent = formatTimeRange(time) // 🔥 RANGE FORMAT
         timeDropdown.appendChild(option)
     })
+
+    checkEnableUpdate()
 }
 
 /* -------- LOAD ATTENDANCE -------- */
@@ -107,7 +143,13 @@ function loadAttendance() {
     setTimeout(() => {
 
         const date = dateDropdown.value
-        const time = normalizeTime(timeDropdown.value) // 🔥 FIX
+        const time = normalizeTime(timeDropdown.value)
+
+        if (!date || !time) {
+            showMessage("Select date & time first ❌", "error")
+            resetBtn(btn)
+            return
+        }
 
         let db = JSON.parse(localStorage.getItem("attendanceDB")) || {}
 
@@ -115,11 +157,11 @@ function loadAttendance() {
 
         const entry = subjectData.find(a =>
             a.date === date &&
-            normalizeTime(a.time) === time   // 🔥 FIX
+            normalizeTime(a.time) === time
         )
 
         if (!entry) {
-            showMessage("Not found", "error")
+            showMessage("Attendance not found ❌", "error")
             resetBtn(btn)
             return
         }
@@ -172,13 +214,18 @@ function toggleStatus(btn) {
 /* -------- UPDATE -------- */
 function updateAttendance() {
 
-    const btn = document.querySelector(".update-btn")
+    if (!dateDropdown.value || !timeDropdown.value) {
+        showMessage("Select date & time first ❌", "error")
+        return
+    }
+
+    const btn = updateBtn
     setBtnLoading(btn)
 
     setTimeout(() => {
 
         const date = dateDropdown.value
-        const time = normalizeTime(timeDropdown.value) // 🔥 FIX
+        const time = normalizeTime(timeDropdown.value)
 
         let db = JSON.parse(localStorage.getItem("attendanceDB")) || {}
 
@@ -186,11 +233,11 @@ function updateAttendance() {
 
         const entry = subjectData.find(a =>
             a.date === date &&
-            normalizeTime(a.time) === time   // 🔥 FIX
+            normalizeTime(a.time) === time
         )
 
         if (!entry) {
-            showMessage("Not found", "error")
+            showMessage("Not found ❌", "error")
             resetBtn(btn)
             return
         }
@@ -221,4 +268,15 @@ function updateAttendance() {
 }
 
 /* -------- INIT -------- */
-dateDropdown.addEventListener("change", loadTimesForDate)
+dateDropdown.addEventListener("change", () => {
+    loadTimesForDate()
+    checkEnableUpdate()
+})
+
+timeDropdown.addEventListener("change", checkEnableUpdate)
+
+/* 🔥 disable initially */
+if (updateBtn) {
+    updateBtn.disabled = true
+    updateBtn.style.opacity = "0.5"
+}
