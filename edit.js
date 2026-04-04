@@ -14,18 +14,25 @@ document.addEventListener("click", function (e) {
     setTimeout(() => circle.remove(), 600)
 })
 
-/* -------- BUTTON -------- */
-function setBtnLoading(btn) {
+/* -------- 🔥 BUTTON WITH TEXT SPINNER -------- */
+function setBtnLoading(btn, text = "Loading...") {
     if (!btn || btn.classList.contains("loading")) return
-    btn.dataset.original = btn.innerText
+
+    btn.dataset.original = btn.innerHTML
     btn.classList.add("loading")
-    btn.innerText = ""
+
+    btn.innerHTML = `
+        <span>${text}</span>
+        <span class="btn-spinner"></span>
+    `
 }
 
 function resetBtn(btn) {
     if (!btn) return
     btn.classList.remove("loading")
-    btn.innerText = btn.dataset.original
+    if (btn.dataset.original) {
+        btn.innerHTML = btn.dataset.original
+    }
 }
 
 /* -------- 🔥 TIME NORMALIZE -------- */
@@ -35,6 +42,16 @@ function normalizeTime(t) {
     let [h, m] = t.split(":")
     h = String(parseInt(h)).padStart(2, "0")
     return `${h}:${m}`
+}
+
+/* -------- 🔥 SORT TIME -------- */
+function sortTimes(times) {
+    return times.sort((a, b) => {
+        const [h1, m1] = a.split(":").map(Number)
+        const [h2, m2] = b.split(":").map(Number)
+
+        return h1 * 60 + m1 - (h2 * 60 + m2)
+    })
 }
 
 /* -------- 🔥 FORMAT RANGE -------- */
@@ -60,18 +77,17 @@ function formatTimeRange(time) {
     return `${format(start)} - ${format(end)}`
 }
 
-/* -------- 🔥 SET HEADER -------- */
-function setText(id, value) {
-    const el = document.getElementById(id)
-    if (el) el.innerText = value || "-"
-}
-
 /* -------- CLASS DETAILS -------- */
 const subject = localStorage.getItem("subject")
 const department = localStorage.getItem("department")
 const program = localStorage.getItem("program") || ""
 const sem = localStorage.getItem("sem")
 const section = localStorage.getItem("section")
+
+function setText(id, value) {
+    const el = document.getElementById(id)
+    if (el) el.innerText = value || "-"
+}
 
 setText("subject", subject)
 setText("department", department)
@@ -80,7 +96,6 @@ setText("sem", sem)
 setText("section", section)
 
 const classKey = `${department}_${program}_${sem}_${section}`
-
 const studentsList = students[classKey] || []
 
 const dateDropdown = document.getElementById("attendanceDate")
@@ -100,24 +115,6 @@ function showMessage(text, type) {
     setTimeout(() => box.style.display = "none", 2500)
 }
 
-/* -------- 🔥 CALCULATE % -------- */
-function getStudentPercent(usn) {
-    let db = JSON.parse(localStorage.getItem("attendanceDB")) || {}
-    const subjectData = db?.[classKey]?.[subject] || []
-
-    let total = 0
-    let present = 0
-
-    subjectData.forEach(day => {
-        if (day.records[usn]) {
-            total++
-            if (day.records[usn] === "Present") present++
-        }
-    })
-
-    return total === 0 ? 100 : Math.round((present / total) * 100)
-}
-
 /* -------- 🔥 DISABLE BUTTON -------- */
 function checkEnableUpdate() {
     if (!updateBtn) return
@@ -131,7 +128,7 @@ function checkEnableUpdate() {
     }
 }
 
-/* -------- LOAD TIMES -------- */
+/* -------- LOAD TIMES (SORTED) -------- */
 function loadTimesForDate() {
 
     const date = dateDropdown.value
@@ -144,6 +141,7 @@ function loadTimesForDate() {
         .map(a => normalizeTime(a.time))
 
     times = [...new Set(times)]
+    times = sortTimes(times) // 🔥 SORT FIX
 
     timeDropdown.innerHTML = ""
 
@@ -165,21 +163,22 @@ function loadTimesForDate() {
 }
 
 /* -------- LOAD ATTENDANCE -------- */
-function loadAttendance() {
+function loadAttendance(event) {
 
     const btn = event?.target || document.activeElement
-    setBtnLoading(btn)
+
+    const date = dateDropdown.value
+    const time = normalizeTime(timeDropdown.value)
+
+    // 🔥 BLOCK BEFORE LOADING
+    if (!date || !time) {
+        showMessage("Select date & time first ❌", "error")
+        return
+    }
+
+    setBtnLoading(btn, "Loading...")
 
     setTimeout(() => {
-
-        const date = dateDropdown.value
-        const time = normalizeTime(timeDropdown.value)
-
-        if (!date || !time) {
-            showMessage("Select date & time first ❌", "error")
-            resetBtn(btn)
-            return
-        }
 
         let db = JSON.parse(localStorage.getItem("attendanceDB")) || {}
         const subjectData = db?.[classKey]?.[subject] || []
@@ -200,15 +199,12 @@ function loadAttendance() {
         studentsList.forEach(student => {
 
             const status = entry.records[student.usn] || "Absent"
-            const percent = getStudentPercent(student.usn) // 🔥 REAL %
 
             let row = document.createElement("tr")
 
             row.innerHTML = `
 <td>${student.usn}</td>
 <td>${student.name}</td>
-
-<td>${percent}%</td> <!-- 🔥 FIXED -->
 
 <td>
 <button class="status-btn ${status === "Present" ? "present" : "absent"} active"
@@ -251,7 +247,7 @@ function updateAttendance() {
     }
 
     const btn = updateBtn
-    setBtnLoading(btn)
+    setBtnLoading(btn, "Updating...")
 
     setTimeout(() => {
 
