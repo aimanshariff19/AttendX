@@ -28,6 +28,18 @@ function resetBtn(btn) {
     btn.innerText = btn.dataset.original
 }
 
+/* -------- 🔥 TIME NORMALIZE (NEW) -------- */
+function normalizeTime(t) {
+    if (!t) return ""
+
+    t = t.trim()
+
+    let [h, m] = t.split(":")
+    h = String(parseInt(h)).padStart(2, "0")
+
+    return `${h}:${m}`
+}
+
 /* -------- CLASS DETAILS -------- */
 const subject = localStorage.getItem("subject")
 const department = localStorage.getItem("department")
@@ -55,7 +67,7 @@ function showMessage(text, type) {
     setTimeout(() => box.style.display = "none", 2500)
 }
 
-/* -------- LOAD TIMES (FIXED) -------- */
+/* -------- LOAD TIMES -------- */
 function loadTimesForDate() {
 
     const date = dateDropdown.value
@@ -65,7 +77,7 @@ function loadTimesForDate() {
 
     let times = subjectData
         .filter(a => a.date === date)
-        .map(a => a.time)
+        .map(a => normalizeTime(a.time))   // 🔥 FIX
 
     times = [...new Set(times)]
 
@@ -86,7 +98,7 @@ function loadTimesForDate() {
     })
 }
 
-/* -------- LOAD ATTENDANCE (FIXED) -------- */
+/* -------- LOAD ATTENDANCE -------- */
 function loadAttendance() {
 
     const btn = event?.target || document.activeElement
@@ -95,13 +107,16 @@ function loadAttendance() {
     setTimeout(() => {
 
         const date = dateDropdown.value
-        const time = timeDropdown.value
+        const time = normalizeTime(timeDropdown.value) // 🔥 FIX
 
         let db = JSON.parse(localStorage.getItem("attendanceDB")) || {}
 
         const subjectData = db?.[classKey]?.[subject] || []
 
-        const entry = subjectData.find(a => a.date === date && a.time === time)
+        const entry = subjectData.find(a =>
+            a.date === date &&
+            normalizeTime(a.time) === time   // 🔥 FIX
+        )
 
         if (!entry) {
             showMessage("Not found", "error")
@@ -154,7 +169,7 @@ function toggleStatus(btn) {
     }
 }
 
-/* -------- UPDATE (FIXED) -------- */
+/* -------- UPDATE -------- */
 function updateAttendance() {
 
     const btn = document.querySelector(".update-btn")
@@ -163,13 +178,16 @@ function updateAttendance() {
     setTimeout(() => {
 
         const date = dateDropdown.value
-        const time = timeDropdown.value
+        const time = normalizeTime(timeDropdown.value) // 🔥 FIX
 
         let db = JSON.parse(localStorage.getItem("attendanceDB")) || {}
 
         const subjectData = db?.[classKey]?.[subject] || []
 
-        const entry = subjectData.find(a => a.date === date && a.time === time)
+        const entry = subjectData.find(a =>
+            a.date === date &&
+            normalizeTime(a.time) === time   // 🔥 FIX
+        )
 
         if (!entry) {
             showMessage("Not found", "error")
