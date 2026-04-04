@@ -60,12 +60,24 @@ function formatTimeRange(time) {
     return `${format(start)} - ${format(end)}`
 }
 
+/* -------- 🔥 SET HEADER -------- */
+function setText(id, value) {
+    const el = document.getElementById(id)
+    if (el) el.innerText = value || "-"
+}
+
 /* -------- CLASS DETAILS -------- */
 const subject = localStorage.getItem("subject")
 const department = localStorage.getItem("department")
 const program = localStorage.getItem("program") || ""
 const sem = localStorage.getItem("sem")
 const section = localStorage.getItem("section")
+
+setText("subject", subject)
+setText("department", department)
+setText("program", program)
+setText("sem", sem)
+setText("section", section)
 
 const classKey = `${department}_${program}_${sem}_${section}`
 
@@ -86,6 +98,24 @@ function showMessage(text, type) {
     box.style.display = "block"
 
     setTimeout(() => box.style.display = "none", 2500)
+}
+
+/* -------- 🔥 CALCULATE % -------- */
+function getStudentPercent(usn) {
+    let db = JSON.parse(localStorage.getItem("attendanceDB")) || {}
+    const subjectData = db?.[classKey]?.[subject] || []
+
+    let total = 0
+    let present = 0
+
+    subjectData.forEach(day => {
+        if (day.records[usn]) {
+            total++
+            if (day.records[usn] === "Present") present++
+        }
+    })
+
+    return total === 0 ? 100 : Math.round((present / total) * 100)
 }
 
 /* -------- 🔥 DISABLE BUTTON -------- */
@@ -127,7 +157,7 @@ function loadTimesForDate() {
     times.forEach(time => {
         const option = document.createElement("option")
         option.value = time
-        option.textContent = formatTimeRange(time) // 🔥 RANGE FORMAT
+        option.textContent = formatTimeRange(time)
         timeDropdown.appendChild(option)
     })
 
@@ -152,7 +182,6 @@ function loadAttendance() {
         }
 
         let db = JSON.parse(localStorage.getItem("attendanceDB")) || {}
-
         const subjectData = db?.[classKey]?.[subject] || []
 
         const entry = subjectData.find(a =>
@@ -171,12 +200,15 @@ function loadAttendance() {
         studentsList.forEach(student => {
 
             const status = entry.records[student.usn] || "Absent"
+            const percent = getStudentPercent(student.usn) // 🔥 REAL %
 
             let row = document.createElement("tr")
 
             row.innerHTML = `
 <td>${student.usn}</td>
 <td>${student.name}</td>
+
+<td>${percent}%</td> <!-- 🔥 FIXED -->
 
 <td>
 <button class="status-btn ${status === "Present" ? "present" : "absent"} active"
@@ -197,7 +229,6 @@ ${status}
 
 /* -------- TOGGLE -------- */
 function toggleStatus(btn) {
-
     const isPresent = btn.classList.contains("present")
 
     btn.classList.remove("present", "absent")
@@ -228,7 +259,6 @@ function updateAttendance() {
         const time = normalizeTime(timeDropdown.value)
 
         let db = JSON.parse(localStorage.getItem("attendanceDB")) || {}
-
         const subjectData = db?.[classKey]?.[subject] || []
 
         const entry = subjectData.find(a =>
@@ -245,7 +275,6 @@ function updateAttendance() {
         let newRecords = {}
 
         document.querySelectorAll("#studentRows tr").forEach(row => {
-
             const usn = row.children[0].innerText
             const btn = row.querySelector(".status-btn")
 
@@ -254,7 +283,6 @@ function updateAttendance() {
         })
 
         entry.records = newRecords
-
         localStorage.setItem("attendanceDB", JSON.stringify(db))
 
         resetBtn(btn)
@@ -275,7 +303,6 @@ dateDropdown.addEventListener("change", () => {
 
 timeDropdown.addEventListener("change", checkEnableUpdate)
 
-/* 🔥 disable initially */
 if (updateBtn) {
     updateBtn.disabled = true
     updateBtn.style.opacity = "0.5"
