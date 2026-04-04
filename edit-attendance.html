@@ -9,7 +9,6 @@
     <title>Edit Attendance</title>
 
     <style>
-        
         /* ===== RESET ===== */
         * {
             margin: 0;
@@ -42,8 +41,16 @@
             font-weight: 600;
 
             background: linear-gradient(90deg, #c7d2fe, #a78bfa, #6366f1);
+
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+
+            background-clip: text;
+            /* 🔥 fallback */
+            color: transparent;
+
+            text-shadow: 0 0 8px rgba(139, 92, 246, 0.25);
+            /* 🔥 glow */
         }
 
         /* ===== CARD ===== */
