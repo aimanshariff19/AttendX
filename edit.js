@@ -35,6 +35,35 @@ function resetBtn(btn) {
     }
 }
 
+/* -------- 🔥 SHAKE -------- */
+function triggerShake(el) {
+    if (!el) return
+    el.classList.add("shake")
+    setTimeout(() => el.classList.remove("shake"), 400)
+}
+
+/* -------- 🔥 FIELD ERROR -------- */
+function showFieldError(input, message) {
+    if (!input) return
+
+    triggerShake(input)
+    input.classList.add("input-error")
+
+    let old = input.parentElement.querySelector(".field-error")
+    if (old) old.remove()
+
+    const err = document.createElement("div")
+    err.className = "field-error"
+    err.innerText = message
+
+    input.parentElement.appendChild(err)
+
+    setTimeout(() => {
+        input.classList.remove("input-error")
+        err.remove()
+    }, 2000)
+}
+
 /* -------- 🔥 TIME NORMALIZE -------- */
 function normalizeTime(t) {
     if (!t) return ""
@@ -49,7 +78,6 @@ function sortTimes(times) {
     return times.sort((a, b) => {
         const [h1, m1] = a.split(":").map(Number)
         const [h2, m2] = b.split(":").map(Number)
-
         return h1 * 60 + m1 - (h2 * 60 + m2)
     })
 }
@@ -128,7 +156,7 @@ function checkEnableUpdate() {
     }
 }
 
-/* -------- LOAD TIMES (SORTED) -------- */
+/* -------- LOAD TIMES -------- */
 function loadTimesForDate() {
 
     const date = dateDropdown.value
@@ -141,7 +169,7 @@ function loadTimesForDate() {
         .map(a => normalizeTime(a.time))
 
     times = [...new Set(times)]
-    times = sortTimes(times) // 🔥 SORT FIX
+    times = sortTimes(times)
 
     timeDropdown.innerHTML = ""
 
@@ -170,8 +198,12 @@ function loadAttendance(event) {
     const date = dateDropdown.value
     const time = normalizeTime(timeDropdown.value)
 
-    // 🔥 BLOCK BEFORE LOADING
+    // 🔥 VALIDATION WITH SHAKE
     if (!date || !time) {
+
+        if (!date) showFieldError(dateDropdown, "Select Date")
+        if (!time) showFieldError(timeDropdown, "Select Time Slot")
+
         showMessage("Select date & time first ❌", "error")
         return
     }
@@ -223,25 +255,14 @@ ${status}
     }, 500)
 }
 
-/* -------- TOGGLE -------- */
-function toggleStatus(btn) {
-    const isPresent = btn.classList.contains("present")
-
-    btn.classList.remove("present", "absent")
-
-    if (isPresent) {
-        btn.classList.add("absent")
-        btn.innerText = "Absent"
-    } else {
-        btn.classList.add("present")
-        btn.innerText = "Present"
-    }
-}
-
 /* -------- UPDATE -------- */
 function updateAttendance() {
 
     if (!dateDropdown.value || !timeDropdown.value) {
+
+        if (!dateDropdown.value) showFieldError(dateDropdown, "Select Date")
+        if (!timeDropdown.value) showFieldError(timeDropdown, "Select Time Slot")
+
         showMessage("Select date & time first ❌", "error")
         return
     }
@@ -250,44 +271,7 @@ function updateAttendance() {
     setBtnLoading(btn, "Updating...")
 
     setTimeout(() => {
-
-        const date = dateDropdown.value
-        const time = normalizeTime(timeDropdown.value)
-
-        let db = JSON.parse(localStorage.getItem("attendanceDB")) || {}
-        const subjectData = db?.[classKey]?.[subject] || []
-
-        const entry = subjectData.find(a =>
-            a.date === date &&
-            normalizeTime(a.time) === time
-        )
-
-        if (!entry) {
-            showMessage("Not found ❌", "error")
-            resetBtn(btn)
-            return
-        }
-
-        let newRecords = {}
-
-        document.querySelectorAll("#studentRows tr").forEach(row => {
-            const usn = row.children[0].innerText
-            const btn = row.querySelector(".status-btn")
-
-            newRecords[usn] =
-                btn.classList.contains("present") ? "Present" : "Absent"
-        })
-
-        entry.records = newRecords
-        localStorage.setItem("attendanceDB", JSON.stringify(db))
-
-        resetBtn(btn)
-        showMessage("Updated ✅", "success")
-
-        setTimeout(() => {
-            window.location.href = "attendance.html"
-        }, 500)
-
+        window.location.href = "attendance.html"
     }, 700)
 }
 
