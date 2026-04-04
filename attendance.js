@@ -1,4 +1,3 @@
-
 /* -------- 🔥 FIX STUCK SPINNER (BFCACHE) -------- */
 window.addEventListener("pageshow", function () {
     document.querySelectorAll(".loading").forEach(btn => {
@@ -138,6 +137,28 @@ setText("program", program)
 setText("sem", sem)
 setText("section", section)
 
+/* -------- 🔥 NEW: GET STUDENT % -------- */
+function getStudentStats(usn) {
+    const classKey = `${department}_${program}_${sem}_${section}`
+    let db = JSON.parse(localStorage.getItem("attendanceDB")) || {}
+
+    const subjectData = db?.[classKey]?.[subject] || []
+
+    let total = 0
+    let present = 0
+
+    subjectData.forEach(day => {
+        if (day.records[usn]) {
+            total++
+            if (day.records[usn] === "Present") present++
+        }
+    })
+
+    let percent = total === 0 ? 100 : ((present / total) * 100).toFixed(0)
+
+    return percent
+}
+
 /* -------- STUDENTS -------- */
 let studentList = []
 let table = null
@@ -161,6 +182,8 @@ function loadStudents() {
 
     studentList.forEach((student) => {
 
+        const percent = getStudentStats(student.usn)
+
         let row = document.createElement("tr")
 
         row.innerHTML = `
@@ -168,9 +191,9 @@ function loadStudents() {
 <td>${student.name}</td>
 
 <td>
-    <span class="percent-text">100%</span>
+    <span class="percent-text">${percent}%</span>
     <div class="bar">
-        <div class="fill" style="width:100%"></div>
+        <div class="fill" style="width:${percent}%"></div>
     </div>
 </td>
 
@@ -217,7 +240,7 @@ function toggleStatus(btn) {
         : "rgba(239,68,68,0.08)"
 }
 
-/* -------- 🔥 SUBMIT -------- */
+/* -------- 🔥 UPDATED SUBMIT -------- */
 function submitAttendance(btn) {
 
     if (!btn) btn = document.getElementById("submitBtn")
@@ -243,21 +266,40 @@ function submitAttendance(btn) {
 
         const rows = document.querySelectorAll("#studentRows tr")
 
-        let attendanceData = []
+        let records = {}
 
         rows.forEach(row => {
             const usn = row.children[0].innerText
             const b = row.querySelector(".status-btn")
             const status = b.classList.contains("present") ? "Present" : "Absent"
 
-            attendanceData.push({ usn, status })
+            records[usn] = status
         })
 
-        let time24 = convertTo24Hour(time)
+        const classKey = `${department}_${program}_${sem}_${section}`
 
-        const key = `${subject}_${department}_${program}_${sem}_${section}_${date}_${time24}`
+        let db = JSON.parse(localStorage.getItem("attendanceDB")) || {}
 
-        localStorage.setItem(key, JSON.stringify({ data: attendanceData }))
+        if (!db[classKey]) db[classKey] = {}
+        if (!db[classKey][subject]) db[classKey][subject] = []
+
+        const exists = db[classKey][subject].find(a =>
+            a.date === date && a.time === time
+        )
+
+        if (exists) {
+            showError("Attendance already marked!")
+            resetBtn(btn)
+            return
+        }
+
+        db[classKey][subject].push({
+            date,
+            time,
+            records
+        })
+
+        localStorage.setItem("attendanceDB", JSON.stringify(db))
 
         window.location.href = "dashboard.html"
 
@@ -267,10 +309,7 @@ function submitAttendance(btn) {
 /* -------- 🔥 EDIT -------- */
 function editAttendance(btn) {
     if (btn && btn.target) btn = btn.target
-    if (!btn) btn = document.querySelector(".btn")
-
     setBtnLoading(btn, "Opening")
-
     setTimeout(() => {
         window.location.href = "edit-attendance.html"
     }, 400)
@@ -278,11 +317,8 @@ function editAttendance(btn) {
 
 /* -------- 🔥 BACK -------- */
 function goBack(btn) {
-
     if (btn && btn.target) btn = btn.target
-    if (!btn) btn = document.querySelector(".back-btn")
 
-    // reset others
     document.querySelectorAll(".loading").forEach(b => {
         if (b !== btn) resetBtn(b)
     })
