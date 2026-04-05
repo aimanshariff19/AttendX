@@ -5,15 +5,11 @@
     <meta charset="UTF-8">
     <title>AttendX / Take Attendance</title>
 
-    <link rel="icon" href="assets/logo.png">
+    <link rel="icon" href="/static/assets/logo.png">
 
     <style>
         /* ===== RESET ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         /* ===== BODY ===== */
         body {
@@ -48,32 +44,23 @@
             width: 100%;
         }
 
-        .header-top h1 {
-            font-size: 28px;
-            font-weight: 600;
-        }
+        .header-top h1 { font-size: 28px; font-weight: 600; }
 
         /* 🔥 EDIT BUTTON */
-
         .header-top .btn {
             padding: 8px 12px;
             font-size: 13px;
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            /* same as main btn */
             border: none;
             color: white;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
-        .header-top .btn:hover {
-            transform: scale(1.05);
-            opacity: 0.95;
-        }
+        .header-top .btn:hover { transform: scale(1.05); opacity: 0.95; }
 
         /* 🔥 BACK BUTTON FINAL FIX */
         .back-btn {
             align-self: flex-start;
-            /* ⭐ MAIN FIX */
             padding: 8px 14px !important;
             font-size: 13px !important;
             width: auto;
@@ -91,10 +78,7 @@
             color: white;
             transition: 0.2s;
         }
-
-        .btn:hover {
-            transform: scale(1.05);
-        }
+        .btn:hover { transform: scale(1.05); }
 
         /* ===== SUBMIT ===== */
         #submitBtn {
@@ -117,164 +101,59 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
         }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            font-size: 13px;
-        }
-
+        .input-group { display: flex; flex-direction: column; font-size: 13px; }
         .input-group input {
-            margin-top: 4px;
-            padding: 9px;
-            border-radius: 8px;
-            border: none;
-            outline: none;
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            max-width: 260px;
+            margin-top: 4px; padding: 9px; border-radius: 8px;
+            border: none; outline: none; background: rgba(255, 255, 255, 0.15);
+            color: white; max-width: 260px;
         }
 
         /* ===== TABLE ===== */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th,
-        td {
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 12px;
-            text-align: left;
-        }
-
-        th {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        tbody tr:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid rgba(255, 255, 255, 0.15); padding: 12px; text-align: left; }
+        th { background: rgba(255, 255, 255, 0.08); }
+        tbody tr:hover { background: rgba(255, 255, 255, 0.05); }
 
         /* ===== PROGRESS BAR ===== */
-        .bar {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            margin-top: 6px;
-        }
-
-        .fill {
-            height: 100%;
-            border-radius: 10px;
-            background: linear-gradient(90deg, #6366f1, #8b5cf6);
-        }
+        .bar { height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; margin-top: 6px; }
+        .fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, #6366f1, #8b5cf6); }
 
         /* ===== ATTENDANCE BUTTON ===== */
         .status-btn {
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-            border: none;
-            color: white;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(6px);
+            padding: 6px 12px; border-radius: 8px; font-size: 12px;
+            cursor: pointer; border: none; color: white;
+            background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(6px);
             transition: all 0.25s ease;
         }
-
-        .status-btn:hover {
-            transform: translateY(-1px) scale(1.05);
-        }
-
-        .status-btn:active {
-            transform: scale(0.95);
-        }
-
-        .status-btn.present.active {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
-        }
-
-        .status-btn.absent.active {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
-        }
+        .status-btn:hover { transform: translateY(-1px) scale(1.05); }
+        .status-btn:active { transform: scale(0.95); }
+        .status-btn.present.active { background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 0 10px rgba(34, 197, 94, 0.6); }
+        .status-btn.absent.active { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 0 10px rgba(239, 68, 68, 0.6); }
 
         /* ===== TIME INFO ===== */
-        .time-info {
-            margin-top: 12px;
-            font-size: 13px;
-            opacity: 0.8;
-        }
+        .time-info { margin-top: 12px; font-size: 13px; opacity: 0.8; }
 
         /* ===== LOADING ===== */
-        .btn.loading {
-            pointer-events: none;
-            opacity: 0.8;
-        }
-
+        .btn.loading { pointer-events: none; opacity: 0.8; }
         .btn-spinner {
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            display: inline-block;
-            margin-left: 8px;
+            width: 14px; height: 14px; border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white; border-radius: 50%;
+            animation: spin 0.6s linear infinite; display: inline-block; margin-left: 8px;
         }
 
         /* ===== TABLE LOADER ===== */
-        .loader-row {
-            text-align: center;
-            padding: 20px;
-        }
-
+        .loader-row { text-align: center; padding: 20px; }
         .spinner {
-            width: 22px;
-            height: 22px;
-            border: 3px solid rgba(255, 255, 255, 0.2);
-            border-top: 3px solid #8b5cf6;
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-            margin: auto;
+            width: 22px; height: 22px; border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top: 3px solid #8b5cf6; border-radius: 50%;
+            animation: spin 0.7s linear infinite; margin: auto;
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* ===== SHAKE ===== */
-        @keyframes shake {
-            0% {
-                transform: translateX(0);
-            }
-
-            25% {
-                transform: translateX(-4px);
-            }
-
-            50% {
-                transform: translateX(4px);
-            }
-
-            75% {
-                transform: translateX(-4px);
-            }
-
-            100% {
-                transform: translateX(0);
-            }
-        }
-
-        .shake {
-            animation: shake 0.3s ease;
-            border: 1px solid #ef4444 !important;
-        }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25%, 75% { transform: translateX(-4px); } 50% { transform: translateX(4px); } }
+        .shake { animation: shake 0.3s ease; border: 1px solid #ef4444 !important; }
     </style>
 </head>
 
@@ -283,15 +162,11 @@
     <div class="dashboard">
 
         <div class="header">
-
             <div class="header-top">
                 <h1>AttendX / Take Attendance</h1>
                 <button class="btn" onclick="editAttendance(this)">Edit Attendance</button>
             </div>
-
-            <!-- 🔥 FIX: added back-btn class -->
             <button class="btn back-btn" onclick="goBack(this)">← Back</button>
-
         </div>
 
         <div class="card">
@@ -308,17 +183,14 @@
                     <label>Date</label>
                     <input type="date" id="date">
                 </div>
-
                 <div class="input-group">
                     <label>Start Time</label>
                     <input type="time" id="classTime">
                 </div>
-
                 <div class="input-group">
                     <label>No. of Classes</label>
                     <input type="number" id="numClasses" value="1">
                 </div>
-
                 <div class="input-group">
                     <label>Current Time</label>
                     <input type="text" id="currentTime" readonly>
@@ -362,10 +234,9 @@
         </button>
 
     </div>
-
-    <script src="mockData.js"></script>
-    <script src="attendance.js"></script>
+    
+    <script src="/static/attendance.js"></script>
 
 </body>
-
+</html>
 </html>

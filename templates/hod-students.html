@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AttendX / HOD Student Records</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        /* ===== RESET & BODY ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #1e1b4b, #312e81); 
+            color: white; 
+            min-height: 100vh; 
+            padding: 30px 20px; 
+        }
+
+        /* ===== DASHBOARD CONTAINER ===== */
+        .dashboard { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            padding: 26px; 
+            background: rgba(255, 255, 255, 0.05); 
+            border-radius: 18px; 
+            backdrop-filter: blur(20px); 
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6); 
+        }
+
+        /* ===== HEADER ===== */
+        .header-actions { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 24px; 
+        }
+        h1 { 
+            font-size: 24px; 
+            font-weight: 600; 
+            background: linear-gradient(90deg, #c7d2fe, #a78bfa, #6366f1); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        
+        /* ===== BUTTONS ===== */
+        .back-btn { 
+            padding: 8px 16px; 
+            border-radius: 10px; 
+            border: 1px solid rgba(255,255,255,0.2); 
+            font-size: 13px; 
+            font-weight: 600; 
+            background: transparent; 
+            color: white; 
+            cursor: pointer; 
+            transition: 0.25s; 
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.1); }
+
+        /* ===== SEARCH BAR ===== */
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 14px 20px 14px 45px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+        .search-container input:focus { border-color: #a78bfa; background: rgba(0, 0, 0, 0.3); }
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        /* ===== TABLE ===== */
+        .card { 
+            background: rgba(255, 255, 255, 0.05); 
+            padding: 20px; 
+            border-radius: 16px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            overflow-x: auto;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 13px; 
+            text-align: left;
+        }
+        th { 
+            padding: 12px 16px; 
+            color: #a78bfa; 
+            font-weight: 600; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+        td { 
+            padding: 14px 16px; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+        }
+        tr:hover td { background: rgba(255,255,255,0.03); }
+
+        /* ===== STATUS BADGES ===== */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .badge.good { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+        .badge.warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .badge.danger { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .badge.none { background: rgba(156, 163, 175, 0.2); color: #d1d5db; }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <div class="header-actions">
+            <h1>Department Student Records</h1>
+            <button class="back-btn" onclick="window.location.href='/hod-dashboard'">
+                <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+            </button>
+        </div>
+
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search by USN or Student Name...">
+        </div>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>USN</th>
+                        <th>Student Name</th>
+                        <th>Sem</th>
+                        <th>Classes Logged</th>
+                        <th>Present</th>
+                        <th>Overall %</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="studentTableBody">
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 30px; opacity: 0.7;">
+                            <i class="fa-solid fa-spinner fa-spin"></i> Loading Student Data...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <script>
+        const rawStudentsData = {{ students | tojson }};
+    </script>
+    <script src="/static/hod-students.js"></script>
+
+</body>
+</html>

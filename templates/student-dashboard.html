@@ -243,9 +243,14 @@
         </button>
 
     </div>
-
-    <script src="mockData.js"></script>
-    <script src="student-dashboard.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> -->
+    <script>
+        const student = {{ student | tojson }};
+        const deptName = {{ dept_name | tojson }};
+        const rawAttendanceData = {{ attendance_data | tojson }};
+    </script>
+    <!-- <script src="/static/utils.js"></script> -->
+    <script src="/static/student-dashboard.js"></script>
 
 </body>
 

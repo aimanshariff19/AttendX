@@ -308,10 +308,13 @@
         </div>
 
     </div>
-
-    <script src="mockData.js"></script>
-    <script src="utils.js"></script>
-    <script src="dashboard.js"></script>
+    <script>
+        const faculty = {{ faculty | tojson }};
+        const rawSubjects = {{ subjects | tojson }};
+        const sectionCount = {{ section_count | tojson }};
+        const studentCount = {{ student_count | tojson }};
+    </script>
+    <script src="/static/dashboard.js"></script>
 
 </body>
 

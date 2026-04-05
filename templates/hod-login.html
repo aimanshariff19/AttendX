@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AttendX HOD Login</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body class="login-page faculty">
+
+    <div class="login-container">
+
+        <img src="/static/assets/logo.png" class="college-logo" alt="Atria Logo">
+
+        <div class="college-info">
+            <h2 class="college-name">Atria Institute of Technology</h2>
+            <p class="college-location">Hebbal, Bengaluru</p>
+            <p class="college-status">(Autonomous Institution)</p>
+        </div>
+
+        <h3 class="system-title">AttendX HOD Portal</h3>
+
+        <form id="hodForm" autocomplete="on" action="/api/login/hod" method="POST">
+
+            <div class="input-group">
+                <label for="username">HOD Username</label>
+                <input type="text" id="username" name="username" required autocomplete="username">
+            </div>
+
+            <div class="input-group password-field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" autocomplete="current-password">
+                <i id="eyeIcon" class="fa-solid fa-eye eye" onclick="togglePassword()"></i>
+            </div>
+
+            <div class="form-extra">
+                <label class="remember">
+                    <input type="checkbox"> Remember me
+                </label>
+                <a href="#" class="forgot">Forgot password?</a>
+            </div>
+
+            <button id="loginBtn" type="submit">
+                <span class="btn-text">Login</span>
+                <span class="btn-loader"></span>
+            </button>
+
+        </form>
+
+        <p id="error" class="error-text"></p>
+
+    </div>
+    <script>
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+    </script>
+
+</body>
+
+</html>
