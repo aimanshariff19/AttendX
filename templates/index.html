@@ -29,7 +29,6 @@
             height: 16px;
             border: 2px solid white;
             border-top: 2px solid #38bdf8;
-            /* 🔥 visible color */
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
@@ -154,17 +153,20 @@
 
             /* 🔥 FIXED SUBMIT */
             form.addEventListener("submit", function (e) {
-                e.preventDefault(); // 🔥 STOP instant reload
+                e.preventDefault();
 
-                normalText.style.display = "none";
-                loadingText.style.display = "inline-flex";
+                btn.innerHTML = `
+        <span style="display:flex; align-items:center; gap:8px;">
+            Logging in...
+            <span class="btn-loader"></span>
+        </span>
+    `;
 
                 btn.disabled = true;
 
-                // 🔥 FORCE UI RENDER THEN SUBMIT
                 setTimeout(() => {
                     form.submit();
-                }, 150); // little delay so spinner shows properly
+                }, 150);
             });
 
             /* ERROR HANDLING */
