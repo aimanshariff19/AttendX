@@ -265,7 +265,7 @@ def api_faculty_login():
         }).execute()
 
         if not response.data:
-            return "Invalid Credentials", 401
+           return redirect('/?error=invalid')
 
         faculty = response.data[0]
 

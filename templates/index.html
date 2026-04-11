@@ -11,6 +11,62 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="/static/style.css">
+
+    <!-- ADD THIS INSIDE <head> (below your CSS link) -->
+    <style>
+        /* SPINNER */
+        .btn-loader {
+            width: 18px;
+            height: 18px;
+            border: 2px solid white;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            display: none;
+            margin-left: 10px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* BUTTON ALIGN */
+        #loginBtn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* SHAKE */
+        .shake {
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-6px);
+            }
+
+            50% {
+                transform: translateX(6px);
+            }
+
+            75% {
+                transform: translateX(-6px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+    </style>
+
 </head>
 
 <body class="login-page faculty">
@@ -52,6 +108,7 @@
 
             <button id="loginBtn" type="submit">
                 <span class="btn-text">Login</span>
+                <span class="btn-loader"></span>
             </button>
 
         </form>
@@ -61,6 +118,7 @@
     </div>
 
     <script>
+
         function togglePassword() {
             const passwordField = document.getElementById('password');
             const eyeIcon = document.getElementById('eyeIcon');
@@ -72,7 +130,35 @@
                 eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         }
-        
+
+        const form = document.getElementById("loginForm");
+        const btn = document.getElementById("loginBtn");
+        const loader = btn.querySelector(".btn-loader");
+        const text = btn.querySelector(".btn-text");
+        const container = document.querySelector(".login-container");
+        const errorText = document.getElementById("error");
+
+        /* SHOW SPINNER ON SUBMIT */
+        form.addEventListener("submit", function () {
+            loader.style.display = "inline-block";
+            text.style.opacity = "0.6";
+        });
+
+        /* CHECK ERROR FROM URL */
+        window.onload = function () {
+            const params = new URLSearchParams(window.location.search);
+
+            if (params.get("error") === "invalid") {
+                errorText.innerText = "Invalid Credentials";
+
+                container.classList.add("shake");
+
+                setTimeout(() => {
+                    container.classList.remove("shake");
+                }, 300);
+            }
+        };
+
     </script>
 </body>
 
