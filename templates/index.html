@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -6,10 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AttendX Faculty Login</title>
 
-    <!-- ICONS -->
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <!-- CSS -->
     <link rel="stylesheet" href="/static/style.css">
 </head>
 
@@ -17,20 +16,19 @@
 
     <div class="login-container">
 
-        <!-- LOGO -->
+        
         <img src="/static/assets/logo.png" class="college-logo" alt="Atria Logo">
 
-        <!-- COLLEGE INFO -->
+        
         <div class="college-info">
             <h2 class="college-name">Atria Institute of Technology</h2>
             <p class="college-location">Hebbal, Bengaluru</p>
             <p class="college-status">(Autonomous Institution)</p>
         </div>
 
-        <!-- TITLE -->
         <h3 class="system-title">AttendX Faculty Portal</h3>
 
-<form id="loginForm" autocomplete="on" action="/api/login/faculty" method="POST">
+        <form id="loginForm" autocomplete="on" action="/api/login/faculty" method="POST">
 
             <div class="input-group">
                 <label for="username">Faculty ID</label>
@@ -72,6 +70,172 @@
                 eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         }
+
     </script>
 </body>
+
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AttendX Faculty Login</title>
+
+    <!-- ICONS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+
+    <!-- 🔥 ADDED INLINE CSS -->
+    <style>
+        /* SPINNER */
+        .btn-loader {
+            width: 18px;
+            height: 18px;
+            border: 2px solid white;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            display: none;
+            margin-left: 10px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* SHAKE */
+        .shake {
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+
+            75% {
+                transform: translateX(-5px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        /* KEEP BUTTON FLEX FOR SPINNER */
+        #loginBtn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+
+</head>
+
+<body class="login-page faculty">
+
+    <div class="login-container">
+
+        <!-- LOGO -->
+        <img src="/static/assets/logo.png" class="college-logo" alt="Atria Logo">
+
+        <!-- COLLEGE INFO -->
+        <div class="college-info">
+            <h2 class="college-name">Atria Institute of Technology</h2>
+            <p class="college-location">Hebbal, Bengaluru</p>
+            <p class="college-status">(Autonomous Institution)</p>
+        </div>
+
+        <!-- TITLE -->
+        <h3 class="system-title">AttendX Faculty Portal</h3>
+
+        <form id="loginForm" autocomplete="on" action="/api/login/faculty" method="POST">
+
+            <div class="input-group">
+                <label for="username">Faculty ID</label>
+                <input type="text" id="username" name="username" required autocomplete="username">
+            </div>
+
+            <div class="input-group password-field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+                <i id="eyeIcon" class="fa-solid fa-eye eye" onclick="togglePassword()"></i>
+            </div>
+
+            <div class="form-extra">
+                <label class="remember">
+                    <input type="checkbox"> Remember me
+                </label>
+                <a href="#" class="forgot">Forgot password?</a>
+            </div>
+
+            <!-- 🔥 BUTTON UPDATED (ADDED SPINNER ONLY) -->
+            <button id="loginBtn" type="submit">
+                <span class="btn-text">Login</span>
+                <span class="btn-loader"></span>
+            </button>
+
+        </form>
+
+        <p id="error" class="error-text"></p>
+
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        /* 🔥 ADDED LOGIN HANDLER */
+        const form = document.getElementById("loginForm");
+        const btn = document.getElementById("loginBtn");
+        const loader = btn.querySelector(".btn-loader");
+        const text = btn.querySelector(".btn-text");
+        const error = document.getElementById("error");
+        const container = document.querySelector(".login-container");
+
+        form.addEventListener("submit", function () {
+            loader.style.display = "inline-block";
+            text.style.opacity = "0.6";
+        });
+
+        /* OPTIONAL: if backend returns error via JS later */
+        function showError(msg) {
+            loader.style.display = "none";
+            text.style.opacity = "1";
+
+            error.innerText = msg;
+            container.classList.add("shake");
+
+            setTimeout(() => {
+                container.classList.remove("shake");
+            }, 300);
+        }
+    </script>
+</body>
+
 </html>
