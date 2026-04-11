@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AttendX Faculty Login</title>
+    <title>AttendX HOD Login</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="/static/style.css">
 
     <style>
-        /* 🔥 BUTTON STATE SWITCH */
+        /* 🔥 BUTTON STATE */
         #loginBtn.loading .btn-text {
             display: none;
         }
@@ -19,13 +19,12 @@
             display: inline-flex !important;
         }
 
-        /* 🔥 LOADING TEXT */
+        /* 🔥 LOADING */
         .btn-loading {
             display: none;
             align-items: center;
             gap: 8px;
             color: white;
-            font-weight: 500;
         }
 
         /* 🔥 SPINNER */
@@ -93,18 +92,18 @@
             <p class="college-status">(Autonomous Institution)</p>
         </div>
 
-        <h3 class="system-title">AttendX Faculty Portal</h3>
+        <h3 class="system-title">AttendX HOD Portal</h3>
 
-        <form id="loginForm" autocomplete="on" action="/api/login/faculty" method="POST">
+        <form id="hodForm" autocomplete="on" action="/api/login/hod" method="POST">
 
             <div class="input-group">
-                <label>Faculty ID</label>
+                <label>HOD Username</label>
                 <input type="text" id="username" name="username" required>
             </div>
 
             <div class="input-group password-field">
                 <label>Password</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password">
                 <i id="eyeIcon" class="fa-solid fa-eye eye" onclick="togglePassword()"></i>
             </div>
 
@@ -144,17 +143,17 @@
 
         document.addEventListener("DOMContentLoaded", () => {
 
-            const form = document.getElementById("loginForm");
+            const form = document.getElementById("hodForm");
             const btn = document.getElementById("loginBtn");
             const container = document.querySelector(".login-container");
             const errorText = document.getElementById("error");
 
-            /* 🔥 SPINNER TRIGGER */
+            /* 🔥 SPINNER */
             form.addEventListener("submit", function () {
                 btn.classList.add("loading");
             });
 
-            /* 🔥 ERROR HANDLING */
+            /* 🔥 ERROR (from Flask redirect like ?error=invalid) */
             const params = new URLSearchParams(window.location.search);
 
             if (params.get("error") === "invalid") {
