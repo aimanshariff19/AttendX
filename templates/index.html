@@ -11,62 +11,6 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="/static/style.css">
-
-    <!-- 🔥 ADDED INLINE CSS -->
-    <style>
-        /* SPINNER */
-        .btn-loader {
-            width: 18px;
-            height: 18px;
-            border: 2px solid white;
-            border-top: 2px solid transparent;
-            border-radius: 50%;
-            display: none;
-            margin-left: 10px;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* SHAKE */
-        .shake {
-            animation: shake 0.3s;
-        }
-
-        @keyframes shake {
-            0% {
-                transform: translateX(0);
-            }
-
-            25% {
-                transform: translateX(-5px);
-            }
-
-            50% {
-                transform: translateX(5px);
-            }
-
-            75% {
-                transform: translateX(-5px);
-            }
-
-            100% {
-                transform: translateX(0);
-            }
-        }
-
-        /* KEEP BUTTON FLEX FOR SPINNER */
-        #loginBtn {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-    </style>
-
 </head>
 
 <body class="login-page faculty">
@@ -106,10 +50,8 @@
                 <a href="#" class="forgot">Forgot password?</a>
             </div>
 
-            <!-- 🔥 BUTTON UPDATED (ADDED SPINNER ONLY) -->
             <button id="loginBtn" type="submit">
                 <span class="btn-text">Login</span>
-                <span class="btn-loader"></span>
             </button>
 
         </form>
@@ -130,8 +72,7 @@
                 eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         }
-
-       
+        
     </script>
 </body>
 
