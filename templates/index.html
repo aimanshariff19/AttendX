@@ -152,22 +152,18 @@
             const normalText = btn.querySelector(".btn-text");
             const loadingText = btn.querySelector(".btn-loading");
 
-            /* 🔥 ON SUBMIT */
+            /* 🔥 ON SUBMIT (SPINNER + TEXT SWITCH) */
             form.addEventListener("submit", function () {
                 normalText.style.display = "none";
+                loadingText.style.display = "inline-flex";
 
-                loadingText.style.display = "inline-flex";  // 🔥 IMPORTANT FIX
-                loadingText.style.visibility = "visible";   // force render
+                btn.disabled = true; // prevent multiple clicks
 
-                btn.disabled = true;
-
-                // small delay ensures spinner paints before redirect
-                setTimeout(() => {
-                    form.submit();
-                }, 50);
+                // ❌ DO NOT use form.submit() again
+                // browser will handle submission automatically
             });
 
-            /* 🔥 CHECK ERROR FROM URL */
+            /* 🔥 ERROR HANDLING (FROM FLASK REDIRECT) */
             const params = new URLSearchParams(window.location.search);
 
             if (params.get("error") === "invalid") {
