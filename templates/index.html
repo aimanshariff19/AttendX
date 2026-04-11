@@ -15,11 +15,12 @@
     <!-- ADD THIS INSIDE <head> (below your CSS link) -->
     <style>
         /* SPINNER */
-        /* LOADING TEXT + SPINNER ALIGN */
         .btn-loading {
             display: none;
             align-items: center;
             gap: 8px;
+            color: white;
+            font-weight: 500;
         }
 
         /* SPINNER */
@@ -154,8 +155,16 @@
             /* 🔥 ON SUBMIT */
             form.addEventListener("submit", function () {
                 normalText.style.display = "none";
-                loadingText.style.display = "flex";
-                btn.disabled = true; // prevent double click
+
+                loadingText.style.display = "inline-flex";  // 🔥 IMPORTANT FIX
+                loadingText.style.visibility = "visible";   // force render
+
+                btn.disabled = true;
+
+                // small delay ensures spinner paints before redirect
+                setTimeout(() => {
+                    form.submit();
+                }, 50);
             });
 
             /* 🔥 CHECK ERROR FROM URL */
@@ -173,7 +182,7 @@
 
         });
     </script>
-    
+
 </body>
 
 </html>
