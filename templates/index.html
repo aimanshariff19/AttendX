@@ -15,14 +15,20 @@
     <!-- ADD THIS INSIDE <head> (below your CSS link) -->
     <style>
         /* SPINNER */
+        /* LOADING TEXT + SPINNER ALIGN */
+        .btn-loading {
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* SPINNER */
         .btn-loader {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             border: 2px solid white;
             border-top: 2px solid transparent;
             border-radius: 50%;
-            display: none;
-            margin-left: 10px;
             animation: spin 0.8s linear infinite;
         }
 
@@ -32,7 +38,7 @@
             }
         }
 
-        /* BUTTON ALIGN */
+        /* BUTTON FLEX */
         #loginBtn {
             display: flex;
             justify-content: center;
@@ -108,7 +114,10 @@
 
             <button id="loginBtn" type="submit">
                 <span class="btn-text">Login</span>
-                <span class="btn-loader"></span>
+                <span class="btn-loading" style="display:none;">
+                    Logging in...
+                    <span class="btn-loader"></span>
+                </span>
             </button>
 
         </form>
