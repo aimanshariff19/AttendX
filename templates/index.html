@@ -131,19 +131,7 @@
             }
         }
 
-
-        /* OPTIONAL: if backend returns error via JS later */
-        function showError(msg) {
-            loader.style.display = "none";
-            text.style.opacity = "1";
-
-            error.innerText = msg;
-            container.classList.add("shake");
-
-            setTimeout(() => {
-                container.classList.remove("shake");
-            }, 300);
-        }
+       
     </script>
 </body>
 
