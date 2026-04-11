@@ -127,10 +127,10 @@
     </div>
 
     <script>
-
         function togglePassword() {
             const passwordField = document.getElementById('password');
             const eyeIcon = document.getElementById('eyeIcon');
+
             if (passwordField.type === 'password') {
                 passwordField.type = 'text';
                 eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
@@ -140,21 +140,25 @@
             }
         }
 
-        const form = document.getElementById("loginForm");
-        const btn = document.getElementById("loginBtn");
-        const loader = btn.querySelector(".btn-loader");
-        const text = btn.querySelector(".btn-text");
-        const container = document.querySelector(".login-container");
-        const errorText = document.getElementById("error");
+        /* WAIT FOR DOM */
+        document.addEventListener("DOMContentLoaded", () => {
 
-        /* SHOW SPINNER ON SUBMIT */
-        form.addEventListener("submit", function () {
-            loader.style.display = "inline-block";
-            text.style.opacity = "0.6";
-        });
+            const form = document.getElementById("loginForm");
+            const btn = document.getElementById("loginBtn");
+            const container = document.querySelector(".login-container");
+            const errorText = document.getElementById("error");
 
-        /* CHECK ERROR FROM URL */
-        window.onload = function () {
+            const normalText = btn.querySelector(".btn-text");
+            const loadingText = btn.querySelector(".btn-loading");
+
+            /* 🔥 ON SUBMIT */
+            form.addEventListener("submit", function () {
+                normalText.style.display = "none";
+                loadingText.style.display = "flex";
+                btn.disabled = true; // prevent double click
+            });
+
+            /* 🔥 CHECK ERROR FROM URL */
             const params = new URLSearchParams(window.location.search);
 
             if (params.get("error") === "invalid") {
@@ -166,9 +170,10 @@
                     container.classList.remove("shake");
                 }, 300);
             }
-        };
 
+        });
     </script>
+    
 </body>
 
 </html>
