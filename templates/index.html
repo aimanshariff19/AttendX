@@ -72,6 +72,14 @@
                 transform: translateX(0);
             }
         }
+
+        #loginBtn.loading .btn-text {
+            display: none;
+        }
+
+        #loginBtn.loading .btn-loading {
+            display: inline-flex !important;
+        }
     </style>
 
 </head>
@@ -148,27 +156,9 @@
             const container = document.querySelector(".login-container");
             const errorText = document.getElementById("error");
 
-            /* 🔥 FINAL FIXED SUBMIT */
-            form.addEventListener("submit", function (e) {
-                e.preventDefault();
-
-                // change UI
-                btn.innerHTML = `
-            <span style="display:flex; align-items:center; gap:8px;">
-                Logging in...
-                <span class="btn-loader"></span>
-            </span>
-        `;
-
-                btn.disabled = true;
-
-                // 🔥 FORCE BROWSER TO RENDER BEFORE SUBMIT
-                btn.offsetHeight; // this line forces reflow
-
-                // now submit
-                setTimeout(() => {
-                    form.submit();
-                }, 200); // slightly higher for guaranteed visibility
+            /* 🔥 SIMPLE + WORKING SUBMIT */
+            form.addEventListener("submit", function () {
+                btn.classList.add("loading");
             });
 
             /* ERROR HANDLING */
