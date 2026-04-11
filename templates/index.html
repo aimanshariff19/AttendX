@@ -141,7 +141,6 @@
             }
         }
 
-        /* WAIT FOR DOM */
         document.addEventListener("DOMContentLoaded", () => {
 
             const form = document.getElementById("loginForm");
@@ -152,18 +151,22 @@
             const normalText = btn.querySelector(".btn-text");
             const loadingText = btn.querySelector(".btn-loading");
 
-            /* 🔥 ON SUBMIT (SPINNER + TEXT SWITCH) */
-            form.addEventListener("submit", function () {
+            /* 🔥 FIXED SUBMIT */
+            form.addEventListener("submit", function (e) {
+                e.preventDefault(); // 🔥 STOP instant reload
+
                 normalText.style.display = "none";
                 loadingText.style.display = "inline-flex";
 
-                btn.disabled = true; // prevent multiple clicks
+                btn.disabled = true;
 
-                // ❌ DO NOT use form.submit() again
-                // browser will handle submission automatically
+                // 🔥 FORCE UI RENDER THEN SUBMIT
+                setTimeout(() => {
+                    form.submit();
+                }, 150); // little delay so spinner shows properly
             });
 
-            /* 🔥 ERROR HANDLING (FROM FLASK REDIRECT) */
+            /* ERROR HANDLING */
             const params = new URLSearchParams(window.location.search);
 
             if (params.get("error") === "invalid") {
