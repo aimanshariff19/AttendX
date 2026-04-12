@@ -109,22 +109,27 @@
         .cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            /* tighter */
             gap: 12px;
+            /* reduced */
             margin-bottom: 20px;
         }
 
         .course-card {
             background: rgba(255, 255, 255, 0.04);
+            /* lighter */
             padding: 14px;
+            /* reduced */
             border-radius: 12px;
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.25s ease;
+            transition: 0.25s;
         }
 
         .course-card:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+            transform: translateY(-4px);
+            /* reduced */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
 
         .subjects {
