@@ -7,7 +7,6 @@
     <title>AttendX Faculty Dashboard</title>
 
     <style>
-        /* ===== BODY ===== */
         body {
             margin: 0;
             font-family: 'Inter', sans-serif;
@@ -15,7 +14,6 @@
             color: white;
         }
 
-        /* ===== GLOW ===== */
         body::before,
         body::after {
             content: "";
@@ -38,14 +36,12 @@
             right: -100px;
         }
 
-        /* ===== DASHBOARD ===== */
         .dashboard {
             position: relative;
             z-index: 2;
             max-width: 1100px;
             margin: 40px auto;
             padding: 25px;
-            /* reduced */
             border-radius: 20px;
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
@@ -54,12 +50,7 @@
             animation: fadeIn 0.6s ease;
         }
 
-        /* ===== HEADER ===== */
-        .header-actions {
-            margin-bottom: 10px;
-        }
-
-        .header-actions h1 {
+        h1 {
             margin-bottom: 18px;
             font-size: 30px;
             font-weight: 600;
@@ -85,169 +76,63 @@
             }
         }
 
-        /* ===== LOGOUT ===== */
+        @keyframes titleGlow {
+            0% {
+                background-position: 0% center;
+            }
+
+            100% {
+                background-position: 200% center;
+            }
+        }
+
         .logout-btn {
             padding: 8px 16px;
-            /* reduced */
             border-radius: 10px;
             border: none;
             background: linear-gradient(135deg, #5f5cff, #7c3aed);
             color: white;
             cursor: pointer;
-            transition: 0.3s;
             margin-bottom: 20px;
-            /* adjusted */
-            width: fit-content;
         }
 
-        .logout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(95, 92, 255, 0.5);
-        }
-
-        /* ===== PROFILE ===== */
-        .faculty-panel h2 {
-            font-size: 22px;
-            /* reduced */
-            margin-bottom: 3px;
-        }
-
-        .dept {
-            color: #9ca3af;
-            /* softer */
-            margin-bottom: 15px;
-            font-size: 13px;
-        }
-
-        /* ===== STATS ===== */
         .cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            /* tighter */
             gap: 12px;
-            /* reduced */
             margin-bottom: 20px;
         }
 
         .course-card {
             background: rgba(255, 255, 255, 0.04);
-            /* lighter */
             padding: 14px;
-            /* reduced */
             border-radius: 12px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: 0.25s;
         }
 
-        .course-card:hover {
-            transform: translateY(-4px);
-            /* reduced */
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        .course-card h3 {
-            font-size: 20px;
-            /* reduced */
-            margin-bottom: 4px;
-        }
-
-        .course-card p {
-            font-size: 12px;
-            color: #9ca3af;
-        }
-
-        /* ===== CARD ===== */
-        .card {
-            background: rgba(255, 255, 255, 0.04);
-            padding: 16px;
-            /* reduced */
-            border-radius: 14px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        /* ===== SUBJECTS ===== */
         .subjects {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            /* tighter */
             gap: 14px;
         }
 
         .subject-card {
             background: rgba(255, 255, 255, 0.04);
             padding: 16px;
-            /* reduced */
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: 0.25s;
         }
 
-        .subject-card:hover {
-            transform: translateY(-4px) scale(1.01);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-        }
-
-        .subject-card h4 {
-            margin-bottom: 4px;
-            font-size: 15px;
-        }
-
-        .subject-card p {
-            font-size: 12px;
-            color: #9ca3af;
-        }
-
-        /* ===== BUTTON ===== */
         button {
             margin-top: 10px;
-            padding: 8px 12px;
-            /* reduced */
+            padding: 8px;
             border-radius: 8px;
             border: none;
             background: linear-gradient(135deg, #5f5cff, #7c3aed);
             color: white;
-            font-weight: 600;
-            font-size: 13px;
             cursor: pointer;
-            transition: 0.3s;
             width: 100%;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(95, 92, 255, 0.5);
-        }
-
-        /* ===== LOADING ===== */
-        button.loading {
-            pointer-events: none;
-            opacity: 0.9;
-        }
-
-        .btn-spinner {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-left: 8px;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* ===== ANIMATION ===== */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -266,66 +151,56 @@
 
     <div class="dashboard">
 
-        <!-- 🔥 DIRECT H1 (like UI version) -->
         <h1>AttendX / Faculty Dashboard</h1>
 
-        <!-- LOGOUT -->
         <button class="logout-btn" onclick="logout(this)">
-            <span>Logout</span>
+            Logout
         </button>
 
-        <!-- PROFILE -->
         <div class="faculty-panel">
-            <div class="faculty-info">
-                <h2 id="facultyName">Dr. Kumar</h2>
-                <p id="facultyDept">CSE Department</p>
-            </div>
+            <h2 id="facultyName">Loading...</h2>
+            <p id="facultyDept">Loading...</p>
         </div>
 
-        <!-- STATS -->
-        <div class="cards faculty-stats">
+        <div class="cards">
             <div class="course-card">
                 <h3 id="courseCount">0</h3>
                 <p>Courses</p>
             </div>
-
             <div class="course-card">
                 <h3 id="sectionCount">0</h3>
                 <p>Sections</p>
             </div>
-
             <div class="course-card">
                 <h3 id="studentCount">0</h3>
                 <p>Students</p>
             </div>
-
             <div class="course-card">
                 <h3 id="facultyId">-</h3>
                 <p>Faculty ID</p>
             </div>
         </div>
 
-        <!-- SCHEDULE -->
         <div class="card">
             <h3>Today's Schedule</h3>
-            <div id="todaySchedule">No classes today</div>
+            <div id="todaySchedule">Loading...</div>
         </div>
 
-        <!-- SUBJECTS -->
-        <h3 style="margin-bottom:10px;">Your Courses</h3>
+        <h3>Your Courses</h3>
 
-        <div class="subjects" id="courseCards">
-            <!-- Dynamic cards will come from JS -->
-        </div>
+        <div class="subjects" id="courseCards"></div>
 
     </div>
 
-    <!-- 🔥 KEEP YOUR SUPABASE DATA -->
+    <!-- ✅ FIXED SCRIPT (NO ERROR NOW) -->
     <script>
-        const faculty = {{ faculty | tojson }};
-        const rawSubjects = {{ subjects | tojson }};
-        const sectionCount = {{ section_count | tojson }};
-        const studentCount = {{ student_count | tojson }};
+        const faculty = JSON.parse('{{ faculty | tojson | safe }}');
+        const rawSubjects = JSON.parse('{{ subjects | tojson | safe }}');
+        const sectionCount = JSON.parse('{{ section_count | tojson | safe }}');
+        const studentCount = JSON.parse('{{ student_count | tojson | safe }}');
+
+        console.log("Faculty:", faculty);
+        console.log("Subjects:", rawSubjects);
     </script>
 
     <script src="/static/dashboard.js"></script>

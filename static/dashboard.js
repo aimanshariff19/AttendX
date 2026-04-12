@@ -1,7 +1,7 @@
 /* -------- SAFE TEXT HELPER -------- */
 function setText(id, value) {
     const el = document.getElementById(id);
-    if (el) el.innerHTML = value || "-";
+    if (el) el.innerHTML = value ?? "-";
 }
 
 /* -------- RIPPLE EFFECT -------- */
@@ -20,15 +20,22 @@ document.addEventListener("click", function (e) {
     setTimeout(() => circle.remove(), 600);
 });
 
-/* -------- BUTTON LOADING HELPER -------- */
+/* -------- BUTTON LOADING -------- */
 function setBtnLoading(btn, textValue) {
     if (!btn) return;
-    if (!btn.dataset.original) btn.dataset.original = btn.innerHTML;
-    
+
+    if (!btn.dataset.original) {
+        btn.dataset.original = btn.innerHTML;
+    }
+
     btn.classList.add("loading");
+
     let text = btn.querySelector("span");
-    if (text) text.innerText = textValue;
-    else btn.innerHTML = `<span>${textValue}</span>`;
+    if (text) {
+        text.innerText = textValue;
+    } else {
+        btn.innerHTML = `<span>${textValue}</span>`;
+    }
 
     let old = btn.querySelector(".btn-spinner");
     if (old) old.remove();
@@ -38,58 +45,73 @@ function setBtnLoading(btn, textValue) {
     btn.appendChild(spinner);
 }
 
-/* -------- 🚀 PHASE 1: LOAD FACULTY DETAILS -------- */
+/* -------- LOAD FACULTY DETAILS -------- */
 function loadFacultyDetails() {
-    // Inject the data that Python securely handed to us!
-    setText("facultyName", faculty.name);
-    
-    // We can show the first 8 characters of their secure ID
-    setText("facultyId", faculty.id.substring(0, 8)); 
-    
-    setText("facultyDept", `<span style="opacity:0.8;">Status:</span> Logged In`);
-    
-    // Use the real Python calculations instead of placeholders!
-    setText("sectionCount", sectionCount);
-    setText("studentCount", studentCount);
+    console.log("🔥 Faculty Data:", faculty);
+
+    if (!faculty || typeof faculty !== "object") {
+        console.error("❌ Faculty data missing or invalid");
+        return;
+    }
+
+    setText("facultyName", faculty.name || "Unknown");
+
+    setText(
+        "facultyId",
+        faculty.id ? faculty.id.toString().substring(0, 8) : "N/A"
+    );
+
+    setText(
+        "facultyDept",
+        `<span style="opacity:0.8;">Status:</span> Logged In`
+    );
+
+    setText("sectionCount", sectionCount ?? 0);
+    setText("studentCount", studentCount ?? 0);
 }
 
-/* -------- 🚀 PHASE 2: LOAD COURSE CARDS -------- */
+/* -------- LOAD COURSE CARDS -------- */
 function loadCourseCards() {
+    console.log("📚 Subjects:", rawSubjects);
+
     const container = document.getElementById("courseCards");
     if (!container) return;
 
-    // Handle empty states (No classes assigned)
-    if (!rawSubjects || rawSubjects.length === 0) {
+    if (!Array.isArray(rawSubjects) || rawSubjects.length === 0) {
         container.innerHTML = "<p style='opacity:0.7;'>No courses assigned</p>";
         setText("courseCount", "0");
         return;
     }
 
-    // Update the Dashboard "Courses" Stat Counter
-    setText("courseCount", rawSubjects.length.toString());
+    setText("courseCount", rawSubjects.length);
 
-    // Generate the HTML Cards dynamically
     container.innerHTML = "";
 
     rawSubjects.forEach((course, index) => {
+        console.log("➡️ Course:", course);
+
+        // SAFE DATA EXTRACTION
+        const name = course.name || course.subject_name || "Unknown";
+        const id = course.id || course.subject_id || "0";
+        const code = course.code || course.subject_code || "N/A";
+
         const card = document.createElement("div");
         card.className = "subject-card";
-        
-        // We add two buttons now: Take Attendance and Edit
+
         card.innerHTML = `
-            <h4>${course.name}</h4>
-            <p>Code: ${course.code}</p>
+            <h4>${name}</h4>
+            <p>Code: ${code}</p>
             <div style="margin-top: 15px; display: flex; gap: 10px;">
-                <button style="flex: 1;" onclick="openCourse('${course.name}', '${course.id}', '/attendance')">
+                <button style="flex: 1;" onclick="openCourse('${name}', '${id}', '/attendance')">
                     <span>Take Attendance</span>
                 </button>
-                <button style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);" onclick="openCourse('${course.name}', '${course.id}', '/edit-attendance')">
+                <button style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);" onclick="openCourse('${name}', '${id}', '/edit-attendance')">
                     <span>Edit</span>
                 </button>
             </div>
         `;
 
-        // Add the staggered fade-in animation
+        // Animation
         card.style.opacity = "0";
         card.style.transform = "translateY(20px)";
 
@@ -103,50 +125,55 @@ function loadCourseCards() {
     });
 }
 
-/* -------- OPEN COURSE (Passing Data to the next page) -------- */
-function openCourse(subjectName, subjectId, pythonRoute) {
-    document.querySelector(".dashboard").classList.add("page-exit");
+/* -------- OPEN COURSE -------- */
+function openCourse(subjectName, subjectId, route) {
+    console.log("🚀 Opening:", subjectName, subjectId);
+
+    document.querySelector(".dashboard")?.classList.add("page-exit");
 
     setTimeout(() => {
-        // We still use localStorage here just to pass the ID to the NEXT page so it knows what to load!
         localStorage.setItem("current_subject_id", subjectId);
         localStorage.setItem("current_subject_name", subjectName);
 
-        // Send them to the secure Python route!
-        window.location.href = pythonRoute;
+        window.location.href = route;
     }, 400);
 }
 
-/* -------- TEMPORARY STUB FOR TODAY'S SCHEDULE -------- */
+/* -------- TODAY SCHEDULE -------- */
 function loadTodaySchedule() {
     const box = document.getElementById("todaySchedule");
-    if (box) box.innerHTML = "<p style='opacity:0.7;'>Schedule feature coming soon...</p>";
+    if (box) {
+        box.innerHTML = "<p style='opacity:0.7;'>Schedule feature coming soon...</p>";
+    }
 }
 
 /* -------- LOGOUT -------- */
 function logout(btn) {
     if (!btn) btn = document.querySelector(".logout-btn");
+
     setBtnLoading(btn, "Logging out...");
 
     setTimeout(() => {
-        document.querySelector(".dashboard").classList.add("page-exit");
-        
+        document.querySelector(".dashboard")?.classList.add("page-exit");
+
         setTimeout(() => {
-            // Route via Python!
             window.location.href = "/logout";
         }, 400);
     }, 800);
 }
 
-/* -------- INIT ON PAGE LOAD -------- */
+/* -------- INIT -------- */
 document.addEventListener("DOMContentLoaded", () => {
-    // Fetch and render the data immediately
-    loadFacultyDetails();
-    loadTodaySchedule();
-    loadCourseCards();
+    try {
+        loadFacultyDetails();
+        loadTodaySchedule();
+        loadCourseCards();
+    } catch (err) {
+        console.error("🔥 Dashboard crash:", err);
+    }
 });
 
-/* FIX STUCK SPINNER WHEN RETURNING FROM BACK */
+/* -------- FIX BACK BUTTON SPINNER -------- */
 window.addEventListener("pageshow", function () {
     document.querySelectorAll(".loading").forEach(btn => {
         btn.classList.remove("loading");
