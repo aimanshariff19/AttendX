@@ -99,17 +99,13 @@ function loadCourseCards() {
         card.className = "subject-card";
 
         card.innerHTML = `
-            <h4>${name}</h4>
-            <p>Code: ${code}</p>
-            <div style="margin-top: 15px; display: flex; gap: 10px;">
-                <button style="flex: 1;" onclick="openCourse('${name}', '${id}', '/attendance')">
-                    <span>Take Attendance</span>
-                </button>
-                <button style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);" onclick="openCourse('${name}', '${id}', '/edit-attendance')">
-                    <span>Edit</span>
-                </button>
-            </div>
-        `;
+    <h4>${name}</h4>
+    <p>Code: ${code}</p>
+
+    <button onclick="openCourse('${name}', '${id}', '/attendance')">
+        <span>Take Attendance</span>
+    </button>
+`;
 
         // Animation
         card.style.opacity = "0";
