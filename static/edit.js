@@ -73,10 +73,23 @@ function showToast(msg, type = "error") {
     }, 2500);
 }
 
-/* -------- (KEPT BUT NOT USED NOW) -------- */
 function showFieldError(input, message) {
     if (!input) return;
-    triggerShake(input);
+
+    const parent = input.parentElement;
+
+    // 🔴 RED BORDER + LIGHT RED BACKGROUND
+    input.style.border = "1px solid #ef4444";
+    input.style.background = "rgba(239, 68, 68, 0.08)";
+
+    // 💥 SHAKE
+    triggerShake(parent);
+
+    // auto reset after 2 sec
+    setTimeout(() => {
+        input.style.border = "1px solid rgba(255,255,255,0.2)";
+        input.style.background = "rgba(15, 23, 42, 0.8)";
+    }, 2000);
 }
 
 /* -------- TIME FORMATTER -------- */
