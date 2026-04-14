@@ -99,35 +99,41 @@ async function loadStudents() {
     if (!table) return;
 
     try {
-        // Fetch from the Python API instead of Supabase directly
         const response = await fetch('/api/students', {
             credentials: 'include'
         });
+
         const data = await response.json();
+
+        console.log("RESPONSE DATA:", data); // ✅ HERE ONLY
 
         if (!response.ok) throw new Error(data.error);
 
-        currentStudentList = data.students || data.data || data || [];
+        currentStudentList = Array.isArray(data.students) ? data.students : [];
+
+        console.log("FINAL STUDENT LIST:", currentStudentList); // ✅ HERE
+
         table.innerHTML = "";
 
         if (currentStudentList.length === 0) {
-            table.innerHTML = `<tr><td colspan="4" style="text-align:center;">No students found in this department.</td></tr>`;
+            table.innerHTML = `<tr><td colspan="4" style="text-align:center;">No students found</td></tr>`;
             return;
         }
 
-        // Render the students
         currentStudentList.forEach((student) => {
             let row = document.createElement("tr");
+
             row.innerHTML = `
                 <td>${student.usn}</td>
                 <td>${student.name}</td>
-                <td><span class="percent-text">--</span></td>
+                <td>--</td>
                 <td>
                     <button class="status-btn present active" data-id="${student.id}" onclick="toggleStatus(this)">
                         Present
                     </button>
                 </td>
             `;
+
             table.appendChild(row);
         });
 
@@ -292,5 +298,8 @@ window.onload = function () {
     document.getElementById("numClasses")?.addEventListener("change", calculateTimeRange);
 
     // Python does the fetching!
-    loadStudents();
+    setTimeout(() => {
+        loadStudents();
+    }, 300);
+
 };
