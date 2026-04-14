@@ -125,8 +125,8 @@
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
         }
 
         thead th {
@@ -144,7 +144,7 @@
             background: rgba(255, 255, 255, 0.04);
         }
 
-       
+
         /* ===== ATTENDANCE BUTTON ===== */
         .status-btn {
             padding: 6px 12px;
@@ -196,6 +196,14 @@
             box-shadow: 0 0 6px rgba(99, 102, 241, 0.4);
             outline: none;
         }
+
+        /* 🔥 LOAD BUTTON RIGHT ALIGN + PROPER SIZE */
+        .load-btn {
+            height: 40px;
+            padding: 0 18px;
+            display: flex;
+            align-items: center;
+        }
     </style>
 
 </head>
@@ -228,8 +236,8 @@
                 </select>
             </div>
 
-            <div>
-                <button class="btn" onclick="loadAttendance(event)">
+            <div style="display:flex; align-items:flex-end; margin-left:auto;">
+                <button class="btn load-btn" onclick="loadAttendance(event)">
                     Load
                 </button>
             </div>
