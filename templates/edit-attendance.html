@@ -138,22 +138,59 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
+        /* 🔥 FINAL PERFECT TABLE UI */
+        .table-container {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 18px;
+            border-radius: 16px;
+
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
         /* TABLE */
         table {
             width: 100%;
             border-collapse: collapse;
         }
 
+        /* HEADER */
         thead th {
             background: rgba(255, 255, 255, 0.08);
             padding: 14px;
             text-align: left;
             font-weight: 600;
+            color: #e5e7eb;
+
+            border-right: 1px solid rgba(255, 255, 255, 0.12);
         }
 
+        /* REMOVE LAST BORDER */
+        thead th:last-child {
+            border-right: none;
+        }
+
+        /* BODY CELLS */
         tbody td {
             padding: 14px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #d1d5db;
+
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* REMOVE LAST BORDER */
+        tbody td:last-child {
+            border-right: none;
+        }
+
+        /* HOVER */
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.04);
         }
 
         .status-btn {
