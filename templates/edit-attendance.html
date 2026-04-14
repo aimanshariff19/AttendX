@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
@@ -9,21 +8,18 @@
     <title>Edit Attendance</title>
 
     <style>
-        /* ===== RESET ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* ===== BODY ===== */
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #1e1b4b, #312e81);
             color: white;
         }
 
-        /* ===== DASHBOARD ===== */
         .dashboard {
             max-width: 950px;
             margin: 30px auto;
@@ -34,105 +30,141 @@
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
         }
 
-        /* ===== TITLE ===== */
         h1 {
             margin-bottom: 18px;
-            font-size: 26px;
+            font-size: 30px;
             font-weight: 600;
-
             background: linear-gradient(90deg, #c7d2fe, #a78bfa, #6366f1);
-
+            background-size: 200% auto;
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-
             background-clip: text;
-            /* 🔥 fallback */
+            -webkit-text-fill-color: transparent;
             color: transparent;
-
-            text-shadow: 0 0 8px rgba(139, 92, 246, 0.25);
-            /* 🔥 glow */
+            text-shadow:
+                0 0 10px rgba(139, 92, 246, 0.3),
+                0 0 20px rgba(139, 92, 246, 0.15);
+            animation: titleGlow 3s linear infinite;
         }
 
-        /* ===== CARD ===== */
+        @keyframes titleGlow {
+            0% {
+                background-position: 0% center;
+            }
+
+            100% {
+                background-position: 200% center;
+            }
+        }
+
         .card {
             background: rgba(255, 255, 255, 0.05);
             padding: 14px 16px;
             border-radius: 12px;
             margin-bottom: 18px;
-
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px 20px;
         }
 
-        /* ===== CONTROLS ===== */
+        /* ===== CONTROLS (FROM FIRST UI) ===== */
         .attendance-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr 110px;
-            gap: 14px;
-            align-items: end;
+            display: flex;
+            justify-content: left;
+            align-items: flex-end;
+            gap: 16px;
+            flex-wrap: wrap;
             margin-bottom: 18px;
         }
 
-        .attendance-controls label {
-            font-size: 12px;
-            margin-bottom: 6px;
-            opacity: 0.85;
+        .attendance-controls div {
+            display: flex;
+            flex-direction: column;
+            font-size: 13px;
+            width: 220px;
         }
 
-        /* ===== INPUTS (UPGRADED) ===== */
+        .attendance-controls div:last-child {
+            width: auto;
+        }
+
         .attendance-controls input,
         .attendance-controls select {
             width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            border: none;
-            font-size: 14px;
-
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-
-            transition: 0.2s;
+            margin-top: 6px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(15, 23, 42, 0.8);
+            color: #e5e7eb;
+            backdrop-filter: blur(10px);
+            outline: none;
+            transition: 0.3s;
         }
 
         .attendance-controls input:focus,
         .attendance-controls select:focus {
-            outline: none;
-            background: rgba(255, 255, 255, 0.15);
+            border-color: #6366f1;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
         }
 
-        /* ===== LOAD BUTTON ===== */
         .attendance-controls button {
-            height: 44px;
-            width: 100%;
-            border-radius: 12px;
+            height: 40px;
+            margin-top: 22px;
+        }
+
+        /* ===== BUTTON ===== */
+        .btn {
+            padding: 8px 14px;
+            border-radius: 8px;
             border: none;
-            font-size: 14px;
+            cursor: pointer;
             font-weight: 600;
-
+            font-size: 13px;
+            color: white;
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            transition: 0.25s;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .attendance-controls button:hover {
-            transform: scale(1.05);
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.6);
         }
 
-        /* ===== BULK BUTTONS ===== */
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.4),
+                    transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ===== BULK ===== */
         .bulk-actions {
             display: flex;
             gap: 10px;
             margin-bottom: 14px;
-        }
-
-        .bulk-actions button {
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 13px;
-            border: none;
-            color: white;
-            min-width: 150px;
         }
 
         .bulk-actions button:first-child {
@@ -146,24 +178,19 @@
         /* ===== TABLE ===== */
         table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            font-size: 13px;
+            border-collapse: collapse;
+            margin-top: 5px;
+        }
 
+        th,
+        td {
             border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            overflow: hidden;
+            padding: 12px;
+            text-align: left;
         }
 
-        thead th {
-            padding: 12px;
-            opacity: 0.7;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        tbody td {
-            padding: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        th {
+            background: rgba(255, 255, 255, 0.08);
         }
 
         tbody tr:hover {
@@ -172,102 +199,46 @@
 
         /* ===== STATUS ===== */
         .status-btn {
-            padding: 5px 12px;
+            padding: 8px 14px;
             border-radius: 8px;
-            font-size: 11px;
-            font-weight: 600;
             border: none;
+            cursor: pointer;
+            color: white;
         }
 
         .status-btn.present.active {
-            background: #22c55e;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
         }
 
         .status-btn.absent.active {
-            background: #ef4444;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
         }
 
-        /* ===== UPDATE BUTTON ===== */
-        .update-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-
-            margin-top: 20px;
-            padding: 10px 18px;
-
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.35);
+        /* ===== SPINNER ===== */
+        .btn-spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
         }
 
-        /* ===== ERROR (STRONG FIX) ===== */
-        .input-group {
-            position: relative;
+        button.loading {
+            pointer-events: none;
+            opacity: 0.85;
         }
 
-        .field-error {
-            position: absolute;
-            top: -24px;
-            left: 0;
-
-            font-size: 13px;
-            /* 🔥 bigger */
-            font-weight: 600;
-            /* 🔥 bold */
-            color: #ff4d4f;
-            /* 🔥 brighter red */
-            letter-spacing: 0.2px;
-        }
-
-        .input-error {
-            border: 1px solid #ef4444 !important;
-            background: rgba(239, 68, 68, 0.08) !important;
-            box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.4);
-        }
-
-        /* ===== SHAKE ===== */
-        .shake {
-            animation: shake 0.3s ease;
-        }
-
-        @keyframes shake {
-            0% {
-                transform: translateX(0);
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
             }
-
-            25% {
-                transform: translateX(-4px);
-            }
-
-            50% {
-                transform: translateX(4px);
-            }
-
-            75% {
-                transform: translateX(-4px);
-            }
-
-            100% {
-                transform: translateX(0);
-            }
-        }
-
-        .input-group {
-            position: relative;
-            margin-top: 12px;
-            /* 🔥 gives space for error above */
         }
     </style>
-
 
 </head>
 
 <body>
-
 
     <div class="dashboard">
 
@@ -283,12 +254,12 @@
 
         <div class="attendance-controls">
 
-            <div class="input-group">
+            <div>
                 <label>📅 Date</label>
                 <input type="date" id="attendanceDate">
             </div>
 
-            <div class="input-group">
+            <div>
                 <label>⏰ Class Time</label>
                 <select id="timeSelect">
                     <option value="">Select date first</option>
@@ -296,14 +267,16 @@
             </div>
 
             <div>
-                <button onclick="loadAttendance(event)">Load</button>
+                <button class="btn" onclick="loadAttendance(event)">
+                    <span>Load</span>
+                </button>
             </div>
 
         </div>
 
         <div class="bulk-actions">
-            <button onclick="markAll(true, event)">Mark All Present</button>
-            <button onclick="markAll(false, event)">Mark All Absent</button>
+            <button class="btn" onclick="markAll(true, event)">Mark All Present</button>
+            <button class="btn" onclick="markAll(false, event)">Mark All Absent</button>
         </div>
 
         <table>
@@ -319,11 +292,12 @@
             <tbody id="studentRows"></tbody>
         </table>
 
-        <button class="update-btn" onclick="updateAttendance()">
-            Update Attendance
+        <button class="btn" onclick="updateAttendance(event)">
+            <span>Update Attendance</span>
         </button>
 
     </div>
+
     <script src="/static/edit.js"></script>
 
 </body>
