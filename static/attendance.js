@@ -105,7 +105,7 @@ async function loadStudents() {
 
         if (!response.ok) throw new Error(data.error);
 
-        currentStudentList = data.students || [];
+        currentStudentList = data.students || data.data || data || [];
         table.innerHTML = "";
 
         if (currentStudentList.length === 0) {
