@@ -30,6 +30,7 @@
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
         }
 
+        /* ===== TITLE ===== */
         h1 {
             margin-bottom: 18px;
             font-size: 30px;
@@ -56,27 +57,26 @@
             }
         }
 
+        /* ===== CARD ===== */
         .card {
             background: rgba(255, 255, 255, 0.05);
-            padding: 14px 16px;
+            padding: 14px;
             border-radius: 12px;
             margin-bottom: 18px;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px 20px;
         }
 
+        /* ===== CONTROLS ===== */
         .attendance-controls {
             display: flex;
             gap: 16px;
-            flex-wrap: wrap;
             margin-bottom: 18px;
         }
 
         .attendance-controls div {
             display: flex;
             flex-direction: column;
-            font-size: 13px;
             width: 220px;
         }
 
@@ -89,6 +89,7 @@
             color: white;
         }
 
+        /* ===== BUTTON ===== */
         .btn {
             padding: 8px 14px;
             border-radius: 8px;
@@ -97,7 +98,7 @@
             font-weight: 600;
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
             color: white;
-            transition: all 0.25s ease;
+            transition: 0.25s;
         }
 
         .btn:hover {
@@ -105,13 +106,7 @@
             box-shadow: 0 10px 25px rgba(139, 92, 246, 0.6);
         }
 
-        .load-btn {
-            height: 40px;
-            padding: 0 18px;
-            display: flex;
-            align-items: center;
-        }
-
+        /* ===== BULK ===== */
         .bulk-actions {
             display: flex;
             gap: 10px;
@@ -126,145 +121,93 @@
             background: linear-gradient(135deg, #ef4444, #dc2626);
         }
 
-        /* ===== TABLE ===== */
-        .table-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 14px;
-            border-radius: 12px;
+        /* ===== 🔥 GLASS TABLE ===== */
+        .table-container {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 18px;
+            border-radius: 20px;
+            margin-top: 18px;
+
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
 
+        /* ===== TABLE ===== */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 5px;
         }
 
-        th,
-        td {
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 12px;
-            text-align: center;
+        thead th {
+            background: rgba(255, 255, 255, 0.07);
+            padding: 16px;
+            text-align: left;
+            color: #e5e7eb;
         }
 
-        th {
-            background: rgba(255, 255, 255, 0.08);
+        tbody td {
+            padding: 16px;
+        }
+
+        tbody tr {
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         tbody tr:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.04);
         }
 
-        /* ===== STATUS ===== */
+        /* ===== 🔥 GLOW BUTTON ===== */
         .status-btn {
-            padding: 8px 14px;
-            border-radius: 8px;
+            padding: 6px 18px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
             border: none;
             cursor: pointer;
-            color: white;
-        }
-
-        .status-btn.present.active {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-        }
-
-        .status-btn.absent.active {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-
-        /* ===== SHAKE ===== */
-        @keyframes shake {
-            0% {
-                transform: translateX(0);
-            }
-
-            25% {
-                transform: translateX(-5px);
-            }
-
-            50% {
-                transform: translateX(5px);
-            }
-
-            75% {
-                transform: translateX(-5px);
-            }
-
-            100% {
-                transform: translateX(0);
-            }
-        }
-
-        .shake {
-            animation: shake 0.3s ease;
-            border: 1px solid #ef4444 !important;
-        }
-
-        /* ===== 🔥 PREMIUM BUTTON EFFECT ===== */
-        .btn {
-            position: relative;
-            overflow: hidden;
             transition: all 0.25s ease;
         }
 
-        /* 🔥 HOVER GLOW */
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.6);
+        /* PRESENT */
+        .status-btn.present {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            box-shadow:
+                0 0 10px rgba(34, 197, 94, 0.6),
+                0 0 20px rgba(34, 197, 94, 0.3);
         }
 
-        /* 💧 LIGHT SWEEP EFFECT */
-        .btn::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(120deg,
-                    transparent,
-                    rgba(255, 255, 255, 0.4),
-                    transparent);
-            transition: 0.5s;
+        /* ABSENT */
+        .status-btn.absent {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
         }
 
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        /* 🔥 CLICK PRESS EFFECT */
-        .btn:active {
-            transform: scale(0.95);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-        }
-
-        /* ===== STATUS BUTTON HOVER ===== */
-        .status-btn {
-            position: relative;
-            overflow: hidden;
-            transition: 0.25s;
-        }
-
+        /* HOVER */
         .status-btn:hover {
-            transform: scale(1.05);
+            transform: scale(1.08);
+            box-shadow:
+                0 0 15px rgba(255, 255, 255, 0.2),
+                0 0 25px rgba(34, 197, 94, 0.5);
         }
 
-        /* light sweep
-        .status-btn::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(120deg,
-                    transparent,
-                    rgba(255, 255, 255, 0.3),
-                    transparent);
-            transition: 0.5s;
-        } */
+        /* CLICK */
+        .status-btn:active {
+            transform: scale(0.95);
+        }
 
-        .status-btn:hover::before {
-            left: 100%;
+        /* INPUT */
+        tbody input {
+            width: 100%;
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: transparent;
+            color: white;
         }
 
         /* ===== SPINNER ===== */
