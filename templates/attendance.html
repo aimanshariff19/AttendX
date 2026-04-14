@@ -154,33 +154,37 @@
         }
 
         /* ===== TABLE ===== */
-        .table-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 14px;
-            border-radius: 12px;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            /* outer border */
         }
 
         th,
         td {
-            border: 1px solid rgba(255, 255, 255, 0.15);
             padding: 12px;
             text-align: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.12);
+            /* vertical only */
         }
 
+        /* remove last column border */
+        th:last-child,
+        td:last-child {
+            border-right: none;
+        }
+
+        /* horizontal lines */
+        tbody td {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* header bg */
         th {
             background: rgba(255, 255, 255, 0.08);
         }
-
-        tbody tr:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
 
         /* ===== PROGRESS BAR ===== */
         .bar {
