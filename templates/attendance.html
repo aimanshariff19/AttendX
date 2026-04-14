@@ -157,33 +157,22 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 5px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            /* outer border */
+            margin-top: 10px;
         }
 
         th,
         td {
+            border: 1px solid rgba(255, 255, 255, 0.15);
             padding: 12px;
-            text-align: center;
-            border-right: 1px solid rgba(255, 255, 255, 0.12);
-            /* vertical only */
+            text-align: left;
         }
 
-        /* remove last column border */
-        th:last-child,
-        td:last-child {
-            border-right: none;
-        }
-
-        /* horizontal lines */
-        tbody td {
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        /* header bg */
         th {
             background: rgba(255, 255, 255, 0.08);
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
         }
 
         /* ===== PROGRESS BAR ===== */
@@ -352,7 +341,7 @@
             <button class="btn" onclick="markAll(false, event)">Mark All Absent</button>
         </div>
 
-        <div class="table-card">
+        <div class="card">
             <table>
                 <thead>
                     <tr>
@@ -360,14 +349,19 @@
                         <th>Name</th>
                         <th>Attendance</th>
                         <th>Status</th>
-                        <th>Reason</th>
                     </tr>
                 </thead>
 
-                <!-- ⚠️ KEEP THIS ID (JS USES IT) -->
-                <tbody id="studentRows"></tbody>
-
+                <tbody id="studentRows">
+                    <tr>
+                        <td colspan="4" class="loader-row">
+                            <div class="spinner"></div>
+                            <p>Loading students...</p>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
+        </div>
 
         <button id="submitBtn" class="btn" onclick="submitAttendance(this)">
             Submit Attendance
