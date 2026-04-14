@@ -2,7 +2,6 @@
 <html>
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Attendance</title>
@@ -20,6 +19,7 @@
             color: white;
         }
 
+        /* MAIN */
         .dashboard {
             max-width: 950px;
             margin: 30px auto;
@@ -29,7 +29,7 @@
             backdrop-filter: blur(20px);
         }
 
-        /* TITLE */
+        /* 🔥 TITLE (CLEAN GLOW) */
         h1 {
             margin-bottom: 18px;
             font-size: 30px;
@@ -59,16 +59,18 @@
         /* CARD */
         .card {
             background: rgba(255, 255, 255, 0.05);
-            padding: 14px;
-            border-radius: 12px;
+            padding: 16px;
+            border-radius: 14px;
             margin-bottom: 18px;
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
 
         /* CONTROLS */
         .attendance-controls {
             display: flex;
+            align-items: flex-end;
             gap: 16px;
             margin-bottom: 18px;
         }
@@ -88,9 +90,16 @@
             color: white;
         }
 
+        /* 🔥 LOAD BUTTON RIGHT */
+        .load-wrapper {
+            margin-left: auto;
+            display: flex;
+            align-items: flex-end;
+        }
+
         /* BUTTON */
         .btn {
-            padding: 8px 14px;
+            padding: 8px 16px;
             border-radius: 8px;
             border: none;
             cursor: pointer;
@@ -102,18 +111,13 @@
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.5);
-        }
-
-        .btn:active {
-            transform: scale(0.95);
         }
 
         /* BULK */
         .bulk-actions {
             display: flex;
             gap: 10px;
-            margin-bottom: 14px;
+            margin-bottom: 18px;
         }
 
         .bulk-actions button:first-child {
@@ -124,18 +128,14 @@
             background: linear-gradient(135deg, #ef4444, #dc2626);
         }
 
-        /* 🔥 GLASS TABLE */
-        .table-card {
+        /* 🔥 TABLE CONTAINER */
+        .table-container {
             background: rgba(255, 255, 255, 0.06);
             padding: 18px;
-            border-radius: 18px;
+            border-radius: 16px;
 
             backdrop-filter: blur(18px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-
-            box-shadow:
-                0 8px 32px rgba(0, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
 
         /* TABLE */
@@ -146,61 +146,40 @@
 
         thead th {
             background: rgba(255, 255, 255, 0.08);
-            padding: 16px;
-            text-align: center;
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
         }
 
         tbody td {
-            padding: 16px;
-            text-align: center;
+            padding: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        tbody tr {
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        tbody tr:hover {
-            background: rgba(255, 255, 255, 0.04);
-        }
-
-        /* 🔥 STATUS BUTTON (NO SWEEP) */
+        /* STATUS */
         .status-btn {
             padding: 6px 16px;
-            border-radius: 999px;
+            border-radius: 20px;
             border: none;
-            cursor: pointer;
             font-size: 12px;
             font-weight: 600;
-            transition: 0.2s;
         }
 
-        /* GREEN */
         .status-btn.present {
             background: linear-gradient(135deg, #22c55e, #16a34a);
-            box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
-        }
-
-        /* RED */
-        .status-btn.absent {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-
-        /* SIMPLE HOVER */
-        .status-btn:hover {
-            transform: scale(1.05);
         }
 
         /* INPUT */
         tbody input {
             width: 100%;
             padding: 6px;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             background: transparent;
             color: white;
         }
 
-        /* SHAKE */
+        /* ===== SHAKE ===== */
         @keyframes shake {
             0% {
                 transform: translateX(0);
@@ -227,6 +206,24 @@
             animation: shake 0.3s ease;
             border: 1px solid #ef4444 !important;
         }
+
+        /* ===== SPINNER ===== */
+        .btn-spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: inline-block;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 
 </head>
@@ -248,21 +245,20 @@
         <div class="attendance-controls">
 
             <div>
-                <label>📅 Date</label>
+                <label>Date</label>
                 <input type="date" id="attendanceDate">
             </div>
 
             <div>
-                <label>⏰ Class Time</label>
+                <label>Class Time</label>
                 <select id="timeSelect">
-                    <option value="">Select date first</option>
+                    <option>Select date first</option>
                 </select>
-            </div> <br>
+            </div>
 
-            <div style="display:flex; align-items:flex-end; margin-left:auto;">
-                <button class="btn load-btn" onclick="loadAttendance(event)">
-                    Load
-                </button>
+            <!-- ✅ RIGHT ALIGNED -->
+            <div class="load-wrapper">
+                <button class="btn" onclick="loadAttendance(event)">Load</button>
             </div>
 
         </div>
@@ -278,12 +274,14 @@
                     <tr>
                         <th>USN</th>
                         <th>Name</th>
-                        <th>%</th>
+                        <th>Attendance</th>
                         <th>Status</th>
                         <th>Reason</th>
                     </tr>
                 </thead>
+
                 <tbody id="studentRows"></tbody>
+
             </table>
         </div>
 
