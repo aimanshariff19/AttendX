@@ -352,7 +352,7 @@
             <button class="btn" onclick="markAll(false, event)">Mark All Absent</button>
         </div>
 
-        <div class="card">
+        <div class="table-card">
             <table>
                 <thead>
                     <tr>
@@ -360,19 +360,14 @@
                         <th>Name</th>
                         <th>Attendance</th>
                         <th>Status</th>
+                        <th>Reason</th>
                     </tr>
                 </thead>
 
-                <tbody id="studentRows">
-                    <tr>
-                        <td colspan="4" class="loader-row">
-                            <div class="spinner"></div>
-                            <p>Loading students...</p>
-                        </td>
-                    </tr>
-                </tbody>
+                <!-- ⚠️ KEEP THIS ID (JS USES IT) -->
+                <tbody id="studentRows"></tbody>
+
             </table>
-        </div>
 
         <button id="submitBtn" class="btn" onclick="submitAttendance(this)">
             Submit Attendance
