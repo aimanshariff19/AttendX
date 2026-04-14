@@ -190,7 +190,7 @@ async function submitAttendance(btn) {
         return;
     }
 
-    setBtnLoading(btn, "Saving to Database...");
+    setBtnLoading(btn, "Suubmitting...");
 
     try {
         // Calculate End Time
