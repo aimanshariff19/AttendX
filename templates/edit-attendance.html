@@ -234,6 +234,57 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* ===== ERROR SYSTEM ===== */
+        .input-group {
+            position: relative;
+            margin-top: 24px;
+        }
+
+        /* error text */
+        .field-error {
+            position: absolute;
+            top: -20px;
+            left: 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: #ff4d4f;
+            letter-spacing: 0.2px;
+        }
+
+        /* input error style */
+        .input-error {
+            border: 1px solid #ef4444 !important;
+            background: rgba(239, 68, 68, 0.08) !important;
+            box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.4);
+        }
+
+        /* shake animation */
+        @keyframes shake {
+            0% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-4px);
+            }
+
+            50% {
+                transform: translateX(4px);
+            }
+
+            75% {
+                transform: translateX(-4px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .shake {
+            animation: shake 0.3s ease;
+        }
     </style>
 
 </head>
@@ -254,12 +305,12 @@
 
         <div class="attendance-controls">
 
-            <div>
+            <div class="input-group">
                 <label>📅 Date</label>
                 <input type="date" id="attendanceDate">
             </div>
 
-            <div>
+            <div class="input-group">
                 <label>⏰ Class Time</label>
                 <select id="timeSelect">
                     <option value="">Select date first</option>
