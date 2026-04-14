@@ -64,24 +64,26 @@ function showFieldError(input, message) {
 
     const parent = input.parentElement;
 
+    // ensure correct container
+    parent.classList.add("input-group");
+
     // remove old error
-    let old = parent.querySelector(".field-error");
+    const old = parent.querySelector(".field-error");
     if (old) old.remove();
 
-    // create error text
+    // create error
     const err = document.createElement("div");
     err.className = "field-error";
     err.innerText = message;
 
     parent.appendChild(err);
 
-    // apply styles
+    // styles
     input.classList.add("input-error");
 
-    // 🔥 shake FULL input box (not just field)
+    // 🔥 shake full box
     triggerShake(parent);
 
-    // auto remove
     setTimeout(() => {
         input.classList.remove("input-error");
         err.remove();
