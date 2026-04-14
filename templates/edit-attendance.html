@@ -27,9 +27,9 @@
             background: rgba(255, 255, 255, 0.05);
             border-radius: 18px;
             backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
         }
 
-        /* ===== TITLE ===== */
         h1 {
             margin-bottom: 18px;
             font-size: 30px;
@@ -56,26 +56,27 @@
             }
         }
 
-        /* ===== CARD ===== */
         .card {
             background: rgba(255, 255, 255, 0.05);
-            padding: 14px;
+            padding: 14px 16px;
             border-radius: 12px;
             margin-bottom: 18px;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
+            gap: 10px 20px;
         }
 
-        /* ===== CONTROLS ===== */
         .attendance-controls {
             display: flex;
             gap: 16px;
+            flex-wrap: wrap;
             margin-bottom: 18px;
         }
 
         .attendance-controls div {
             display: flex;
             flex-direction: column;
+            font-size: 13px;
             width: 220px;
         }
 
@@ -88,7 +89,6 @@
             color: white;
         }
 
-        /* ===== BUTTON ===== */
         .btn {
             padding: 8px 14px;
             border-radius: 8px;
@@ -97,7 +97,7 @@
             font-weight: 600;
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
             color: white;
-            transition: 0.25s;
+            transition: all 0.25s ease;
         }
 
         .btn:hover {
@@ -105,7 +105,13 @@
             box-shadow: 0 10px 25px rgba(139, 92, 246, 0.6);
         }
 
-        /* ===== BULK ===== */
+        .load-btn {
+            height: 40px;
+            padding: 0 18px;
+            display: flex;
+            align-items: center;
+        }
+
         .bulk-actions {
             display: flex;
             gap: 10px;
@@ -120,11 +126,12 @@
             background: linear-gradient(135deg, #ef4444, #dc2626);
         }
 
-        /* ===== 🔥 NEW TABLE UI ===== */
-        .table-card {
+        /* 🔥 MODERN TABLE */
+        .table-container {
             background: rgba(255, 255, 255, 0.05);
             padding: 18px;
             border-radius: 18px;
+            margin-top: 18px;
         }
 
         table {
@@ -132,19 +139,20 @@
             border-collapse: collapse;
         }
 
-        /* header */
         thead th {
             background: rgba(255, 255, 255, 0.06);
             padding: 16px;
+            font-size: 14px;
             text-align: left;
+            color: #e5e7eb;
         }
 
-        /* rows */
         tbody td {
             padding: 16px;
+            font-size: 14px;
+            color: #d1d5db;
         }
 
-        /* line only */
         tbody tr {
             border-top: 1px solid rgba(255, 255, 255, 0.06);
         }
@@ -153,7 +161,7 @@
             background: rgba(255, 255, 255, 0.03);
         }
 
-        /* ===== 🔥 PRESENT BUTTON ===== */
+        /* 🔥 EXACT BUTTON */
         .status-btn {
             padding: 6px 16px;
             border-radius: 999px;
@@ -161,7 +169,7 @@
             font-weight: 600;
             border: none;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s ease;
         }
 
         .status-btn.present {
@@ -175,16 +183,21 @@
 
         .status-btn:hover {
             transform: scale(1.08);
+            box-shadow: 0 0 16px rgba(255, 255, 255, 0.2);
         }
 
-        /* ===== INPUT ===== */
+        .status-btn:active {
+            transform: scale(0.95);
+        }
+
         tbody input {
             width: 100%;
-            padding: 6px;
+            padding: 6px 10px;
             border-radius: 6px;
             border: 1px solid rgba(255, 255, 255, 0.15);
             background: transparent;
-            color: white;
+            color: #d1d5db;
+            font-size: 12px;
         }
     </style>
 
@@ -197,29 +210,33 @@
         <h1>AttendX / Edit Attendance</h1>
 
         <div class="card">
-            <p><b>Course:</b> <span id="subject"></span></p>
-            <p><b>Department:</b> <span id="department"></span></p>
-            <p><b>Program:</b> <span id="program"></span></p>
-            <p><b>Semester:</b> <span id="sem"></span></p>
-            <p><b>Section:</b> <span id="section"></span></p>
+            <p><strong>Course:</strong> <span id="subject"></span></p>
+            <p><strong>Department:</strong> <span id="department"></span></p>
+            <p><strong>Program:</strong> <span id="program"></span></p>
+            <p><strong>Semester:</strong> <span id="sem"></span></p>
+            <p><strong>Section:</strong> <span id="section"></span></p>
         </div>
 
         <div class="attendance-controls">
+
             <div>
-                <label>Date</label>
+                <label>📅 Date</label>
                 <input type="date" id="attendanceDate">
             </div>
 
             <div>
-                <label>Class Time</label>
+                <label>⏰ Class Time</label>
                 <select id="timeSelect">
-                    <option>Select date first</option>
+                    <option value="">Select date first</option>
                 </select>
+            </div> <br>
+
+            <div style="display:flex; align-items:flex-end; margin-left:auto;">
+                <button class="btn load-btn" onclick="loadAttendance(event)">
+                    Load
+                </button>
             </div>
 
-            <div>
-                <button class="btn">Load</button>
-            </div>
         </div>
 
         <div class="bulk-actions">
@@ -227,24 +244,20 @@
             <button class="btn" onclick="markAll(false, event)">Mark All Absent</button>
         </div>
 
-        <div class="table-card">
+        <div class="table-container">
             <table>
                 <thead>
                     <tr>
                         <th>USN</th>
                         <th>Name</th>
-                        <th>Attendance</th>
+                        <th>%</th>
                         <th>Status</th>
                         <th>Reason</th>
                     </tr>
                 </thead>
-
                 <tbody id="studentRows"></tbody>
-
             </table>
         </div>
-
-        <button class="btn">Update Attendance</button>
 
     </div>
 
@@ -253,3 +266,31 @@
 </body>
 
 </html>
+
+<script src="/static/edit.js"></script>
+
+        h1 {
+            margin-bottom: 18px;
+            font-size: 30px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #c7d2fe, #a78bfa, #6366f1);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            text-shadow:
+                0 0 10px rgba(139, 92, 246, 0.3),
+                0 0 20px rgba(139, 92, 246, 0.15);
+            animation: titleGlow 3s linear infinite;
+        }
+
+        @keyframes titleGlow {
+            0% {
+                background-position: 0% center;
+            }
+
+            100% {
+                background-position: 200% center;
+            }
+        }
