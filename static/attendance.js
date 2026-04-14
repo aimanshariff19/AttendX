@@ -47,7 +47,7 @@ function showError(msg, isSuccess = false) {
         box.style.color = "white";
         document.body.appendChild(box);
     }
-    
+
     box.style.background = isSuccess ? "#22c55e" : "#ef4444";
     box.innerText = msg;
     box.style.display = "block";
@@ -100,7 +100,9 @@ async function loadStudents() {
 
     try {
         // Fetch from the Python API instead of Supabase directly
-        const response = await fetch('/api/students');
+        const response = await fetch('/api/students', {
+            credentials: 'include'
+        });
         const data = await response.json();
 
         if (!response.ok) throw new Error(data.error);
@@ -196,8 +198,8 @@ async function submitAttendance(btn) {
         // Calculate End Time
         let [h, m] = time.split(":").map(Number);
         let endDate = new Date();
-        endDate.setHours(h, m, 0, 0); 
-        endDate.setMinutes(endDate.getMinutes() + (numClasses * 60)); 
+        endDate.setHours(h, m, 0, 0);
+        endDate.setMinutes(endDate.getMinutes() + (numClasses * 60));
         const endTimeStr = `${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2, '0')}`;
 
         // GATHER ALL STUDENT STATUSES
@@ -207,7 +209,7 @@ async function submitAttendance(btn) {
         rows.forEach(row => {
             const statusBtn = row.querySelector(".status-btn");
             if (statusBtn) {
-                const studentId = statusBtn.getAttribute("data-id"); 
+                const studentId = statusBtn.getAttribute("data-id");
                 const isPresent = statusBtn.classList.contains("present");
                 attendanceRecords.push({
                     student_id: studentId,
@@ -239,7 +241,7 @@ async function submitAttendance(btn) {
 
         // SUCCESS!
         showError("Attendance Saved Successfully!", true);
-        
+
         setTimeout(() => {
             window.location.href = "/dashboard"; // Direct to python route
         }, 1500);
@@ -272,7 +274,7 @@ function editAttendance(btn) {
 window.onload = function () {
     setText("subject", subjectName);
     setText("department", deptName);
-    
+
     document.getElementById("program").parentElement.style.display = "none";
     document.getElementById("sem").parentElement.style.display = "none";
     document.getElementById("section").parentElement.style.display = "none";
