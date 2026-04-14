@@ -102,7 +102,7 @@ function loadCourseCards() {
     <h4>${name}</h4>
     <p>Code: ${code}</p>
 
-    <button onclick="openCourse('${name}', '${id}', '/attendance')">
+   <button onclick="openCourse('${name}', '${id}', '/attendance', this)">
         <span>Take Attendance</span>
     </button>
 `;
