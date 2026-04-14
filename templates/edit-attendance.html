@@ -37,7 +37,23 @@
             background: linear-gradient(90deg, #c7d2fe, #a78bfa, #6366f1);
             background-size: 200% auto;
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
+            color: transparent;
+            text-shadow:
+                0 0 10px rgba(139, 92, 246, 0.3),
+                0 0 20px rgba(139, 92, 246, 0.15);
+            animation: titleGlow 3s linear infinite;
+        }
+
+        @keyframes titleGlow {
+            0% {
+                background-position: 0% center;
+            }
+
+            100% {
+                background-position: 200% center;
+            }
         }
 
         .card {
@@ -129,34 +145,35 @@
         }
 
         /* ===== 🔥 STATUS BUTTON ===== */
+        /* ===== ATTENDANCE BUTTON ===== */
         .status-btn {
-            padding: 5px 14px;
-            border-radius: 20px;
-            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
             cursor: pointer;
-            font-size: 11px;
-            font-weight: 600;
+            border: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(6px);
             transition: all 0.25s ease;
         }
 
-        .status-btn.present {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
-        }
-
-        .status-btn.absent {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
-        }
-
         .status-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 0 12px rgba(255, 255, 255, 0.3),
-                0 0 18px rgba(139, 92, 246, 0.5);
+            transform: translateY(-1px) scale(1.05);
         }
 
         .status-btn:active {
             transform: scale(0.95);
+        }
+
+        .status-btn.present.active {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+        }
+
+        .status-btn.absent.active {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
         }
 
         /* ===== INPUT FIX ===== */
@@ -219,9 +236,9 @@
 
         </div>
 
-        <div class="bulk-actions">
-            <button class="btn" onclick="markAll(true)">Mark All Present</button>
-            <button class="btn" onclick="markAll(false)">Mark All Absent</button>
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <button class="btn" onclick="markAll(true, event)">Mark All Present</button>
+            <button class="btn" onclick="markAll(false, event)">Mark All Absent</button>
         </div>
 
         <div class="table-container">
