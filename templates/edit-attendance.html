@@ -37,23 +37,7 @@
             background: linear-gradient(90deg, #c7d2fe, #a78bfa, #6366f1);
             background-size: 200% auto;
             -webkit-background-clip: text;
-            background-clip: text;
             -webkit-text-fill-color: transparent;
-            color: transparent;
-            text-shadow:
-                0 0 10px rgba(139, 92, 246, 0.3),
-                0 0 20px rgba(139, 92, 246, 0.15);
-            animation: titleGlow 3s linear infinite;
-        }
-
-        @keyframes titleGlow {
-            0% {
-                background-position: 0% center;
-            }
-
-            100% {
-                background-position: 200% center;
-            }
         }
 
         .card {
@@ -66,11 +50,9 @@
             gap: 10px 20px;
         }
 
-        /* ===== CONTROLS (FROM FIRST UI) ===== */
+        /* ===== CONTROLS ===== */
         .attendance-controls {
             display: flex;
-            justify-content: left;
-            align-items: flex-end;
             gap: 16px;
             flex-wrap: wrap;
             margin-bottom: 18px;
@@ -83,33 +65,13 @@
             width: 220px;
         }
 
-        .attendance-controls div:last-child {
-            width: auto;
-        }
-
         .attendance-controls input,
         .attendance-controls select {
-            width: 100%;
-            margin-top: 3px;
-            padding: 10px 12px;
+            padding: 10px;
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             background: rgba(15, 23, 42, 0.8);
-            color: #e5e7eb;
-            backdrop-filter: blur(10px);
-            outline: none;
-            transition: 0.3s;
-        }
-
-        .attendance-controls input:focus,
-        .attendance-controls select:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
-        }
-
-        .attendance-controls button {
-            height: 40px;
-            margin-top: 22px;
+            color: white;
         }
 
         /* ===== BUTTON ===== */
@@ -119,48 +81,10 @@
             border: none;
             cursor: pointer;
             font-weight: 600;
-            font-size: 13px;
-            color: white;
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-
-            transition: all 0.25s ease;
-            position: relative;
-            overflow: hidden;
+            color: white;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.6);
-        }
-
-        .btn::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(120deg,
-                    transparent,
-                    rgba(255, 255, 255, 0.4),
-                    transparent);
-            transition: 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn:active {
-            transform: scale(0.95);
-        }
-
-        /* ===== BULK ===== */
         .bulk-actions {
             display: flex;
             gap: 10px;
@@ -184,129 +108,76 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        /* ===== TABLE ===== */
         table {
             width: 100%;
             border-collapse: collapse;
-            overflow: hidden;
-            border-radius: 12px;
         }
 
-        /* ===== HEADER ===== */
         thead th {
             background: rgba(255, 255, 255, 0.08);
             padding: 14px;
             font-weight: 600;
-            font-size: 14px;
-            color: #e5e7eb;
-            text-align: left;
         }
 
-        /* ===== ROWS ===== */
         tbody td {
             padding: 14px;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
-            font-size: 14px;
-            color: #d1d5db;
-        }
-
-        /* ===== HOVER ===== */
-        tbody tr {
-            transition: 0.2s ease;
         }
 
         tbody tr:hover {
             background: rgba(255, 255, 255, 0.04);
         }
 
-        /* ===== STATUS BUTTON ===== */
+        /* ===== 🔥 STATUS BUTTON ===== */
+        .status-btn {
+            padding: 5px 14px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+
         .status-btn.present {
             background: linear-gradient(135deg, #22c55e, #16a34a);
-            border-radius: 20px;
-            padding: 6px 14px;
-            font-size: 12px;
-            font-weight: 600;
-            box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
         }
 
         .status-btn.absent {
             background: linear-gradient(135deg, #ef4444, #dc2626);
-            border-radius: 20px;
-            padding: 6px 14px;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+        }
+
+        .status-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.3),
+                0 0 18px rgba(139, 92, 246, 0.5);
+        }
+
+        .status-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ===== INPUT FIX ===== */
+        tbody input {
+            width: 100%;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: transparent;
+            color: #d1d5db;
             font-size: 12px;
-            font-weight: 600;
         }
 
-        /* ===== SPINNER ===== */
-        .btn-spinner {
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
+        tbody input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
         }
 
-        button.loading {
-            pointer-events: none;
-            opacity: 0.85;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* ===== ERROR SYSTEM ===== */
-        .input-group {
-            position: relative;
-            margin-top: 24px;
-        }
-
-        /* error text */
-        .field-error {
-            position: absolute;
-            top: -20px;
-            left: 0;
-            font-size: 13px;
-            font-weight: 600;
-            color: #ff4d4f;
-            letter-spacing: 0.2px;
-        }
-
-        /* input error style */
-        .input-error {
-            border: 1px solid #ef4444 !important;
-            background: rgba(239, 68, 68, 0.08) !important;
-            box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.4);
-        }
-
-        /* shake animation */
-        @keyframes shake {
-            0% {
-                transform: translateX(0);
-            }
-
-            25% {
-                transform: translateX(-4px);
-            }
-
-            50% {
-                transform: translateX(4px);
-            }
-
-            75% {
-                transform: translateX(-4px);
-            }
-
-            100% {
-                transform: translateX(0);
-            }
-        }
-
-        .shake {
-            animation: shake 0.3s ease;
+        tbody input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 6px rgba(99, 102, 241, 0.4);
+            outline: none;
         }
     </style>
 
@@ -342,15 +213,15 @@
 
             <div>
                 <button class="btn" onclick="loadAttendance(event)">
-                    <span>Load</span>
+                    Load
                 </button>
             </div>
 
         </div>
 
         <div class="bulk-actions">
-            <button class="btn" onclick="markAll(true, event)">Mark All Present</button>
-            <button class="btn" onclick="markAll(false, event)">Mark All Absent</button>
+            <button class="btn" onclick="markAll(true)">Mark All Present</button>
+            <button class="btn" onclick="markAll(false)">Mark All Absent</button>
         </div>
 
         <div class="table-container">
@@ -367,6 +238,7 @@
                 <tbody id="studentRows"></tbody>
             </table>
         </div>
+
     </div>
 
     <script src="/static/edit.js"></script>
