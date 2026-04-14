@@ -1,5 +1,4 @@
 /* -------- GLOBAL VARS -------- */
-// We still use localStorage ONLY to remember which class card was clicked on the dashboard!
 const subjectId = localStorage.getItem('current_subject_id');
 const subjectName = localStorage.getItem('current_subject_name') || "Subject";
 const deptName = localStorage.getItem('current_dept_name') || "Department";
@@ -93,10 +92,13 @@ function calculateTimeRange() {
     if (el) el.innerText = `${format12(startDate)} - ${format12(endDate)}`;
 }
 
-/* -------- 🚀 THE PYTHON BRIDGE: FETCH STUDENTS -------- */
+/* -------- 🚀 FETCH STUDENTS -------- */
 async function loadStudents() {
     const table = document.getElementById("studentRows");
-    if (!table) return;
+    if (!table) {
+        console.error("TABLE NOT FOUND");
+        return;
+    }
 
     try {
         const response = await fetch('/api/students', {
@@ -105,21 +107,25 @@ async function loadStudents() {
 
         const data = await response.json();
 
-        console.log("RESPONSE DATA:", data); // ✅ HERE ONLY
+        console.log("RESPONSE DATA:", data);
 
         if (!response.ok) throw new Error(data.error);
 
+        // ✅ SAFE PARSE
         currentStudentList = Array.isArray(data.students) ? data.students : [];
 
-        console.log("FINAL STUDENT LIST:", currentStudentList); // ✅ HERE
+        console.log("FINAL STUDENT LIST:", currentStudentList);
 
+        // ✅ FORCE CLEAR TABLE (FIXED)
         table.innerHTML = "";
+        table.replaceChildren();
 
         if (currentStudentList.length === 0) {
             table.innerHTML = `<tr><td colspan="4" style="text-align:center;">No students found</td></tr>`;
             return;
         }
 
+        // ✅ RENDER
         currentStudentList.forEach((student) => {
             let row = document.createElement("tr");
 
@@ -137,13 +143,15 @@ async function loadStudents() {
             table.appendChild(row);
         });
 
+        console.log("ROWS ADDED:", table.children.length);
+
     } catch (err) {
         console.error("Error fetching students:", err);
         table.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Failed to load students.</td></tr>`;
     }
 }
 
-/* -------- TOGGLE ATTENDANCE BUTTON -------- */
+/* -------- TOGGLE -------- */
 function toggleStatus(btn) {
     const row = btn.closest("tr");
     const isPresent = btn.classList.contains("present");
@@ -161,6 +169,7 @@ function toggleStatus(btn) {
     }
 }
 
+/* -------- BULK -------- */
 function markAll(isPresent, event) {
     let btn = event?.target || document.activeElement;
     setBtnLoading(btn, isPresent ? "Marking Present" : "Marking Absent");
@@ -186,97 +195,7 @@ function markAll(isPresent, event) {
     }, 400);
 }
 
-/* -------- 🚀 THE PYTHON BRIDGE: SUBMIT ATTENDANCE -------- */
-async function submitAttendance(btn) {
-    const date = document.getElementById("date")?.value;
-    const time = document.getElementById("classTime")?.value;
-    const numClasses = parseInt(document.getElementById("numClasses")?.value || "1");
-
-    if (!time) {
-        triggerShake(document.getElementById("classTime"));
-        showError("Please select a Start Time");
-        return;
-    }
-
-    setBtnLoading(btn, "Suubmitting...");
-
-    try {
-        // Calculate End Time
-        let [h, m] = time.split(":").map(Number);
-        let endDate = new Date();
-        endDate.setHours(h, m, 0, 0);
-        endDate.setMinutes(endDate.getMinutes() + (numClasses * 60));
-        const endTimeStr = `${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2, '0')}`;
-
-        // GATHER ALL STUDENT STATUSES
-        const rows = document.querySelectorAll("#studentRows tr");
-        const attendanceRecords = [];
-
-        rows.forEach(row => {
-            const statusBtn = row.querySelector(".status-btn");
-            if (statusBtn) {
-                const studentId = statusBtn.getAttribute("data-id");
-                const isPresent = statusBtn.classList.contains("present");
-                attendanceRecords.push({
-                    student_id: studentId,
-                    status: isPresent ? "Present" : "Absent"
-                });
-            }
-        });
-
-        if (attendanceRecords.length === 0) {
-            throw new Error("No students to mark.");
-        }
-
-        // SEND TO PYTHON API
-        const response = await fetch('/api/attendance', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                subject_id: parseInt(subjectId),
-                date: date,
-                start_time: time,
-                end_time: endTimeStr,
-                records: attendanceRecords
-            })
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) throw new Error(result.error);
-
-        // SUCCESS!
-        showError("Attendance Saved Successfully!", true);
-
-        setTimeout(() => {
-            window.location.href = "/dashboard"; // Direct to python route
-        }, 1500);
-
-    } catch (err) {
-        console.error("Submit Error:", err);
-        showError(err.message || "Failed to save to database.");
-        resetBtn(btn);
-    }
-}
-
-/* -------- NAVIGATION -------- */
-function goBack(btn) {
-    if (btn && btn.target) btn = btn.target;
-    setBtnLoading(btn, "Going");
-    setTimeout(() => {
-        window.location.href = "/dashboard";
-    }, 250);
-}
-
-function editAttendance(btn) {
-    if (btn && btn.target) btn = btn.target;
-    setBtnLoading(btn, "Opening");
-    setTimeout(() => {
-        window.location.href = "/edit-attendance";
-    }, 400);
-}
-
-/* -------- INIT PAGE -------- */
+/* -------- INIT -------- */
 window.onload = function () {
     setText("subject", subjectName);
     setText("department", deptName);
@@ -294,12 +213,12 @@ window.onload = function () {
 
     updateCurrentTime();
     setInterval(updateCurrentTime, 1000);
+
     document.getElementById("classTime")?.addEventListener("change", calculateTimeRange);
     document.getElementById("numClasses")?.addEventListener("change", calculateTimeRange);
 
-    // Python does the fetching!
+    // ✅ KEEP YOUR DELAY (FIXED)
     setTimeout(() => {
         loadStudents();
     }, 300);
-
 };
