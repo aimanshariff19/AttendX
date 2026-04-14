@@ -61,24 +61,27 @@ function showToast(msg, type = "error") {
 
 function showFieldError(input, message) {
     if (!input) return;
-    triggerShake(input);
-    input.classList.add("input-error");
-    let parent = input.parentElement;
+
+    const parent = input.parentElement;
+
+    // remove old error
     let old = parent.querySelector(".field-error");
     if (old) old.remove();
 
+    // create error text
     const err = document.createElement("div");
     err.className = "field-error";
     err.innerText = message;
-    parent.style.position = "relative";
-    err.style.position = "absolute";
-    err.style.top = "-20px";
-    err.style.right = "0";
-    err.style.fontSize = "12px";
-    err.style.color = "#ef4444";
-    err.style.pointerEvents = "none";
+
     parent.appendChild(err);
 
+    // apply styles
+    input.classList.add("input-error");
+
+    // 🔥 shake FULL input box (not just field)
+    triggerShake(parent);
+
+    // auto remove
     setTimeout(() => {
         input.classList.remove("input-error");
         err.remove();
@@ -116,9 +119,9 @@ async function fetchPastSessions() {
         const data = await response.json();
 
         if (!response.ok) throw new Error(data.error);
-        
+
         pastSessions = data.sessions || [];
-        
+
         // Populate Date Dropdown with unique dates
         const uniqueDates = [...new Set(pastSessions.map(s => s.session_date))];
         dateDropdown.innerHTML = '<option value="">Select Date</option>';
@@ -138,7 +141,7 @@ async function fetchPastSessions() {
 function loadTimesForDate() {
     const selectedDate = dateDropdown.value;
     timeDropdown.innerHTML = "";
-    
+
     if (!selectedDate) {
         timeDropdown.innerHTML = "<option value=''>Select date first</option>";
         checkEnableUpdate();
@@ -146,11 +149,11 @@ function loadTimesForDate() {
     }
 
     const sessionsForDate = pastSessions.filter(s => s.session_date === selectedDate);
-    
+
     timeDropdown.innerHTML = "<option value=''>Select Time Slot</option>";
     sessionsForDate.forEach(session => {
         let opt = document.createElement('option');
-        opt.value = session.id; 
+        opt.value = session.id;
         opt.textContent = formatTimeRange(session.start_time, session.end_time);
         timeDropdown.appendChild(opt);
     });
@@ -161,7 +164,7 @@ function loadTimesForDate() {
 /* -------- 🚀 THE PYTHON BRIDGE: LOAD PREVIOUS ATTENDANCE -------- */
 async function loadAttendance(event) {
     const btn = event?.target || document.activeElement;
-    currentSessionId = timeDropdown.value; 
+    currentSessionId = timeDropdown.value;
 
     if (!dateDropdown.value || !currentSessionId) {
         if (!dateDropdown.value) showFieldError(dateDropdown, "Select Date");
@@ -287,9 +290,9 @@ async function updateAttendance() {
         if (!response.ok) throw new Error(result.error);
 
         showToast("Attendance Updated Successfully!", "success");
-        
-        setTimeout(() => { 
-            window.location.href = "/dashboard"; 
+
+        setTimeout(() => {
+            window.location.href = "/dashboard";
         }, 1500);
 
     } catch (err) {
@@ -313,12 +316,12 @@ window.onload = () => {
 
     setText("subject", subjectName);
     setText("department", deptName);
-    
+
     if (updateBtn) {
         updateBtn.disabled = true;
         updateBtn.style.opacity = "0.5";
     }
-    
+
     // Auto-fetch sessions on page load
     fetchPastSessions();
 };
