@@ -10,7 +10,7 @@ let currentSessionId = null;
 const dateDropdown = document.getElementById("attendanceDate");
 const timeDropdown = document.getElementById("timeSelect");
 const table = document.getElementById("studentRows");
-const updateBtn = document.querySelector(".update-btn");
+const updateBtn = document.querySelector("button[onclick='updateAttendance(event)']");
 
 /* -------- UI HELPERS -------- */
 function setText(id, value) {
@@ -59,29 +59,24 @@ function showToast(msg, type = "error") {
     setTimeout(() => box.style.display = "none", 2500);
 }
 
+/* -------- ✅ FIXED ERROR FUNCTION -------- */
 function showFieldError(input, message) {
     if (!input) return;
 
     const parent = input.parentElement;
 
-    // ensure correct container
-    parent.classList.add("input-group");
-
-    // remove old error
     const old = parent.querySelector(".field-error");
     if (old) old.remove();
 
-    // create error
     const err = document.createElement("div");
     err.className = "field-error";
     err.innerText = message;
 
     parent.appendChild(err);
 
-    // styles
     input.classList.add("input-error");
 
-    // 🔥 shake full box
+    // 🔥 shake full container
     triggerShake(parent);
 
     setTimeout(() => {
@@ -114,7 +109,7 @@ function checkEnableUpdate() {
     }
 }
 
-/* -------- 🚀 THE PYTHON BRIDGE: FETCH SESSIONS -------- */
+/* -------- FETCH SESSIONS -------- */
 async function fetchPastSessions() {
     try {
         const response = await fetch(`/api/sessions/${subjectId}`);
@@ -124,9 +119,9 @@ async function fetchPastSessions() {
 
         pastSessions = data.sessions || [];
 
-        // Populate Date Dropdown with unique dates
         const uniqueDates = [...new Set(pastSessions.map(s => s.session_date))];
         dateDropdown.innerHTML = '<option value="">Select Date</option>';
+
         uniqueDates.forEach(date => {
             let opt = document.createElement('option');
             opt.value = date;
@@ -153,6 +148,7 @@ function loadTimesForDate() {
     const sessionsForDate = pastSessions.filter(s => s.session_date === selectedDate);
 
     timeDropdown.innerHTML = "<option value=''>Select Time Slot</option>";
+
     sessionsForDate.forEach(session => {
         let opt = document.createElement('option');
         opt.value = session.id;
@@ -163,9 +159,9 @@ function loadTimesForDate() {
     checkEnableUpdate();
 }
 
-/* -------- 🚀 THE PYTHON BRIDGE: LOAD PREVIOUS ATTENDANCE -------- */
+/* -------- LOAD ATTENDANCE -------- */
 async function loadAttendance(event) {
-    const btn = event?.target || document.activeElement;
+    const btn = event?.currentTarget; // ✅ FIXED
     currentSessionId = timeDropdown.value;
 
     if (!dateDropdown.value || !currentSessionId) {
@@ -191,28 +187,27 @@ async function loadAttendance(event) {
             return;
         }
 
-        // Sort alphabetically by USN
         records.sort((a, b) => a.students.usn.localeCompare(b.students.usn));
 
         records.forEach(record => {
             const student = record.students;
-            let row = document.createElement("tr");
 
+            let row = document.createElement("tr");
             row.innerHTML = `
                 <td>${student.usn}</td>
                 <td>${student.name}</td>
                 <td>--</td>
                 <td>
                     <button class="status-btn ${record.status === "Present" ? "present" : "absent"} active" 
-                            data-record-id="${record.id}" 
-                            data-student-id="${student.id}"
-                            onclick="toggleStatus(this)">
+                        data-record-id="${record.id}" 
+                        data-student-id="${student.id}"
+                        onclick="toggleStatus(this)">
                         ${record.status}
                     </button>
                 </td>
                 <td>
                     <input type="text" placeholder="Optional reason..." 
-                           style="width: 100%; padding: 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: white; font-size: 11px;">
+                        style="width:100%; padding:4px; border-radius:4px; border:1px solid rgba(255,255,255,0.2); background:transparent; color:white; font-size:11px;">
                 </td>
             `;
             table.appendChild(row);
@@ -228,7 +223,7 @@ async function loadAttendance(event) {
     }
 }
 
-/* -------- TOGGLE STATUS -------- */
+/* -------- TOGGLE -------- */
 function toggleStatus(btn) {
     const isPresent = btn.classList.contains("present");
     btn.classList.remove("present", "absent");
@@ -242,11 +237,14 @@ function toggleStatus(btn) {
     }
 }
 
-function markAll(isPresent, event) {
+/* -------- BULK -------- */
+function markAll(isPresent) {
     document.querySelectorAll("#studentRows tr").forEach(row => {
         const b = row.querySelector(".status-btn");
         if (!b) return;
+
         b.classList.remove("present", "absent", "active");
+
         if (isPresent) {
             b.classList.add("present", "active");
             b.innerText = "Present";
@@ -257,11 +255,13 @@ function markAll(isPresent, event) {
     });
 }
 
-/* -------- 🚀 THE PYTHON BRIDGE: UPDATE DATABASE -------- */
-async function updateAttendance() {
+/* -------- UPDATE -------- */
+async function updateAttendance(event) {
     if (!currentSessionId) return;
 
-    setBtnLoading(updateBtn, "Updating Database...");
+    const btn = event?.currentTarget; // optional
+
+    setBtnLoading(btn, "Updating...");
 
     try {
         const rows = document.querySelectorAll("#studentRows tr");
@@ -270,7 +270,6 @@ async function updateAttendance() {
         rows.forEach(row => {
             const statusBtn = row.querySelector(".status-btn");
             if (statusBtn) {
-                // 🔥 FIX: Removed parseInt() so we don't destroy the UUID strings!
                 updates.push({
                     id: statusBtn.getAttribute("data-record-id"),
                     session_id: currentSessionId,
@@ -280,11 +279,10 @@ async function updateAttendance() {
             }
         });
 
-        // Send to Python API
         const response = await fetch('/api/attendance/update', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ updates: updates })
+            body: JSON.stringify({ updates })
         });
 
         const result = await response.json();
@@ -300,15 +298,12 @@ async function updateAttendance() {
     } catch (err) {
         console.error("Update Error:", err);
         showToast("Failed to update database.", "error");
-        resetBtn(updateBtn);
+        resetBtn(btn);
     }
 }
 
-/* -------- INIT EVENT LISTENERS -------- */
-dateDropdown.addEventListener("change", () => {
-    loadTimesForDate();
-});
-
+/* -------- INIT -------- */
+dateDropdown.addEventListener("change", loadTimesForDate);
 timeDropdown.addEventListener("change", checkEnableUpdate);
 
 window.onload = () => {
@@ -319,11 +314,5 @@ window.onload = () => {
     setText("subject", subjectName);
     setText("department", deptName);
 
-    if (updateBtn) {
-        updateBtn.disabled = true;
-        updateBtn.style.opacity = "0.5";
-    }
-
-    // Auto-fetch sessions on page load
     fetchPastSessions();
 };
