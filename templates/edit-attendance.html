@@ -66,7 +66,6 @@
             gap: 10px 20px;
         }
 
-        /* ===== CONTROLS ===== */
         .attendance-controls {
             display: flex;
             gap: 16px;
@@ -90,7 +89,6 @@
             color: white;
         }
 
-        /* ===== BUTTON ===== */
         .btn {
             padding: 8px 14px;
             border-radius: 8px;
@@ -107,7 +105,6 @@
             box-shadow: 0 10px 25px rgba(139, 92, 246, 0.6);
         }
 
-        /* ===== LOAD BTN ===== */
         .load-btn {
             height: 40px;
             padding: 0 18px;
@@ -115,7 +112,6 @@
             align-items: center;
         }
 
-        /* ===== BULK ===== */
         .bulk-actions {
             display: flex;
             gap: 10px;
@@ -130,54 +126,55 @@
             background: linear-gradient(135deg, #ef4444, #dc2626);
         }
 
-        /* ===== TABLE ===== */
+        /* 🔥 MODERN TABLE */
         .table-container {
             background: rgba(255, 255, 255, 0.05);
-            padding: 16px;
-            border-radius: 16px;
+            padding: 18px;
+            border-radius: 18px;
             margin-top: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            border-radius: 12px;
-            overflow: hidden;
         }
 
         thead th {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 14px;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 16px;
             font-size: 14px;
             text-align: left;
             color: #e5e7eb;
         }
 
         tbody td {
-            padding: 14px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 16px;
+            font-size: 14px;
             color: #d1d5db;
         }
 
-        tbody tr:hover {
-            background: rgba(255, 255, 255, 0.04);
+        tbody tr {
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        /* ===== STATUS BUTTON (🔥 EXACT LIKE YOUR IMAGE) ===== */
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* 🔥 EXACT BUTTON */
         .status-btn {
-            padding: 6px 14px;
-            border-radius: 20px;
+            padding: 6px 16px;
+            border-radius: 999px;
             font-size: 12px;
             font-weight: 600;
             border: none;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s ease;
         }
 
         .status-btn.present {
             background: linear-gradient(135deg, #22c55e, #16a34a);
-            box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.6);
         }
 
         .status-btn.absent {
@@ -185,10 +182,14 @@
         }
 
         .status-btn:hover {
-            transform: scale(1.05);
+            transform: scale(1.08);
+            box-shadow: 0 0 16px rgba(255, 255, 255, 0.2);
         }
 
-        /* ===== INPUT ===== */
+        .status-btn:active {
+            transform: scale(0.95);
+        }
+
         tbody input {
             width: 100%;
             padding: 6px 10px;
@@ -197,10 +198,6 @@
             background: transparent;
             color: #d1d5db;
             font-size: 12px;
-        }
-
-        tbody input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
         }
     </style>
 
@@ -222,12 +219,12 @@
 
         <div class="attendance-controls">
 
-            <div class="input-group">
+            <div>
                 <label>📅 Date</label>
                 <input type="date" id="attendanceDate">
             </div>
 
-            <div class="input-group">
+            <div>
                 <label>⏰ Class Time</label>
                 <select id="timeSelect">
                     <option value="">Select date first</option>
