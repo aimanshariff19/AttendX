@@ -10,7 +10,9 @@ let currentSessionId = null;
 const dateDropdown = document.getElementById("attendanceDate");
 const timeDropdown = document.getElementById("timeSelect");
 const table = document.getElementById("studentRows");
-const updateBtn = document.querySelector(".update-btn");
+
+// ✅ FIXED BUTTON SELECTOR
+const updateBtn = document.querySelector(".btn:last-of-type");
 
 /* -------- UI HELPERS -------- */
 function setText(id, value) {
@@ -37,6 +39,34 @@ function triggerShake(el) {
     setTimeout(() => el.classList.remove("shake"), 400);
 }
 
+/* -------- 🔥 FIELD ERROR (IMPROVED) -------- */
+function showFieldError(input, message) {
+    if (!input) return;
+
+    const parent = input.parentElement;
+
+    // remove old error
+    const old = parent.querySelector(".field-error");
+    if (old) old.remove();
+
+    // create error
+    const err = document.createElement("div");
+    err.className = "field-error";
+    err.innerText = message;
+
+    parent.appendChild(err);
+
+    // styles
+    input.classList.add("input-error");
+    triggerShake(parent); // ✅ better UX (whole box shakes)
+
+    setTimeout(() => {
+        input.classList.remove("input-error");
+        err.remove();
+    }, 2000);
+}
+
+/* -------- TOAST -------- */
 function showToast(msg, type = "error") {
     let box = document.getElementById("toastBox");
     if (!box) {
@@ -53,41 +83,18 @@ function showToast(msg, type = "error") {
         box.style.zIndex = "999";
         document.body.appendChild(box);
     }
+
     box.style.background = (type === "success") ? "#16a34a" : "#ef4444";
     box.innerText = msg;
     box.style.display = "block";
+
     setTimeout(() => box.style.display = "none", 2500);
 }
 
-function showFieldError(input, message) {
-    if (!input) return;
-    triggerShake(input);
-    input.classList.add("input-error");
-    let parent = input.parentElement;
-    let old = parent.querySelector(".field-error");
-    if (old) old.remove();
-
-    const err = document.createElement("div");
-    err.className = "field-error";
-    err.innerText = message;
-    parent.style.position = "relative";
-    err.style.position = "absolute";
-    err.style.top = "-20px";
-    err.style.right = "0";
-    err.style.fontSize = "12px";
-    err.style.color = "#ef4444";
-    err.style.pointerEvents = "none";
-    parent.appendChild(err);
-
-    setTimeout(() => {
-        input.classList.remove("input-error");
-        err.remove();
-    }, 2000);
-}
-
-/* -------- TIME FORMATTER -------- */
+/* -------- FORMAT TIME -------- */
 function formatTimeRange(startTime, endTime) {
     if (!startTime || !endTime) return "--";
+
     const format = (t) => {
         let [h, m] = t.split(":");
         h = parseInt(h);
@@ -95,11 +102,13 @@ function formatTimeRange(startTime, endTime) {
         h = h % 12 || 12;
         return `${h}:${m} ${ampm}`;
     };
+
     return `${format(startTime)} - ${format(endTime)}`;
 }
 
 function checkEnableUpdate() {
     if (!updateBtn) return;
+
     if (dateDropdown.value && timeDropdown.value) {
         updateBtn.disabled = false;
         updateBtn.style.opacity = "1";
@@ -109,19 +118,20 @@ function checkEnableUpdate() {
     }
 }
 
-/* -------- 🚀 THE PYTHON BRIDGE: FETCH SESSIONS -------- */
+/* -------- FETCH SESSIONS -------- */
 async function fetchPastSessions() {
     try {
         const response = await fetch(`/api/sessions/${subjectId}`);
         const data = await response.json();
 
         if (!response.ok) throw new Error(data.error);
-        
+
         pastSessions = data.sessions || [];
-        
-        // Populate Date Dropdown with unique dates
+
         const uniqueDates = [...new Set(pastSessions.map(s => s.session_date))];
+
         dateDropdown.innerHTML = '<option value="">Select Date</option>';
+
         uniqueDates.forEach(date => {
             let opt = document.createElement('option');
             opt.value = date;
@@ -130,27 +140,30 @@ async function fetchPastSessions() {
         });
 
     } catch (err) {
-        console.error("Error fetching sessions:", err);
-        showToast("Failed to load past sessions", "error");
+        console.error(err);
+        showToast("Failed to load sessions");
     }
 }
 
+/* -------- LOAD TIMES -------- */
 function loadTimesForDate() {
     const selectedDate = dateDropdown.value;
+
     timeDropdown.innerHTML = "";
-    
+
     if (!selectedDate) {
         timeDropdown.innerHTML = "<option value=''>Select date first</option>";
         checkEnableUpdate();
         return;
     }
 
-    const sessionsForDate = pastSessions.filter(s => s.session_date === selectedDate);
-    
+    const sessions = pastSessions.filter(s => s.session_date === selectedDate);
+
     timeDropdown.innerHTML = "<option value=''>Select Time Slot</option>";
-    sessionsForDate.forEach(session => {
+
+    sessions.forEach(session => {
         let opt = document.createElement('option');
-        opt.value = session.id; 
+        opt.value = session.id;
         opt.textContent = formatTimeRange(session.start_time, session.end_time);
         timeDropdown.appendChild(opt);
     });
@@ -158,10 +171,11 @@ function loadTimesForDate() {
     checkEnableUpdate();
 }
 
-/* -------- 🚀 THE PYTHON BRIDGE: LOAD PREVIOUS ATTENDANCE -------- */
+/* -------- LOAD ATTENDANCE -------- */
 async function loadAttendance(event) {
-    const btn = event?.target || document.activeElement;
-    currentSessionId = timeDropdown.value; 
+    const btn = event?.target;
+
+    currentSessionId = timeDropdown.value;
 
     if (!dateDropdown.value || !currentSessionId) {
         if (!dateDropdown.value) showFieldError(dateDropdown, "Select Date");
@@ -177,20 +191,11 @@ async function loadAttendance(event) {
 
         if (!response.ok) throw new Error(data.error);
 
-        const records = data.records;
         table.innerHTML = "";
 
-        if (!records || records.length === 0) {
-            table.innerHTML = `<tr><td colspan="6" style="text-align:center;">No records found.</td></tr>`;
-            resetBtn(btn);
-            return;
-        }
-
-        // Sort alphabetically by USN
-        records.sort((a, b) => a.students.usn.localeCompare(b.students.usn));
-
-        records.forEach(record => {
+        data.records.forEach(record => {
             const student = record.students;
+
             let row = document.createElement("tr");
 
             row.innerHTML = `
@@ -198,127 +203,80 @@ async function loadAttendance(event) {
                 <td>${student.name}</td>
                 <td>--</td>
                 <td>
-                    <button class="status-btn ${record.status === "Present" ? "present" : "absent"} active" 
-                            data-record-id="${record.id}" 
-                            data-student-id="${student.id}"
-                            onclick="toggleStatus(this)">
+                    <button class="status-btn ${record.status === "Present" ? "present" : "absent"} active"
+                        data-record-id="${record.id}"
+                        data-student-id="${student.id}"
+                        onclick="toggleStatus(this)">
                         ${record.status}
                     </button>
                 </td>
-                <td>
-                    <input type="text" placeholder="Optional reason..." 
-                           style="width: 100%; padding: 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: white; font-size: 11px;">
-                </td>
+                <td><input type="text" placeholder="Reason..." /></td>
             `;
+
             table.appendChild(row);
         });
 
-        showToast("Records Loaded", "success");
+        showToast("Loaded", "success");
 
     } catch (err) {
-        console.error("Load Error:", err);
-        showToast("Failed to load records.", "error");
+        console.error(err);
+        showToast("Failed to load");
     } finally {
         resetBtn(btn);
     }
 }
 
-/* -------- TOGGLE STATUS -------- */
-function toggleStatus(btn) {
-    const isPresent = btn.classList.contains("present");
-    btn.classList.remove("present", "absent");
-
-    if (isPresent) {
-        btn.classList.add("absent");
-        btn.innerText = "Absent";
-    } else {
-        btn.classList.add("present");
-        btn.innerText = "Present";
-    }
-}
-
-function markAll(isPresent, event) {
-    document.querySelectorAll("#studentRows tr").forEach(row => {
-        const b = row.querySelector(".status-btn");
-        if (!b) return;
-        b.classList.remove("present", "absent", "active");
-        if (isPresent) {
-            b.classList.add("present", "active");
-            b.innerText = "Present";
-        } else {
-            b.classList.add("absent", "active");
-            b.innerText = "Absent";
-        }
-    });
-}
-
-/* -------- 🚀 THE PYTHON BRIDGE: UPDATE DATABASE -------- */
+/* -------- UPDATE -------- */
 async function updateAttendance() {
     if (!currentSessionId) return;
 
-    setBtnLoading(updateBtn, "Updating Database...");
+    setBtnLoading(updateBtn, "Updating...");
 
     try {
         const rows = document.querySelectorAll("#studentRows tr");
         const updates = [];
 
         rows.forEach(row => {
-            const statusBtn = row.querySelector(".status-btn");
-            if (statusBtn) {
-                // 🔥 FIX: Removed parseInt() so we don't destroy the UUID strings!
-                updates.push({
-                    id: statusBtn.getAttribute("data-record-id"),
-                    session_id: currentSessionId,
-                    student_id: statusBtn.getAttribute("data-student-id"),
-                    status: statusBtn.classList.contains("present") ? "Present" : "Absent"
-                });
-            }
+            const btn = row.querySelector(".status-btn");
+
+            updates.push({
+                id: btn.dataset.recordId,
+                session_id: currentSessionId,
+                student_id: btn.dataset.studentId,
+                status: btn.classList.contains("present") ? "Present" : "Absent"
+            });
         });
 
-        // Send to Python API
-        const response = await fetch('/api/attendance/update', {
+        const res = await fetch('/api/attendance/update', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ updates: updates })
+            body: JSON.stringify({ updates })
         });
 
-        const result = await response.json();
+        if (!res.ok) throw new Error();
 
-        if (!response.ok) throw new Error(result.error);
+        showToast("Updated ✅", "success");
 
-        showToast("Attendance Updated Successfully!", "success");
-        
-        setTimeout(() => { 
-            window.location.href = "/dashboard"; 
-        }, 1500);
+        setTimeout(() => location.href = "/dashboard", 1500);
 
-    } catch (err) {
-        console.error("Update Error:", err);
-        showToast("Failed to update database.", "error");
+    } catch {
+        showToast("Update failed");
         resetBtn(updateBtn);
     }
 }
 
-/* -------- INIT EVENT LISTENERS -------- */
-dateDropdown.addEventListener("change", () => {
-    loadTimesForDate();
-});
-
-timeDropdown.addEventListener("change", checkEnableUpdate);
+/* -------- INIT -------- */
+dateDropdown?.addEventListener("change", loadTimesForDate);
+timeDropdown?.addEventListener("change", checkEnableUpdate);
 
 window.onload = () => {
-    document.getElementById("program").parentElement.style.display = "none";
-    document.getElementById("sem").parentElement.style.display = "none";
-    document.getElementById("section").parentElement.style.display = "none";
-
     setText("subject", subjectName);
     setText("department", deptName);
-    
+
     if (updateBtn) {
         updateBtn.disabled = true;
         updateBtn.style.opacity = "0.5";
     }
-    
-    // Auto-fetch sessions on page load
+
     fetchPastSessions();
 };
