@@ -160,11 +160,17 @@ async function loadAttendance(event) {
 
     /* 🔥 ONLY CHANGE HERE */
     if (!dateDropdown.value || !currentSessionId) {
+
         if (!dateDropdown.value) {
             showToast("Please select a Date");
-        } else {
-            showToast("Please select a Start Time");
+            showFieldError(dateDropdown, "Required"); // 💥 shake + red border
         }
+
+        if (!currentSessionId) {
+            showToast("Please select a Start Time");
+            showFieldError(timeDropdown, "Required"); // 💥 shake + red border
+        }
+
         return;
     }
 
