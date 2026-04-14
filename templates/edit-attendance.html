@@ -136,16 +136,6 @@
 
             backdrop-filter: blur(18px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        /* 🔥 FINAL PERFECT TABLE UI */
-        .table-container {
-            background: rgba(255, 255, 255, 0.06);
-            padding: 18px;
-            border-radius: 16px;
-
-            backdrop-filter: blur(18px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
 
             box-shadow:
                 0 8px 32px rgba(0, 0, 0, 0.4),
@@ -166,26 +156,36 @@
             font-weight: 600;
             color: #e5e7eb;
 
+            /* ONLY INNER COLUMN LINE */
             border-right: 1px solid rgba(255, 255, 255, 0.12);
         }
 
-        /* REMOVE LAST BORDER */
+        /* REMOVE RIGHT EDGE */
         thead th:last-child {
             border-right: none;
         }
 
-        /* BODY CELLS */
+        /* BODY */
         tbody td {
             padding: 14px;
             color: #d1d5db;
 
+            /* horizontal line */
             border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+            /* vertical inner line */
             border-right: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        /* REMOVE LAST BORDER */
+        /* REMOVE RIGHT EDGE */
         tbody td:last-child {
             border-right: none;
+        }
+
+        /* 🔥 IMPORTANT: REMOVE LEFT EDGE COMPLETELY */
+        thead th:first-child,
+        tbody td:first-child {
+            border-left: none;
         }
 
         /* HOVER */
