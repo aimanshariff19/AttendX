@@ -37,52 +37,46 @@ function triggerShake(el) {
     setTimeout(() => el.classList.remove("shake"), 400);
 }
 
+/* -------- 🔥 UPDATED TOAST (BIG RED BOX LIKE YOUR UI) -------- */
 function showToast(msg, type = "error") {
     let box = document.getElementById("toastBox");
+
     if (!box) {
         box = document.createElement("div");
         box.id = "toastBox";
+
         box.style.position = "fixed";
         box.style.top = "20px";
         box.style.left = "50%";
         box.style.transform = "translateX(-50%)";
+        box.style.padding = "14px 22px";
+        box.style.borderRadius = "12px";
+        box.style.fontSize = "14px";
+        box.style.fontWeight = "600";
         box.style.color = "white";
-        box.style.padding = "10px 16px";
-        box.style.borderRadius = "8px";
-        box.style.fontSize = "13px";
-        box.style.zIndex = "999";
+        box.style.zIndex = "9999";
+        box.style.boxShadow = "0 10px 25px rgba(0,0,0,0.4)";
+        box.style.transition = "all 0.3s ease";
+
         document.body.appendChild(box);
     }
-    box.style.background = (type === "success") ? "#16a34a" : "#ef4444";
+
+    box.style.background = (type === "success")
+        ? "linear-gradient(135deg, #22c55e, #16a34a)"
+        : "linear-gradient(135deg, #ef4444, #dc2626)";
+
     box.innerText = msg;
     box.style.display = "block";
-    setTimeout(() => box.style.display = "none", 2500);
-}
-
-/* -------- ✅ FIXED ERROR FUNCTION -------- */
-function showFieldError(input, message) {
-    if (!input) return;
-
-    const parent = input.parentElement;
-
-    const old = parent.querySelector(".field-error");
-    if (old) old.remove();
-
-    const err = document.createElement("div");
-    err.className = "field-error";
-    err.innerText = message;
-
-    parent.appendChild(err);
-
-    input.classList.add("input-error");
-
-    // 🔥 shake full container
-    triggerShake(parent);
 
     setTimeout(() => {
-        input.classList.remove("input-error");
-        err.remove();
-    }, 2000);
+        box.style.display = "none";
+    }, 2500);
+}
+
+/* -------- (KEPT BUT NOT USED NOW) -------- */
+function showFieldError(input, message) {
+    if (!input) return;
+    triggerShake(input);
 }
 
 /* -------- TIME FORMATTER -------- */
@@ -161,12 +155,16 @@ function loadTimesForDate() {
 
 /* -------- LOAD ATTENDANCE -------- */
 async function loadAttendance(event) {
-    const btn = event?.currentTarget; // ✅ FIXED
+    const btn = event?.currentTarget;
     currentSessionId = timeDropdown.value;
 
+    /* 🔥 ONLY CHANGE HERE */
     if (!dateDropdown.value || !currentSessionId) {
-        if (!dateDropdown.value) showFieldError(dateDropdown, "Select Date");
-        if (!currentSessionId) showFieldError(timeDropdown, "Select Time Slot");
+        if (!dateDropdown.value) {
+            showToast("Please select a Date");
+        } else {
+            showToast("Please select a Start Time");
+        }
         return;
     }
 
@@ -259,7 +257,7 @@ function markAll(isPresent) {
 async function updateAttendance(event) {
     if (!currentSessionId) return;
 
-    const btn = event?.currentTarget; // optional
+    const btn = event?.currentTarget;
 
     setBtnLoading(btn, "Updating...");
 
