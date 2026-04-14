@@ -139,23 +139,35 @@
         }
 
         /* TABLE */
+        /* 🔥 COLUMN + OUTER BORDERS */
         table {
             width: 100%;
             border-collapse: collapse;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            /* outer border */
         }
 
-        thead th {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 14px;
-            text-align: left;
-            font-weight: 600;
-        }
-
+        thead th,
         tbody td {
-            padding: 14px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-right: 1px solid rgba(255, 255, 255, 0.12);
+            /* vertical lines */
         }
 
+        /* remove last column extra line */
+        thead th:last-child,
+        tbody td:last-child {
+            border-right: none;
+        }
+
+        /* horizontal lines */
+        tbody td {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        thead {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* status btn */
         .status-btn {
             padding: 6px 12px;
             border-radius: 8px;
