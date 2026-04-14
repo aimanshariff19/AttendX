@@ -353,23 +353,20 @@
             <button class="btn" onclick="markAll(false, event)">Mark All Absent</button>
         </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>USN</th>
-                    <th>Name</th>
-                    <th>%</th>
-                    <th>Status</th>
-                    <th>Reason</th>
-                </tr>
-            </thead>
-            <tbody id="studentRows"></tbody>
-        </table>
-
-        <button class="btn" onclick="updateAttendance(event)">
-            <span>Update Attendance</span>
-        </button>
-
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>USN</th>
+                        <th>Name</th>
+                        <th>%</th>
+                        <th>Status</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody id="studentRows"></tbody>
+            </table>
+        </div>
     </div>
 
     <script src="/static/edit.js"></script>
