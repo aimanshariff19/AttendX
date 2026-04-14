@@ -122,8 +122,9 @@ function loadCourseCards() {
 }
 
 /* -------- OPEN COURSE -------- */
-function openCourse(subjectName, subjectId, route) {
+function openCourse(subjectName, subjectId, route, btn) {
     console.log("🚀 Opening:", subjectName, subjectId);
+    setBtnLoading(btn, "Opening...");
 
     document.querySelector(".dashboard")?.classList.add("page-exit");
 
