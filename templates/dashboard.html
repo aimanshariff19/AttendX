@@ -114,7 +114,6 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
 
-        /* ===== FIXED SUBJECT CARDS ===== */
         .subjects {
             display: grid;
             grid-template-columns: repeat(auto-fill, 280px);
@@ -137,15 +136,44 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
         }
 
+        /* 🔥 UPDATED BUTTON + SPINNER */
         button {
             margin-top: 10px;
-            padding: 8px;
+            padding: 8px 12px;
             border-radius: 8px;
             border: none;
             background: linear-gradient(135deg, #5f5cff, #7c3aed);
             color: white;
+            font-weight: 600;
+            font-size: 13px;
             cursor: pointer;
             width: 100%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(95, 92, 255, 0.5);
+        }
+
+        button.loading {
+            pointer-events: none;
+            opacity: 0.85;
+        }
+
+        .btn-spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
         }
 
         @keyframes fadeIn {
@@ -158,22 +186,6 @@
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
-
-        button.loading {
-            pointer-events: none;
-            opacity: 0.9;
-        }
-
-        .btn-spinner {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-left: 8px;
         }
 
         @keyframes spin {
