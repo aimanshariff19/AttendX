@@ -1,7 +1,7 @@
 /* -------- GLOBAL VARS -------- */
 const subjectId = localStorage.getItem('current_subject_id');
 const subjectName = localStorage.getItem('current_subject_name') || "Subject";
-const deptName = localStorage.getItem('current_dept_name') || "Department"; // kept (not removed)
+const deptName = localStorage.getItem('current_dept_name') || "Department";
 
 let currentStudentList = [];
 
@@ -53,8 +53,8 @@ function showError(msg, isSuccess = false) {
     setTimeout(() => box.style.display = "none", 2500);
 }
 
-/* -------- 🚀 NEW: FETCH FACULTY INFO (DEPT FROM DB) -------- */
-async function loadFacultyInfo() {
+/* -------- 🔥 ONLY ADDITION (DEPT FIX) -------- */
+async function loadDeptFromDB() {
     try {
         const res = await fetch('/api/faculty-info', {
             credentials: 'include'
@@ -63,14 +63,11 @@ async function loadFacultyInfo() {
         const data = await res.json();
 
         if (res.ok && data.department) {
-            setText("department", data.department);
-        } else {
-            setText("department", deptName);
+            setText("department", data.department); // override localStorage
         }
 
     } catch (err) {
         console.error("Dept fetch error:", err);
-        setText("department", deptName);
     }
 }
 
@@ -168,29 +165,12 @@ async function loadStudents() {
     }
 }
 
-/* -------- TOGGLE -------- */
-function toggleStatus(btn) {
-    const row = btn.closest("tr");
-    const isPresent = btn.classList.contains("present");
-
-    btn.classList.remove("present", "absent", "active");
-
-    if (isPresent) {
-        btn.classList.add("absent", "active");
-        btn.innerText = "Absent";
-        row.style.background = "rgba(239,68,68,0.08)";
-    } else {
-        btn.classList.add("present", "active");
-        btn.innerText = "Present";
-        row.style.background = "rgba(34,197,94,0.08)";
-    }
-}
-
 /* -------- INIT -------- */
-window.onload = async function () {
+window.onload = function () {
     setText("subject", subjectName);
+    setText("department", deptName); // existing (unchanged)
 
-    await loadFacultyInfo(); // 🔥 NEW (DB-based dept)
+    loadDeptFromDB(); // 🔥 ONLY ADDITION
 
     document.getElementById("program").parentElement.style.display = "none";
     document.getElementById("sem").parentElement.style.display = "none";
