@@ -53,24 +53,6 @@ function showError(msg, isSuccess = false) {
     setTimeout(() => box.style.display = "none", 2500);
 }
 
-/* -------- 🔥 ADDED: DEPT FROM DB -------- */
-async function loadDeptFromDB() {
-    try {
-        const res = await fetch('/api/faculty-info', {
-            credentials: 'include'
-        });
-
-        const data = await res.json();
-
-        if (res.ok && data.department) {
-            setText("department", data.department);
-        }
-
-    } catch (err) {
-        console.error("Dept fetch error:", err);
-    }
-}
-
 /* -------- TIME LOGIC -------- */
 function updateCurrentTime() {
     const now = new Date();
@@ -131,6 +113,7 @@ async function loadStudents() {
         currentStudentList = Array.isArray(data.students) ? data.students : [];
         console.log("FINAL STUDENT LIST:", currentStudentList);
 
+        /* 🔥 FIX: FORCE CLEAR TABLE (REAL BUG FIX) */
         while (table.firstChild) {
             table.removeChild(table.firstChild);
         }
@@ -183,12 +166,113 @@ function toggleStatus(btn) {
     }
 }
 
+function markAll(isPresent, event) {
+    let btn = event?.target || document.activeElement;
+    setBtnLoading(btn, isPresent ? "Marking Present" : "Marking Absent");
+
+    setTimeout(() => {
+        document.querySelectorAll("#studentRows tr").forEach(row => {
+            const b = row.querySelector(".status-btn");
+            if (!b) return;
+
+            b.classList.remove("present", "absent", "active");
+
+            if (isPresent) {
+                b.classList.add("present", "active");
+                b.innerText = "Present";
+                row.style.background = "rgba(34,197,94,0.08)";
+            } else {
+                b.classList.add("absent", "active");
+                b.innerText = "Absent";
+                row.style.background = "rgba(239,68,68,0.08)";
+            }
+        });
+        resetBtn(btn);
+    }, 400);
+}
+
+/* -------- SUBMIT -------- */
+async function submitAttendance(btn) {
+    const date = document.getElementById("date")?.value;
+    const time = document.getElementById("classTime")?.value;
+    const numClasses = parseInt(document.getElementById("numClasses")?.value || "1");
+
+    if (!time) {
+        triggerShake(document.getElementById("classTime"));
+        showError("Please select a Start Time");
+        return;
+    }
+
+    setBtnLoading(btn, "Submitting...");
+
+    try {
+        let [h, m] = time.split(":").map(Number);
+        let endDate = new Date();
+        endDate.setHours(h, m, 0, 0);
+        endDate.setMinutes(endDate.getMinutes() + (numClasses * 60));
+
+        const endTimeStr = `${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2, '0')}`;
+
+        const rows = document.querySelectorAll("#studentRows tr");
+        const attendanceRecords = [];
+
+        rows.forEach(row => {
+            const statusBtn = row.querySelector(".status-btn");
+            if (statusBtn) {
+                attendanceRecords.push({
+                    student_id: statusBtn.getAttribute("data-id"),
+                    status: statusBtn.classList.contains("present") ? "Present" : "Absent"
+                });
+            }
+        });
+
+        if (attendanceRecords.length === 0) throw new Error("No students to mark.");
+
+        const response = await fetch('/api/attendance', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                subject_id: parseInt(subjectId),
+                date,
+                start_time: time,
+                end_time: endTimeStr,
+                records: attendanceRecords
+            })
+        });
+
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error);
+
+        showError("Attendance Saved Successfully!", true);
+
+        setTimeout(() => {
+            window.location.href = "/dashboard";
+        }, 1500);
+
+    } catch (err) {
+        console.error("Submit Error:", err);
+        showError(err.message || "Failed to save to database.");
+        resetBtn(btn);
+    }
+}
+
+/* -------- NAVIGATION -------- */
+function goBack(btn) {
+    if (btn && btn.target) btn = btn.target;
+    setBtnLoading(btn, "Going");
+    setTimeout(() => window.location.href = "/dashboard", 250);
+}
+
+function editAttendance(btn) {
+    if (btn && btn.target) btn = btn.target;
+    setBtnLoading(btn, "Opening");
+    setTimeout(() => window.location.href = "/edit-attendance", 400);
+}
+
 /* -------- INIT -------- */
 window.onload = function () {
     setText("subject", subjectName);
     setText("department", deptName);
-
-    loadDeptFromDB(); // 🔥 ONLY ADDED LINE
 
     document.getElementById("program").parentElement.style.display = "none";
     document.getElementById("sem").parentElement.style.display = "none";
