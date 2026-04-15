@@ -205,7 +205,7 @@ def hod_dashboard():
             'subject_id, semester, section, subjects(name, code), faculty(name)'
         ).eq('department_id', dept_id).execute()
         
-        print("SUBJECT RAW DATA:", sub_res.data)S
+        print("SUBJECT RAW DATA:", sub_res.data)
 
         subjects_map = {}
 
