@@ -1,3 +1,8 @@
+if (typeof allSubjects === "undefined") {
+    console.warn("⚠ allSubjects not received from backend");
+    window.allSubjects = [];
+}
+
 /* -------- SAFE TEXT HELPER -------- */
 function setText(id, value) {
     const el = document.getElementById(id);
