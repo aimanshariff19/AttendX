@@ -201,7 +201,7 @@ def hod_dashboard():
         }
 
         # 3 🔥 FETCH SUBJECTS
-        sub_res = supabase.table('subjects').select('*').eq('department_id', dept_id).execute()
+        sub_res = supabase.table('subjects').select('*').execute()
 
         print("🔥 SUBJECTS FROM DB:", sub_res.data)
 
@@ -209,19 +209,28 @@ def hod_dashboard():
 
         for s in sub_res.data or []:
             subjects_list.append({
-                'id': s['id'],
-                'name': s['name'],
-                'code': s['code'],
+                'id': s.get('id'),
+                'name': s.get('name', 'Unknown'),
+                'code': s.get('code', 'N/A'),
                 'faculty': "Not Assigned",
                 'sem': s.get('semester'),
                 'section': "-",
                 'dept': dept_name,
                 'program': "BTech"
             })
-        
-    except Exception as e:
-        print(f"HOD Dashboard Error: {e}")
-        return "Server Error", 500
+
+        # ✅ THIS WAS MISSING
+        return render_template(
+            'hod-dashboard.html', 
+            hod_name=hod_name, 
+            dept_name=dept_name, 
+            stats=stats, 
+            subjects=subjects_list
+        )
+
+        except Exception as e:
+            print(f"HOD Dashboard Error: {e}")
+            return "Server Error", 500
         
 
 @app.route('/hod-students', methods=['GET'])
