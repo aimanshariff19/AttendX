@@ -9,6 +9,7 @@ document.addEventListener("click", function (e) {
     const btn = e.target.closest("button");
     if (!btn) return;
 
+    // RIPPLE
     const circle = document.createElement("span");
     circle.classList.add("ripple");
 
@@ -18,6 +19,21 @@ document.addEventListener("click", function (e) {
 
     btn.appendChild(circle);
     setTimeout(() => circle.remove(), 600);
+
+    // 🔥 ADD SPINNER (AUTO FOR ALL BUTTONS)
+    if (!btn.classList.contains("loading")) {
+        btn.classList.add("loading");
+
+        const spinner = document.createElement("span");
+        spinner.className = "btn-spinner";
+        btn.appendChild(spinner);
+
+        // auto remove after 600ms (or remove manually in functions)
+        setTimeout(() => {
+            btn.classList.remove("loading");
+            spinner.remove();
+        }, 600);
+    }
 });
 
 /* -------- GLOBAL DATA -------- */

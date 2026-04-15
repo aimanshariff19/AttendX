@@ -164,6 +164,63 @@
             color: white;
             cursor: pointer;
         }
+
+        /* ===== APPLY BUTTON ===== */
+        .apply-btn {
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, #5f5cff, #7c3aed);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .apply-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(95, 92, 255, 0.5);
+        }
+
+        /* ===== BUTTON SPINNER ===== */
+        .apply-btn.loading {
+            pointer-events: none;
+        }
+
+        .apply-btn.loading .btn-spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-left: 8px;
+        }
+
+        button.loading {
+            pointer-events: none;
+        }
+
+        .btn-spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
     </style>
 </head>
 
@@ -205,7 +262,9 @@
             <select id="filterProgram"></select>
             <select id="filterSem"></select>
             <select id="filterSection"></select>
-            <button onclick="applyFilters()">Apply</button>
+            <button class="apply-btn" onclick="applyFilters(this)">
+                <span>Apply</span>
+            </button>
         </div>
 
         <!-- SUBJECT CARDS ONLY -->
