@@ -217,6 +217,9 @@
         const hodName = {{ hod_name | tojson | safe }};
         const deptName = {{ dept_name | tojson | safe }};
         const stats = {{ stats | tojson | safe }};
+
+        // 🔥 TEMP FIX so JS doesn’t crash
+        const allSubjects = [];
     </script>
 
     <script src="/static/hod.js"></script>
