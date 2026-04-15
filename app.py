@@ -356,6 +356,35 @@ def api_hod_login():
     except Exception as e:
         print(f"Login Error: {e}")
         return "Server Error", 500
+    
+    # new api added
+    @app.route('/api/faculty-info', methods=['GET'])
+def api_faculty_info():
+    # 1. Security Check
+    user_data = verify_token(required_role='faculty')
+    if not user_data:
+        return {"error": "Unauthorized"}, 401
+
+    try:
+        # 2. Get faculty department_id
+        fac_res = supabase.table('faculty') \
+            .select('department_id') \
+            .eq('id', user_data['user_id']) \
+            .single().execute()
+
+        dept_id = fac_res.data['department_id']
+
+        # 3. Get department name
+        dept_res = supabase.table('departments') \
+            .select('name') \
+            .eq('id', dept_id) \
+            .single().execute()
+
+        return {"department": dept_res.data['name']}, 200
+
+    except Exception as e:
+        print(f"Faculty Info Error: {e}")
+        return {"error": "Database error"}, 500
 
 # ==========================================
 # CHANGE PASSWORD ROUTES
