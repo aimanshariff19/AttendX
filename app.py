@@ -204,6 +204,8 @@ def hod_dashboard():
         sub_res = supabase.table('class_sessions').select(
             'subject_id, semester, section, subjects(name, code), faculty(name)'
         ).eq('department_id', dept_id).execute()
+        
+        print("SUBJECT RAW DATA:", sub_res.data)S
 
         subjects_map = {}
 
