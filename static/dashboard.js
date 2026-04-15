@@ -1,8 +1,3 @@
-if (typeof allSubjects === "undefined") {
-    console.warn("⚠ allSubjects not received from backend");
-    window.allSubjects = [];
-}
-
 /* -------- SAFE TEXT HELPER -------- */
 function setText(id, value) {
     const el = document.getElementById(id);
@@ -55,7 +50,7 @@ function loadFacultyDetails() {
     console.log("🔥 Faculty Data:", faculty);
 
     if (!faculty || typeof faculty !== "object") {
-        console.error("❌ Faculty data missing");
+        console.error("❌ Faculty data missing or invalid");
         return;
     }
 
@@ -77,32 +72,25 @@ function loadFacultyDetails() {
 
 /* -------- LOAD COURSE CARDS -------- */
 function loadCourseCards() {
-    console.log("📚 Subjects (FINAL):", allSubjects);
+    console.log("📚 Subjects:", rawSubjects);
 
     const container = document.getElementById("courseCards");
     if (!container) return;
 
-    // 🔥 SAFETY CHECK
-    if (typeof allSubjects === "undefined") {
-        console.error("❌ allSubjects not defined from backend");
-        container.innerHTML = "<p style='opacity:0.7;'>Data not loaded</p>";
-        return;
-    }
-
-    if (!Array.isArray(allSubjects) || allSubjects.length === 0) {
-        console.warn("⚠ No subjects found");
+    if (!Array.isArray(rawSubjects) || rawSubjects.length === 0) {
         container.innerHTML = "<p style='opacity:0.7;'>No courses assigned</p>";
         setText("courseCount", "0");
         return;
     }
 
-    setText("courseCount", allSubjects.length);
+    setText("courseCount", rawSubjects.length);
 
     container.innerHTML = "";
 
-    allSubjects.forEach((course, index) => {
+    rawSubjects.forEach((course, index) => {
         console.log("➡️ Course:", course);
 
+        // SAFE DATA EXTRACTION
         const name = course.name || course.subject_name || "Unknown";
         const id = course.id || course.subject_id || "0";
         const code = course.code || course.subject_code || "N/A";
@@ -111,13 +99,13 @@ function loadCourseCards() {
         card.className = "subject-card";
 
         card.innerHTML = `
-            <h4>${name}</h4>
-            <p>Code: ${code}</p>
+    <h4>${name}</h4>
+    <p>Code: ${code}</p>
 
-            <button onclick="openCourse('${name}', '${id}', '/attendance', this)">
-                <span>Take Attendance</span>
-            </button>
-        `;
+   <button onclick="openCourse('${name}', '${id}', '/attendance', this)">
+        <span>Take Attendance</span>
+    </button>
+`;
 
         // Animation
         card.style.opacity = "0";
@@ -136,7 +124,6 @@ function loadCourseCards() {
 /* -------- OPEN COURSE -------- */
 function openCourse(subjectName, subjectId, route, btn) {
     console.log("🚀 Opening:", subjectName, subjectId);
-
     setBtnLoading(btn, "Opening...");
 
     document.querySelector(".dashboard")?.classList.add("page-exit");
@@ -144,6 +131,7 @@ function openCourse(subjectName, subjectId, route, btn) {
     setTimeout(() => {
         localStorage.setItem("current_subject_id", subjectId);
         localStorage.setItem("current_subject_name", subjectName);
+
         window.location.href = route;
     }, 400);
 }
