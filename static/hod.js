@@ -4,12 +4,12 @@ function setText(id, value) {
     if (el) el.innerHTML = value || "0";
 }
 
-/* -------- RIPPLE EFFECT -------- */
+/* -------- RIPPLE + SPINNER -------- */
 document.addEventListener("click", function (e) {
     const btn = e.target.closest("button");
     if (!btn) return;
 
-    // RIPPLE
+    // Ripple
     const circle = document.createElement("span");
     circle.classList.add("ripple");
 
@@ -20,7 +20,7 @@ document.addEventListener("click", function (e) {
     btn.appendChild(circle);
     setTimeout(() => circle.remove(), 600);
 
-    // 🔥 ADD SPINNER (AUTO FOR ALL BUTTONS)
+    // Spinner
     if (!btn.classList.contains("loading")) {
         btn.classList.add("loading");
 
@@ -28,7 +28,6 @@ document.addEventListener("click", function (e) {
         spinner.className = "btn-spinner";
         btn.appendChild(spinner);
 
-        // auto remove after 600ms (or remove manually in functions)
         setTimeout(() => {
             btn.classList.remove("loading");
             spinner.remove();
@@ -36,22 +35,28 @@ document.addEventListener("click", function (e) {
     }
 });
 
-/* -------- GLOBAL DATA -------- */
-let allSubjects = []; // 🔥 this will store subjects from backend
+/* -------- SAFE DATA (FROM FLASK) -------- */
+// 🔥 IMPORTANT: this comes from HTML
+// const allSubjects = {{ subjects | tojson | safe }};
+
+if (typeof allSubjects === "undefined") {
+    console.warn("⚠ allSubjects not found from backend");
+    window.allSubjects = []; // fallback to avoid crash
+}
 
 /* -------- LOAD DASHBOARD -------- */
 function loadHodDashboard() {
     // Profile
-    setText("hodName", `Dr. ${hodName}`);
-    setText("hodDept", `<span style="opacity:0.8">Head of</span> ${deptName}`);
+    setText("hodName", `Dr. ${hodName || ""}`);
+    setText("hodDept", `<span style="opacity:0.8">Head of</span> ${deptName || ""}`);
 
     // Stats
-    setText("totalFaculty", stats.faculty);
-    setText("totalStudents", stats.students);
-    setText("totalCourses", stats.courses);
-    setText("totalSections", stats.sections);
+    setText("totalFaculty", stats?.faculty);
+    setText("totalStudents", stats?.students);
+    setText("totalCourses", stats?.courses);
+    setText("totalSections", stats?.sections);
 
-    // 🔥 Load subjects instead of recent activity
+    // Load subjects
     loadSubjects();
 }
 
@@ -62,20 +67,20 @@ function loadSubjects() {
 
     container.innerHTML = "";
 
-    if (!allSubjects || allSubjects.length === 0) {
+    if (!window.allSubjects || window.allSubjects.length === 0) {
         container.innerHTML = "<p style='opacity:0.7;'>No subjects found.</p>";
         return;
     }
 
-    allSubjects.forEach((sub) => {
+    window.allSubjects.forEach((sub) => {
         const card = document.createElement("div");
         card.className = "subject-card";
 
         card.innerHTML = `
-            <h3>${sub.name}</h3>
-            <p>${sub.code}</p>
-            <p>Sem ${sub.sem} • Sec ${sub.section}</p>
-            <p style="margin-bottom:10px;">Prof. ${sub.faculty}</p>
+            <h3>${sub.name || sub.subject_name || "N/A"}</h3>
+            <p>${sub.code || sub.subject_code || ""}</p>
+            <p>Sem ${sub.sem || ""} • Sec ${sub.section || ""}</p>
+            <p style="margin-bottom:10px;">Prof. ${sub.faculty || sub.faculty_name || ""}</p>
 
             <button onclick="openSubject('${sub.id}')">
                 View
@@ -93,7 +98,7 @@ function applyFilters() {
     const sem = document.getElementById("filterSem").value;
     const section = document.getElementById("filterSection").value;
 
-    const filtered = allSubjects.filter(sub => {
+    const filtered = window.allSubjects.filter(sub => {
         return (
             (!dept || sub.dept == dept) &&
             (!program || sub.program == program) &&
@@ -110,7 +115,7 @@ function renderFilteredSubjects(list) {
     const container = document.getElementById("courseCards");
     container.innerHTML = "";
 
-    if (list.length === 0) {
+    if (!list || list.length === 0) {
         container.innerHTML = "<p style='opacity:0.7;'>No matching subjects.</p>";
         return;
     }
@@ -120,10 +125,10 @@ function renderFilteredSubjects(list) {
         card.className = "subject-card";
 
         card.innerHTML = `
-            <h3>${sub.name}</h3>
-            <p>${sub.code}</p>
-            <p>Sem ${sub.sem} • Sec ${sub.section}</p>
-            <p style="margin-bottom:10px;">Prof. ${sub.faculty}</p>
+            <h3>${sub.name || sub.subject_name || "N/A"}</h3>
+            <p>${sub.code || sub.subject_code || ""}</p>
+            <p>Sem ${sub.sem || ""} • Sec ${sub.section || ""}</p>
+            <p style="margin-bottom:10px;">Prof. ${sub.faculty || sub.faculty_name || ""}</p>
 
             <button onclick="openSubject('${sub.id}')">
                 View
