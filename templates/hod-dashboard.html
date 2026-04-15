@@ -5,145 +5,187 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AttendX / HOD Dashboard</title>
-    
+
     <style>
         /* ===== RESET & BODY ===== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: linear-gradient(135deg, #1e1b4b, #312e81); 
-            color: white; 
-            min-height: 100vh; 
-            padding: 30px 20px; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            color: white;
+            min-height: 100vh;
+            padding: 30px 20px;
         }
 
         /* ===== MAIN DASHBOARD CONTAINER ===== */
-        .dashboard { 
-            max-width: 950px; 
-            margin: 0 auto; 
-            padding: 26px; 
-            background: rgba(255, 255, 255, 0.05); 
-            border-radius: 18px; 
-            backdrop-filter: blur(20px); 
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6); 
+        .dashboard {
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 26px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
         }
 
         /* ===== HEADER ===== */
-        .header-actions { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 24px; 
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
         }
-        
-        h1 { 
-            font-size: 26px; 
-            font-weight: 600; 
-            background: linear-gradient(90deg, #c7d2fe, #a78bfa, #6366f1); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            text-shadow: 0 0 8px rgba(139, 92, 246, 0.25); 
+
+        h1 {
+            font-size: 26px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #c7d2fe, #a78bfa, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 8px rgba(139, 92, 246, 0.25);
         }
 
         /* ===== LOGOUT BUTTON ===== */
-        .logout-btn { 
+        .logout-btn {
             position: relative;
             overflow: hidden;
-            padding: 10px 20px; 
-            border-radius: 12px; 
-            border: none; 
-            font-size: 13px; 
-            font-weight: 600; 
-            background: linear-gradient(135deg, #ef4444, #dc2626); 
-            color: white; 
-            cursor: pointer; 
-            transition: 0.25s; 
-            box-shadow: 0 8px 16px rgba(239, 68, 68, 0.3); 
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            cursor: pointer;
+            transition: 0.25s;
+            box-shadow: 0 8px 16px rgba(239, 68, 68, 0.3);
         }
-        .logout-btn:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 12px 20px rgba(239, 68, 68, 0.4); 
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px rgba(239, 68, 68, 0.4);
         }
 
         /* ===== GLASS CARD ===== */
-        .card { 
-            background: rgba(255, 255, 255, 0.05); 
-            padding: 24px; 
-            border-radius: 16px; 
-            border: 1px solid rgba(255,255,255,0.1); 
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             margin-bottom: 24px;
         }
 
         /* ===== PROFILE INFO ===== */
-        .profile-header { 
-            margin-bottom: 24px; 
-            border-bottom: 1px solid rgba(255,255,255,0.1); 
-            padding-bottom: 18px; 
+        .profile-header {
+            margin-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 18px;
         }
-        .profile-header h2 { font-size: 24px; margin-bottom: 4px; font-weight: 700; }
-        .profile-header p { font-size: 15px; color: #a78bfa; font-weight: 500; }
+
+        .profile-header h2 {
+            font-size: 24px;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .profile-header p {
+            font-size: 15px;
+            color: #a78bfa;
+            font-weight: 500;
+        }
 
         /* ===== HOD STATS GRID ===== */
-        .stats-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
-            gap: 16px; 
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
         }
-        .stat-box { 
-            background: rgba(0, 0, 0, 0.2); 
-            padding: 20px; 
-            border-radius: 14px; 
-            text-align: center; 
-            border: 1px solid rgba(255,255,255,0.05); 
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 14px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
             transition: 0.3s;
         }
+
         .stat-box:hover {
             background: rgba(0, 0, 0, 0.3);
             transform: translateY(-3px);
             border-color: rgba(167, 139, 250, 0.3);
         }
-        .stat-box span { 
-            display: block; 
-            font-size: 32px; 
-            font-weight: 700; 
-            color: #c7d2fe; 
-            margin-bottom: 6px; 
+
+        .stat-box span {
+            display: block;
+            font-size: 32px;
+            font-weight: 700;
+            color: #c7d2fe;
+            margin-bottom: 6px;
         }
-        .stat-box p { 
-            font-size: 12px; 
-            opacity: 0.7; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px; 
+
+        .stat-box p {
+            font-size: 12px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             font-weight: 600;
         }
 
         /* ===== ACTIVITY SECTION ===== */
-        #courseCards { 
-            display: grid; 
-            grid-template-columns: 1fr; 
-            gap: 12px; 
+        #courseCards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
         }
 
         /* ===== LOADING SPINNER ===== */
-        .logout-btn.loading { color: transparent; pointer-events: none; }
-        .logout-btn.loading::after { 
-            content: ""; position: absolute; left: 50%; top: 50%; 
-            width: 16px; height: 16px; 
-            border: 2px solid rgba(255,255,255,0.3); 
-            border-top-color: white; border-radius: 50%; 
-            transform: translate(-50%, -50%); 
-            animation: spin 0.6s linear infinite; 
+        .logout-btn.loading {
+            color: transparent;
+            pointer-events: none;
         }
-        @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        .logout-btn.loading::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
 
         /* ===== RIPPLE EFFECT ===== */
-        .ripple { 
-            position: absolute; border-radius: 50%; 
-            background: rgba(255,255,255,0.4); 
-            transform: scale(0); animation: ripple-anim 0.6s linear; 
-            pointer-events: none; 
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple-anim 0.6s linear;
+            pointer-events: none;
         }
-        @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+
+        @keyframes ripple-anim {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 
@@ -153,7 +195,9 @@
 
         <div class="header-actions">
             <h1>AttendX / HOD Dashboard</h1>
-            <button class="logout-btn" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); margin-right: 10px;" onclick="window.location.href='/hod-students'">View All Students</button>
+            <button class="logout-btn"
+                style="background: linear-gradient(135deg, #6366f1, #8b5cf6); margin-right: 10px;"
+                onclick="window.location.href='/hod-students'">View All Students</button>
             <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
 
@@ -184,15 +228,15 @@
         </div>
 
         <div id="courseCards">
-            </div>
+        </div>
 
     </div>
 
     <script>
-        const hodName = {{ hod_name | tojson }};
-        const deptName = {{ dept_name | tojson }};
-        const stats = {{ stats | tojson }};
-        const recentActivity = {{ recent | tojson }};
+        const hodName = {{ hod_name | tojson | safe }};
+        const deptName = {{ dept_name | tojson | safe }};
+        const stats = {{ stats | tojson | safe }};
+        const recentActivity = {{ recent | tojson | safe }};
     </script>
     <script src="/static/hod.js"></script>
 
