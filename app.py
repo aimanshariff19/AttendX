@@ -201,46 +201,27 @@ def hod_dashboard():
         }
 
         # 3 🔥 FETCH SUBJECTS
-        sub_res = supabase.table('class_sessions').select(
-            'subject_id, semester, section, subjects(name, code), faculty(name)'
-        ).eq('department_id', dept_id).execute()
-        
-        print("SUBJECT RAW DATA:", sub_res.data)
+        sub_res = supabase.table('subjects').select('*').eq('department_id', dept_id).execute()
 
-        subjects_map = {}
+        print("🔥 SUBJECTS FROM DB:", sub_res.data)
+
+        subjects_list = []
 
         for s in sub_res.data or []:
-            if not s.get('subjects'):
-                continue
-
-            key = s['subject_id']
-
-            if key not in subjects_map:
-                subjects_map[key] = {
-                    'id': key,
-                    'name': s['subjects']['name'],
-                    'code': s['subjects']['code'],
-                    'faculty': s['faculty']['name'] if s.get('faculty') else "Unknown",
-                    'sem': s.get('semester'),
-                    'section': s.get('section'),
-                    'dept': dept_name,
-                    'program': "BTech"
-                }
-
-        subjects_list = list(subjects_map.values())
-
-        # ✅ FIXED INDENTATION HERE
-        return render_template(
-            'hod-dashboard.html', 
-            hod_name=hod_name, 
-            dept_name=dept_name, 
-            stats=stats, 
-            subjects=subjects_list
-        )
+            subjects_list.append({
+                'id': s['id'],
+                'name': s['name'],
+                'code': s['code'],
+                'faculty': "Not Assigned",
+                'sem': s.get('semester'),
+                'section': "-",
+                'dept': dept_name,
+                'program': "BTech"
+            })
         
     except Exception as e:
         print(f"HOD Dashboard Error: {e}")
-    return "Server Error", 500
+        return "Server Error", 500
         
 
 @app.route('/hod-students', methods=['GET'])
