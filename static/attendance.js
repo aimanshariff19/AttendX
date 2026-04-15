@@ -291,7 +291,4 @@ window.onload = function () {
     document.getElementById("classTime")?.addEventListener("change", calculateTimeRange);
     document.getElementById("numClasses")?.addEventListener("change", calculateTimeRange);
 
-    setTimeout(() => {
-        loadStudents();
-    }, 300);
 };
