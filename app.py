@@ -228,9 +228,9 @@ def hod_dashboard():
             subjects=subjects_list
         )
 
-        except Exception as e:
-            print(f"HOD Dashboard Error: {e}")
-            return "Server Error", 500
+    except Exception as e:
+        print(f"HOD Dashboard Error: {e}")
+        return "Server Error", 500
         
 
 @app.route('/hod-students', methods=['GET'])
