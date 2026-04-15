@@ -220,7 +220,6 @@
                 transform: rotate(360deg);
             }
         }
-        
     </style>
 </head>
 
@@ -277,8 +276,7 @@
         const deptName = {{ dept_name | tojson | safe }};
         const stats = {{ stats | tojson | safe }};
 
-        // 🔥 TEMP FIX so JS doesn’t crash
-        const allSubjects = [];
+        const allSubjects = {{ subjects | tojson | safe }};  // 🔥 ADD THIS
     </script>
 
     <script src="/static/hod.js"></script>
