@@ -272,10 +272,10 @@
     </div>
 
     <script>
-        const hodName = {{ hod_name | tojson | safe }};
-        const deptName = {{ dept_name | tojson | safe }};
-        const stats = {{ stats | tojson | safe }};
-        const allSubjects = {{ subjects | tojson | safe }};  // 🔥 THIS LINE
+        const faculty = {{ faculty | tojson | safe }};
+        const sectionCount = {{ section_count | tojson | safe }};
+        const studentCount = {{ student_count | tojson | safe }};
+        const allSubjects = {{ subjects | tojson | safe }};   // 🔥 THIS LINE IS MISSING
     </script>
 
     <script src="/static/hod.js"></script>
