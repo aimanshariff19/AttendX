@@ -200,38 +200,21 @@ def hod_dashboard():
             'sections': len(sessions)
         }
 
-        # 3 🔥 FETCH SUBJECTS
-        sub_res = supabase.table('subjects').select('*').execute()
+        # 3. Fetch Recent Department Activity
+        recent_res = supabase.table('class_sessions').select(
+            'session_date, start_time, faculty(name), subjects(name, code)'
+        ).eq('department_id', dept_id).order('created_at', desc=True).limit(6).execute()
 
-        print("🔥 SUBJECTS FROM DB:", sub_res.data)
-
-        subjects_list = []
-
-        for s in sub_res.data or []:
-            subjects_list.append({
-                'id': s.get('id'),
-                'name': s.get('name', 'Unknown'),
-                'code': s.get('code', 'N/A'),
-                'faculty': "Not Assigned",
-                'sem': s.get('semester'),
-                'section': "-",
-                'dept': dept_name,
-                'program': "BTech"
-            })
-
-        # ✅ THIS WAS MISSING
         return render_template(
             'hod-dashboard.html', 
             hod_name=hod_name, 
             dept_name=dept_name, 
             stats=stats, 
-            subjects=subjects_list
+            recent=recent_res.data
         )
-
     except Exception as e:
         print(f"HOD Dashboard Error: {e}")
         return "Server Error", 500
-        
 
 @app.route('/hod-students', methods=['GET'])
 def hod_students_page():
