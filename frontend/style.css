@@ -59,7 +59,7 @@ body::after {
 /* ===== LOGIN CONTAINER ===== */
 .login-container {
     width: min(420px, calc(100vw - 32px));
-    padding: 44px 32px;
+    padding: 30px 32px;
     border-radius: 30px;
     background: rgba(15, 23, 42, 0.74);
     backdrop-filter: blur(22px);
@@ -67,7 +67,7 @@ body::after {
     box-shadow: 0 34px 80px rgba(0, 0, 0, 0.42);
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
     color: white;
     animation: fadeIn 0.7s ease both;
     position: relative;
