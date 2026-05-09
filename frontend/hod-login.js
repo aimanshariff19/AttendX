@@ -82,9 +82,21 @@ function hodLogin() {
 /* Initialize HOD Login */
 window.addEventListener("load", () => {
     const usernameInput = document.getElementById("username")
+    const passwordInput = document.getElementById("password")
+    const eyeIcon = document.getElementById("eyeIcon")
     const rememberCheckbox = document.querySelector('.remember input[type="checkbox"]')
     const forgotLink = document.querySelector('.forgot')
     const form = document.getElementById("loginForm")
+
+    // Password Toggle
+    if (eyeIcon && passwordInput) {
+        eyeIcon.onclick = () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password'
+            passwordInput.setAttribute('type', type)
+            eyeIcon.classList.toggle('fa-eye')
+            eyeIcon.classList.toggle('fa-eye-slash')
+        }
+    }
 
     // Restore saved credentials
     const savedId = localStorage.getItem('hod_id_saved')
