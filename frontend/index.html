@@ -70,7 +70,9 @@
             font-size: 36px;
             margin: 0;
             background: linear-gradient(90deg, #fff, #a78bfa);
+            background-clip: text;
             -webkit-background-clip: text;
+            color: #fff; /* Fallback */
             -webkit-text-fill-color: transparent;
         }
 
@@ -116,7 +118,9 @@
             font-size: 48px;
             margin-bottom: 25px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background-clip: text;
             -webkit-background-clip: text;
+            color: var(--primary); /* Fallback */
             -webkit-text-fill-color: transparent;
         }
 
