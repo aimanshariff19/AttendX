@@ -223,5 +223,6 @@ function redirectTo(url) {
 }
 
 function goHome() {
-    window.location.href = '/';
+    console.log("Navigating to portal...");
+    window.location.assign(window.location.origin + '/');
 }
