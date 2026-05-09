@@ -6,10 +6,13 @@ window.__CHANGE_PASS_RUNNING__ = true
 
 /* -------- INIT -------- */
 document.addEventListener("DOMContentLoaded", async () => {
-    const user = await requireAuth('student')
+    // Determine which role to check based on the referrer or context
+    // Default to student but could be faculty/hod
+    const role = localStorage.getItem('user_role') || 'student';
+    const user = await requireAuth(role)
     if (!user) return
 
-    console.log("🔥 Change Password Loaded")
+    console.log("🔥 Change Password Loaded for " + role)
 
     const updateBtn = document.getElementById("updateBtn")
     const backBtn = document.getElementById("backBtn")
@@ -24,9 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     function toggleEye(inputId, eyeId) {
         const input = document.getElementById(inputId)
         const eye = document.getElementById(eyeId)
-
         if (!input || !eye) return
-
         eye.addEventListener("click", () => {
             input.type = input.type === "password" ? "text" : "password"
         })
@@ -37,128 +38,37 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     /* 📊 PASSWORD STRENGTH */
     const fill = document.getElementById("strengthFill")
-    const text = document.getElementById("strengthText")
-
-    /* 📋 RULES */
-    const ruleLen = document.getElementById("ruleLen")
-    const ruleUpper = document.getElementById("ruleUpper")
-    const ruleNum = document.getElementById("ruleNum")
-    const ruleSpecial = document.getElementById("ruleSpecial")
-
     if (newPass) {
         newPass.addEventListener("input", () => {
-
             let val = newPass.value
             let score = 0
-
-            const checks = {
-                len: val.length >= 4,
-                upper: /[A-Z]/.test(val),
-                num: /[0-9]/.test(val),
-                special: /[^A-Za-z0-9]/.test(val)
-            }
-
-            if (checks.len) score++
-            if (checks.upper) score++
-            if (checks.num) score++
-            if (checks.special) score++
-
-            /* -------- RULES UPDATE -------- */
-            ruleLen?.classList.toggle("ok", checks.len)
-            ruleUpper?.classList.toggle("ok", checks.upper)
-            ruleNum?.classList.toggle("ok", checks.num)
-            ruleSpecial?.classList.toggle("ok", checks.special)
+            if (val.length >= 4) score++
+            if (/[A-Z]/.test(val)) score++
+            if (/[0-9]/.test(val)) score++
+            if (/[^A-Za-z0-9]/.test(val)) score++
 
             const widths = ["0%", "25%", "50%", "75%", "100%"]
-            if (fill) fill.style.width = widths[score]
-
-            if (!text || !fill) return
-
-            if (score <= 1) {
-                fill.style.background = "#ef4444"
-                text.innerText = "Weak"
-            } else if (score === 2) {
-                fill.style.background = "#f59e0b"
-                text.innerText = "Medium"
-            } else {
-                fill.style.background = "#22c55e"
-                text.innerText = "Strong"
+            const colors = ["#ef4444", "#f59e0b", "#f59e0b", "#22c55e", "#22c55e"]
+            
+            if (fill) {
+                fill.style.width = widths[score]
+                fill.style.background = colors[score]
             }
         })
     }
-
-    /* -------- ✔ PASSWORD MATCH -------- */
-    const matchText = document.getElementById("matchText")
-
-    function checkMatch() {
-        if (!confirmPass.value) {
-            matchText.innerText = ""
-            return
-        }
-
-        if (newPass.value === confirmPass.value) {
-            matchText.innerText = "✔ Passwords match"
-            matchText.className = "match ok"
-        } else {
-            matchText.innerText = "❌ Passwords do not match"
-            matchText.className = "match no"
-        }
-    }
-
-    newPass?.addEventListener("input", checkMatch)
-    confirmPass?.addEventListener("input", checkMatch)
-
-    /* -------- 🌊 RIPPLE EFFECT -------- */
-    document.addEventListener("click", function (e) {
-        const btn = e.target.closest("button")
-        if (!btn) return
-
-        const circle = document.createElement("span")
-        const diameter = Math.max(btn.clientWidth, btn.clientHeight)
-
-        circle.style.width = circle.style.height = diameter + "px"
-        circle.style.left = e.clientX - btn.offsetLeft - diameter / 2 + "px"
-        circle.style.top = e.clientY - btn.offsetTop - diameter / 2 + "px"
-        circle.classList.add("ripple")
-
-        const ripple = btn.querySelector(".ripple")
-        if (ripple) ripple.remove()
-
-        btn.appendChild(circle)
-    })
-
 })
-
 
 /* -------- MESSAGE -------- */
 function showMessage(text, type) {
-
     const box = document.getElementById("messageBox")
     if (!box) return
-
     box.innerText = text
     box.className = "message-box " + type
     box.style.display = "block"
-
     setTimeout(() => {
         box.style.display = "none"
-    }, 2500)
+    }, 3000)
 }
-
-
-/* -------- SHAKE -------- */
-function shakeForm() {
-
-    const card = document.querySelector(".card")
-    if (!card) return
-
-    card.style.animation = "shake 0.4s"
-
-    setTimeout(() => {
-        card.style.animation = ""
-    }, 400)
-}
-
 
 /* -------- UPDATE PASSWORD -------- */
 async function updatePassword() {
@@ -171,33 +81,23 @@ async function updatePassword() {
     const newPass = newPassEl?.value.trim()
     const confirmPass = confirmPassEl?.value.trim()
 
-    /* clear errors */
-    ;[oldPassEl, newPassEl, confirmPassEl].forEach(i => i?.classList.remove("input-error"))
-
     if (!oldPass || !newPass || !confirmPass) {
-        showMessage("⚠ Fill all fields", "error")
-        shakeForm()
-        return
+        return showMessage("⚠ Please fill all fields", "error")
     }
 
     if (newPass.length < 4) {
-        newPassEl.classList.add("input-error")
-        showMessage("⚠ Password too short", "error")
-        shakeForm()
-        return
+        return showMessage("⚠ Password must be at least 4 characters", "error")
     }
 
     if (newPass !== confirmPass) {
-        confirmPassEl.classList.add("input-error")
-        showMessage("❌ Passwords do not match", "error")
-        shakeForm()
-        return
+        return showMessage("❌ Passwords do not match", "error")
     }
 
-    /* -------- 🔄 LOADING -------- */
+    // 🔥 START LOADING
     if (btn) {
+        if (!btn.dataset.original) btn.dataset.original = btn.innerHTML
         btn.classList.add("loading")
-        btn.disabled = true
+        btn.innerHTML = `<span>Updating...</span><span class="btn-spinner"></span>`
     }
 
     try {
@@ -206,27 +106,27 @@ async function updatePassword() {
             body: JSON.stringify({ oldPassword: oldPass, newPassword: newPass })
         })
 
-        /* -------- 🎉 SUCCESS OVERLAY -------- */
-        const overlay = document.getElementById("successOverlay")
-        if (overlay) overlay.classList.add("show")
-
+        showMessage("✅ Password updated successfully!", "success")
+        
         setTimeout(() => {
-            window.location.href = "student-dashboard.html"
-        }, 1200)
+            goBack()
+        }, 1500)
     } catch (err) {
         console.error(err)
-        oldPassEl.classList.add("input-error")
         showMessage(err.body?.msg || "❌ Failed to update password", "error")
-        shakeForm()
+        
+        // 🛑 STOP LOADING
         if (btn) {
             btn.classList.remove("loading")
-            btn.innerText = "Update Password"
+            btn.innerHTML = btn.dataset.original
         }
     }
 }
 
-
 /* -------- BACK -------- */
 function goBack() {
-    window.location.href = "student-dashboard.html"
+    const role = localStorage.getItem('user_role') || 'student'
+    if (role === 'hod') window.location.href = "hod-dashboard.html"
+    else if (role === 'faculty') window.location.href = "dashboard.html"
+    else window.location.href = "student-dashboard.html"
 }
