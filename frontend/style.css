@@ -239,9 +239,9 @@ body.login-page.student .input-group input:focus {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 0 2px rgba(167, 139, 250, 0.18);
 }
 
-body.login-page.hod .input-group input:focus {
-    border-color: rgba(52, 211, 153, 0.75);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 0 2px rgba(52, 211, 153, 0.18);
+body.login-page.student .input-group input:focus {
+    border-color: rgba(167, 139, 250, 0.75);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 0 2px rgba(167, 139, 250, 0.18);
 }
 
 /* ===== PASSWORD ===== */
