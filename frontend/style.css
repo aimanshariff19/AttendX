@@ -196,13 +196,14 @@ body.login-page.student .input-group input:focus {
 
 .eye {
     position: absolute;
-    right: 14px;
-    top: 34px;
-    color: rgba(255, 255, 255, 0.65);
+    right: 18px;
+    bottom: 14px;
     cursor: pointer;
-    transition: color 0.25s ease;
-    pointer-events: auto;
-    z-index: 2;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 18px;
+    z-index: 99 !important;
+    display: block !important;
+    transition: 0.2s;
 }
 
 .eye:hover {
@@ -262,7 +263,7 @@ body.login-page.student .input-group input:focus {
     justify-content: center;
     gap: 8px;
     transition: 0.3s;
-    padding: 8px 16px;
+    padding: 6px 8px;
     border-radius: 12px;
     text-decoration: none;
 }
