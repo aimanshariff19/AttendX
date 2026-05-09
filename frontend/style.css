@@ -252,9 +252,9 @@ body.login-page.student .input-group input:focus {
 
 
 .forgot {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
     cursor: pointer;
     font-size: 14px;
     display: inline-flex;
@@ -262,7 +262,7 @@ body.login-page.student .input-group input:focus {
     justify-content: center;
     gap: 6px;
     transition: 0.3s;
-    padding: 6px 9px;
+    padding: 4px 10px;
     border-radius: 10px;
     text-decoration: none;
 }
