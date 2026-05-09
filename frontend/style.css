@@ -253,8 +253,8 @@ body.login-page.student .input-group input:focus {
 
 
 .forgot {
-    background: transparent;
-    border: none;
+    background: transparent !important;
+    border: none !important;
     color: rgba(255, 255, 255, 0.5);
     cursor: pointer;
     font-size: 13px;
@@ -264,6 +264,9 @@ body.login-page.student .input-group input:focus {
     transition: 0.3s;
     padding: 0;
     text-decoration: none;
+    width: auto !important;
+    height: auto !important;
+    min-height: unset !important;
 }
 
 .forgot:hover {
