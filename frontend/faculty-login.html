@@ -48,11 +48,14 @@
 
             <!-- EXTRA OPTIONS -->
             <div class="form-extra">
-                <div class="remember" style="display:flex; align-items:center;">
-                    <input type="checkbox" id="rememberMe" style="cursor:pointer; width:auto; margin:0;"> 
-                    <label for="rememberMe" style="font-size: 12px; color: rgba(255,255,255,0.6); margin-left: 6px; cursor: pointer; user-select: none;">Remember me</label>
+                <div class="remember">
+                    <input type="checkbox" id="rememberMe"> 
+                    <label for="rememberMe">Remember me</label>
                 </div>
-                <button type="button" onclick="window.location.href='/forgot-password.html?role=faculty'" class="forgot" style="background:none; border:none; padding:1px 4px; color:rgba(226, 232, 240, 0.4); cursor:pointer; font-size:10.5px; transition:0.25s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(226, 232, 240, 0.4)'">Forgot password?</button>
+                <button type="button" class="forgot" onclick="this.classList.add('loading'); setTimeout(() => window.location.href='/forgot-password.html?role=faculty', 150)">
+                    <span>Forgot password?</span>
+                    <span class="btn-loader"></span>
+                </button>
             </div>
 
             <!-- 🔥 BUTTON UPDATED -->
