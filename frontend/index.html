@@ -4,75 +4,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AttendX Faculty Login</title>
+    <title>AttendX / Official Portal</title>
 
     <!-- ICONS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a78bfa;
+            --dark: #0f172a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* GLOWS */
+        body::before, body::after {
+            content: "";
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            filter: blur(150px);
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        body::before { background: var(--primary); top: -200px; left: -200px; }
+        body::after { background: var(--secondary); bottom: -200px; right: -200px; }
+
+        .portal-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1000px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .logo-section {
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .logo-section img {
+            width: 100px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.5));
+        }
+
+        .logo-section h1 {
+            font-size: 36px;
+            margin: 0;
+            background: linear-gradient(90deg, #fff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-section p {
+            opacity: 0.6;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .portal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .portal-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 40px 30px;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeInUp 0.8s ease backwards;
+        }
+
+        .portal-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .portal-card i {
+            font-size: 48px;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .portal-card h2 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+        }
+
+        .portal-card p {
+            opacity: 0.5;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .portal-card:nth-child(1) { animation-delay: 0.1s; }
+        .portal-card:nth-child(2) { animation-delay: 0.2s; }
+        .portal-card:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .portal-container { padding: 20px; }
+            .logo-section h1 { font-size: 28px; }
+        }
+    </style>
 </head>
 
-<body class="login-page faculty">
+<body>
 
-    <div class="login-container">
-
-        <!-- LOGO -->
-        <img src="assets/logo.png" class="college-logo" alt="Atria Logo">
-
-        <!-- COLLEGE INFO -->
-        <div class="college-info">
-            <h2 class="college-name">Atria Institute of Technology</h2>
-            <p class="college-location">Hebbal, Bengaluru</p>
-            <p class="college-status">(Autonomous Institution)</p>
+    <div class="portal-container">
+        
+        <div class="logo-section">
+            <img src="assets/logo.png" alt="Atria Logo">
+            <h1>Atria AttendX ERP</h1>
+            <p>Select Your Access Portal</p>
         </div>
 
-        <!-- TITLE -->
-        <h3 class="system-title">AttendX Faculty Portal</h3>
+        <div class="portal-grid">
+            
+            <!-- STUDENT -->
+            <a href="student-login.html" class="portal-card">
+                <i class="fa-solid fa-user-graduate"></i>
+                <h2>Student Portal</h2>
+                <p>View your attendance & status</p>
+            </a>
 
-        <!-- FORM -->
-        <form id="loginForm" autocomplete="on">
+            <!-- FACULTY -->
+            <a href="faculty-login.html" class="portal-card">
+                <i class="fa-solid fa-chalkboard-user"></i>
+                <h2>Faculty Portal</h2>
+                <p>Mark & manage attendance</p>
+            </a>
 
-            <!-- USERNAME -->
-            <div class="input-group">
-                <label for="username">Faculty ID</label>
-                <input type="text" id="username" required autocomplete="username">
-            </div>
+            <!-- HOD -->
+            <a href="hod-login.html" class="portal-card">
+                <i class="fa-solid fa-user-tie"></i>
+                <h2>HOD Portal</h2>
+                <p>Departmental insights & reports</p>
+            </a>
 
-            <!-- PASSWORD -->
-            <div class="input-group password-field">
-                <label for="password">Password</label>
-                <input type="password" id="password" required autocomplete="current-password">
-                <i id="eyeIcon" class="fa-solid fa-eye eye"></i>
-            </div>
-
-            <!-- EXTRA OPTIONS -->
-            <div class="form-extra">
-                <label class="remember">
-                    <input type="checkbox"> Remember me
-                </label>
-                <a href="#" class="forgot">Forgot password?</a>
-            </div>
-
-            <!-- 🔥 BUTTON UPDATED -->
-            <button id="loginBtn" type="button" onclick="handleFacultyLogin(event)">
-                <span class="btn-text">Login</span>
-                <span class="btn-loader"></span>
-            </button>
-
-        </form>
-
-        <!-- ERROR -->
-        <p id="error" class="error-text"></p>
+        </div>
 
     </div>
-
-    <!-- JS -->
-    
-    <script src="utils.js"></script>
-    <script src="login.js"></script>
-    <script src="hod-login.js"></script>
-    
 
 </body>
 

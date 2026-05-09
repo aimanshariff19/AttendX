@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AttendX HOD Login</title>
+    <title>AttendX Faculty Login</title>
 
     <!-- ICONS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -28,14 +28,14 @@
         </div>
 
         <!-- TITLE -->
-        <h3 class="system-title">AttendX HOD Portal</h3>
+        <h3 class="system-title">AttendX Faculty Portal</h3>
 
         <!-- FORM -->
         <form id="loginForm" autocomplete="on">
 
             <!-- USERNAME -->
             <div class="input-group">
-                <label for="username">HOD ID</label>
+                <label for="username">Faculty ID</label>
                 <input type="text" id="username" required autocomplete="username">
             </div>
 
@@ -55,7 +55,7 @@
             </div>
 
             <!-- 🔥 BUTTON UPDATED -->
-            <button id="loginBtn" type="button" onclick="hodLogin()">
+            <button id="loginBtn" type="button" onclick="handleFacultyLogin(event)">
                 <span class="btn-text">Login</span>
                 <span class="btn-loader"></span>
             </button>
@@ -70,8 +70,8 @@
     <!-- JS -->
     
     <script src="utils.js"></script>
-    <script src="hod-login.js"></script>
-
+    <script src="login.js"></script>
+    
 </body>
 
 </html>
