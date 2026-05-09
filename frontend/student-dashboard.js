@@ -67,11 +67,11 @@ function renderStats(stats) {
 <td style="text-align:center;">${sub.conducted}</td>
 <td style="text-align:center; color:#34d399;">${sub.present}</td>
 <td style="text-align:center; color:#fb7185;">${sub.absent}</td>
-<td>
+<td style="text-align:center;">
     <div class="percent-chip" style="color:${percentColor}; background:${percentBg}; border:1px solid ${percentColor}33;">
         ${sub.percent}%
     </div>
-    <div class="bar">
+    <div class="bar" style="margin: 8px auto 0 auto; width: 80%;">
         <div class="fill" style="width:0%; background:${percentColor}; shadow: 0 0 10px ${percentColor}44;"></div>
     </div>
 </td>
