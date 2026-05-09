@@ -18,18 +18,26 @@ body {
 
 /* ===== FACULTY BACKGROUND ===== */
 body.login-page.faculty {
-    background: radial-gradient(circle at top left, rgba(79, 70, 229, 0.28), transparent 28%),
-        radial-gradient(circle at bottom right, rgba(124, 58, 237, 0.20), transparent 26%),
-        linear-gradient(135deg, #020617, #111827);
+    background: radial-gradient(circle at top left, rgba(16, 185, 129, 0.24), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(20, 184, 166, 0.18), transparent 24%),
+        linear-gradient(135deg, #022c22, #064e3b);
     animation: bgShift 18s ease infinite;
 }
 
 /* ===== STUDENT BACKGROUND ===== */
 body.login-page.student {
-    background: radial-gradient(circle at top left, rgba(139, 92, 246, 0.24), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.18), transparent 24%),
-        linear-gradient(135deg, #0f172a, #1f2937);
+  background: radial-gradient(circle at top left, rgba(16, 185, 129, 0.24), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(20, 184, 166, 0.18), transparent 24%),
+        linear-gradient(135deg, #022c22, #064e3b);
     animation: bgShift 18s ease infinite reverse;
+}
+
+/* ===== HOD BACKGROUND ===== */
+body.login-page.hod {
+    background: radial-gradient(circle at top left, rgba(16, 185, 129, 0.24), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(20, 184, 166, 0.18), transparent 24%),
+        linear-gradient(135deg, #022c22, #064e3b);
+    animation: bgShift 18s ease infinite;
 }
 
 /* ===== BACKGROUND GLOW ===== */
@@ -161,6 +169,10 @@ body.login-page.student .college-logo:hover {
     filter: brightness(1.4) drop-shadow(0 0 18px rgba(167, 139, 250, 0.72));
 }
 
+body.login-page.hod .college-logo:hover {
+    filter: brightness(1.4) drop-shadow(0 0 18px rgba(52, 211, 153, 0.72));
+}
+
 /* ===== TEXT ===== */
 .college-name {
     text-align: center;
@@ -225,6 +237,11 @@ body.login-page.faculty .input-group input:focus {
 body.login-page.student .input-group input:focus {
     border-color: rgba(167, 139, 250, 0.75);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 0 2px rgba(167, 139, 250, 0.18);
+}
+
+body.login-page.hod .input-group input:focus {
+    border-color: rgba(52, 211, 153, 0.75);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 0 2px rgba(52, 211, 153, 0.18);
 }
 
 /* ===== PASSWORD ===== */
@@ -375,6 +392,15 @@ body.login-page.student button {
 
 body.login-page.student button:hover {
     box-shadow: 0 18px 40px rgba(139, 92, 246, 0.45);
+}
+
+body.login-page.hod button {
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 14px 30px rgba(16, 185, 129, 0.28);
+}
+
+body.login-page.hod button:hover {
+    box-shadow: 0 18px 40px rgba(16, 185, 129, 0.45);
 }
 
 button:active {
