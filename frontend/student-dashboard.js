@@ -112,34 +112,6 @@ function renderStats(stats) {
 `
 }
 
-function renderNotifications(notifications) {
-    let box = document.getElementById("notificationBox")
-
-    if (!box) {
-        box = document.createElement("div")
-        box.id = "notificationBox"
-        box.className = "card"
-        const profileCard = document.querySelector(".card")
-        profileCard?.insertAdjacentElement("afterend", box)
-    }
-
-    const unread = (notifications || []).slice(0, 5)
-
-    if (unread.length === 0) {
-        box.innerHTML = "<p><strong>Alerts:</strong> No new alerts</p>"
-        return
-    }
-
-    box.innerHTML = `
-<p><strong>Alerts</strong></p>
-${unread.map(n => `
-    <p style="grid-column:1/-1;color:${n.type === "critical" ? "#ef4444" : "#f59e0b"}">
-        ${n.message}
-    </p>
-`).join("")}
-`
-}
-
 function openChangePassword() {
     window.location.href = "change-password.html"
 }
@@ -180,13 +152,6 @@ async function loadStudentDashboard() {
     try {
         const stats = await apiFetch('/student/stats')
         renderStats(stats)
-    } catch (err) {
-        console.error(err)
-    }
-
-    try {
-        const notifications = await apiFetch('/student/notifications')
-        renderNotifications(notifications)
     } catch (err) {
         console.error(err)
     }

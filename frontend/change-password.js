@@ -197,8 +197,7 @@ async function updatePassword() {
     /* -------- 🔄 LOADING -------- */
     if (btn) {
         btn.classList.add("loading")
-        btn.dataset.originalText = btn.innerText
-        btn.innerText = ""
+        btn.disabled = true
     }
 
     try {
