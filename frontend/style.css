@@ -18,25 +18,25 @@ body {
 
 /* ===== FACULTY BACKGROUND ===== */
 body.login-page.faculty {
-    background: radial-gradient(circle at top left, rgba(16, 185, 129, 0.24), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(20, 184, 166, 0.18), transparent 24%),
-        linear-gradient(135deg, #022c22, #064e3b);
+    background: radial-gradient(circle at top left, rgba(79, 70, 229, 0.28), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(124, 58, 237, 0.20), transparent 26%),
+        linear-gradient(135deg, #020617, #111827);
     animation: bgShift 18s ease infinite;
 }
 
 /* ===== STUDENT BACKGROUND ===== */
 body.login-page.student {
-  background: radial-gradient(circle at top left, rgba(16, 185, 129, 0.24), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(20, 184, 166, 0.18), transparent 24%),
-        linear-gradient(135deg, #022c22, #064e3b);
+    background: radial-gradient(circle at top left, rgba(139, 92, 246, 0.24), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.18), transparent 24%),
+        linear-gradient(135deg, #0f172a, #1f2937);
     animation: bgShift 18s ease infinite reverse;
 }
 
 /* ===== HOD BACKGROUND ===== */
 body.login-page.hod {
-    background: radial-gradient(circle at top left, rgba(16, 185, 129, 0.24), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(20, 184, 166, 0.18), transparent 24%),
-        linear-gradient(135deg, #022c22, #064e3b);
+      background: radial-gradient(circle at top left, rgba(139, 92, 246, 0.24), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.18), transparent 24%),
+        linear-gradient(135deg, #0f172a, #1f2937);
     animation: bgShift 18s ease infinite;
 }
 
