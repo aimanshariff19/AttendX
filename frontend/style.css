@@ -250,17 +250,17 @@ body.login-page.student .input-group input:focus {
 }
 
 .forgot {
-    background: none;
+    background: transparent;
     border: none;
-    padding: 0;
-    color: #a78bfa;
-    font-weight: 500;
+    color: rgba(255, 255, 255, 0.4);
     cursor: pointer;
-    font-size: 12px;
-    transition: 0.25s;
+    font-size: 11px;
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    transition: 0.3s;
+    padding: 5px 10px;
+    border-radius: 10px;
     text-decoration: none;
 }
 
