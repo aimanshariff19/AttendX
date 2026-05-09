@@ -15,7 +15,7 @@ function setBtnLoading(btn, text = "Loading...") {
     }
 
     btn.classList.add("loading")
-    btn.innerHTML = `<span>${text}</span>`
+    btn.innerHTML = `<span>${text}</span><span class="btn-spinner"></span>`
 }
 
 /* -------- 💧 RIPPLE -------- */
@@ -42,7 +42,9 @@ function predictAttendance(present, total, target = 75) {
         let percent = ((present + needed) / (total + needed)) * 100
         if (percent >= target) return needed
         needed++
+        if (needed > 100) break // safety
     }
+    return needed
 }
 
 function renderStats(stats) {
@@ -54,27 +56,23 @@ function renderStats(stats) {
 
     stats.forEach((sub, index) => {
         totalPercent += sub.percent
-        const needed = predictAttendance(sub.present, sub.conducted)
-        const percentColor = sub.percent < 75 ? "#ef4444" : sub.percent < 85 ? "#f59e0b" : "#22c55e"
-        const percentBg = sub.percent < 75 ? "rgba(239,68,68,0.12)" : sub.percent < 85 ? "rgba(245,158,11,0.12)" : "rgba(34,197,94,0.12)"
+        
+        const percentColor = sub.percent < 75 ? "#fb7185" : sub.percent < 85 ? "#fbbf24" : "#34d399"
+        const percentBg = sub.percent < 75 ? "rgba(251,113,133,0.1)" : sub.percent < 85 ? "rgba(251,191,36,0.1)" : "rgba(52,211,153,0.1)"
 
         const row = document.createElement("tr")
         row.innerHTML = `
-<td>${sub.subject}</td>
-<td>${sub.subjectCode || "-"}</td>
-<td>${sub.conducted}</td>
-<td>${sub.present}</td>
-<td>${sub.absent}</td>
+<td><strong style="color: #eef2ff;">${sub.subject}</strong></td>
+<td><span style="opacity:0.6; font-family: monospace;">${sub.subjectCode || "-"}</span></td>
+<td style="text-align:center;">${sub.conducted}</td>
+<td style="text-align:center; color:#34d399;">${sub.present}</td>
+<td style="text-align:center; color:#fb7185;">${sub.absent}</td>
 <td>
-    <div class="circle ${sub.percent < 75 ? "low" : ""}"
-        style="--percent:${sub.percent * 3.6}deg"
-        data-text="${sub.percent}%">
-    </div>
-    <div class="bar ${sub.percent < 75 ? "low-bar" : ""}">
-        <div class="fill" style="width:${sub.percent}%"></div>
-    </div>
-    <div style="font-size:13px;margin-top:8px;color:${percentColor};background:${percentBg};border:1px solid ${percentColor};border-radius:999px;padding:4px 8px;display:inline-block;font-weight:700;">
+    <div class="percent-chip" style="color:${percentColor}; background:${percentBg}; border:1px solid ${percentColor}33;">
         ${sub.percent}%
+    </div>
+    <div class="bar">
+        <div class="fill" style="width:0%; background:${percentColor}; shadow: 0 0 10px ${percentColor}44;"></div>
     </div>
 </td>
 `
@@ -82,34 +80,28 @@ function renderStats(stats) {
         row.style.opacity = "0"
         row.style.transform = "translateY(10px)"
 
+        table.appendChild(row)
+
+        // Animate in
         setTimeout(() => {
-            row.style.transition = "0.3s ease"
+            row.style.transition = "0.4s ease-out"
             row.style.opacity = "1"
             row.style.transform = "translateY(0)"
-        }, index * 80)
-
-        table.appendChild(row)
+            
+            // Animate progress bar
+            const fill = row.querySelector(".fill")
+            setTimeout(() => {
+                if (fill) fill.style.width = sub.percent + "%"
+            }, 100)
+        }, index * 60)
     })
 
     const overall = stats.length ? Math.round(totalPercent / stats.length) : 0
-    let overallBox = document.getElementById("overallBox")
-
-    if (!overallBox) {
-        overallBox = document.createElement("div")
-        overallBox.id = "overallBox"
-        overallBox.className = "card"
-        document.querySelector(".dashboard").prepend(overallBox)
+    const overallEl = document.getElementById("overallPercent")
+    if (overallEl) {
+        overallEl.innerText = overall + "%"
+        overallEl.style.color = overall < 75 ? "#fb7185" : overall < 85 ? "#fbbf24" : "#34d399"
     }
-
-    overallBox.innerHTML = `
-<p><strong>Overall Attendance:</strong> ${overall}%</p>
-<div class="bar ${overall < 75 ? "low-bar" : ""}">
-    <div class="fill" style="width:${overall}%"></div>
-</div>
-<p style="margin-top:8px;font-weight:600;color:${overall < 75 ? "#ef4444" : overall < 85 ? "#f59e0b" : "#22c55e"}">
-    ${overall < 75 ? "⚠ Low Attendance" : overall < 85 ? "⚠ Average" : "✅ Excellent"}
-</p>
-`
 }
 
 function openChangePassword() {
@@ -132,12 +124,15 @@ async function loadStudentDashboard() {
     if (!user) return
     currentUser = user
 
+    // Populate profile info
     document.getElementById("studentUSN").innerText = user.id
     document.getElementById("studentName").innerText = user.name
-    document.getElementById("department").innerText = user.department || "-"
-    document.getElementById("program").innerText = user.program || "-"
-    document.getElementById("sem").innerText = user.sem || "-"
-    document.getElementById("section").innerText = user.section || "-"
+    document.getElementById("department").innerText = user.department || "N/A"
+    
+    // Populate stats grid
+    document.getElementById("program").innerText = user.program || "N/A"
+    document.getElementById("sem").innerText = user.sem || "N/A"
+    document.getElementById("section").innerText = user.section || "N/A"
 
     document.getElementById("changePasswordBtn")?.addEventListener("click", function () {
         setBtnLoading(this, "Opening...")
@@ -145,7 +140,6 @@ async function loadStudentDashboard() {
     })
 
     document.getElementById("logoutBtn")?.addEventListener("click", function () {
-        setBtnLoading(this, "Logging out...")
         studentLogout()
     })
 
