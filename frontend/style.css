@@ -253,7 +253,7 @@ body.login-page.student .input-group input:focus {
 
 
 .forgot {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.08);
     color: rgba(255, 255, 255, 0.5);
     cursor: pointer;
