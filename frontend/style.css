@@ -57,9 +57,9 @@ body::after {
 
 /* ===== LOGIN CONTAINER ===== */
 .login-container {
-    width: min(420px, calc(100vw - 32px));
-    padding: 44px 32px;
-    border-radius: 30px;
+    width: min(390px, calc(100vw - 32px));
+    padding: 35px 28px;
+    border-radius: 28px;
     background: rgba(15, 23, 42, 0.74);
     backdrop-filter: blur(22px);
     border: 1px solid rgba(255, 255, 255, 0.14);
@@ -249,18 +249,19 @@ body.login-page.student .input-group input:focus {
     transform: rotate(45deg);
 }
 
+
 .forgot {
     background: transparent;
     border: none;
     color: rgba(255, 255, 255, 0.4);
     cursor: pointer;
-    font-size: 11px;
+    font-size: 13px;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     transition: 0.3s;
-    padding: 5px 10px;
-    border-radius: 10px;
+    padding: 2px 4px;
+    border-radius: 6px;
     text-decoration: none;
 }
 
@@ -271,9 +272,9 @@ body.login-page.student .input-group input:focus {
 
 .forgot.loading .btn-loader {
     display: inline-block !important;
-    width: 12px;
-    height: 12px;
-    border-width: 2px;
+    width: 10px;
+    height: 10px;
+    border-width: 1.5px;
 }
 
 /* Remember Me Label Size */
