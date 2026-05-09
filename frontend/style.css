@@ -252,27 +252,27 @@ body.login-page.student .input-group input:focus {
 .forgot {
     background: none;
     border: none;
-    padding: 4px 8px;
-    color: rgba(226, 232, 240, 0.4);
+    padding: 0;
+    color: rgba(167, 139, 250, 0.8);
     cursor: pointer;
-    font-size: 10.5px;
+    font-size: 11px;
     transition: 0.25s;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
-    border-radius: 8px;
+    gap: 4px;
+    text-decoration: none;
 }
 
 .forgot:hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    text-decoration: underline;
 }
 
 .forgot.loading .btn-loader {
     display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-width: 1.5px;
+    width: 8px;
+    height: 8px;
+    border-width: 1.2px;
 }
 
 /* ===== BUTTON ===== */
