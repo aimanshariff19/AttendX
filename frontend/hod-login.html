@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AttendX Faculty Login</title>
+
+    <!-- ICONS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="login-page faculty">
+
+    <div class="login-container">
+
+        <!-- LOGO -->
+        <img src="assets/logo.png" class="college-logo" alt="Atria Logo">
+
+        <!-- COLLEGE INFO -->
+        <div class="college-info">
+            <h2 class="college-name">Atria Institute of Technology</h2>
+            <p class="college-location">Hebbal, Bengaluru</p>
+            <p class="college-status">(Autonomous Institution)</p>
+        </div>
+
+        <!-- TITLE -->
+        <h3 class="system-title">AttendX HOD Portal</h3>
+
+        <!-- FORM -->
+        <form id="loginForm" autocomplete="on">
+
+            <!-- USERNAME -->
+            <div class="input-group">
+                <label for="username">HOD ID</label>
+                <input type="text" id="username" required autocomplete="username">
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="input-group password-field">
+                <label for="password">Password</label>
+                <input type="password" id="password" required autocomplete="current-password">
+                <i id="eyeIcon" class="fa-solid fa-eye eye"></i>
+            </div>
+
+            <!-- EXTRA OPTIONS -->
+            <div class="form-extra">
+                <label class="remember">
+                    <input type="checkbox"> Remember me
+                </label>
+                <a href="#" class="forgot">Forgot password?</a>
+            </div>
+
+            <!-- 🔥 BUTTON UPDATED -->
+            <button id="loginBtn" type="button" onclick="hodLogin()">
+                <span class="btn-text">Login</span>
+                <span class="btn-loader"></span>
+            </button>
+
+        </form>
+
+        <!-- ERROR -->
+        <p id="error" class="error-text"></p>
+
+    </div>
+
+    <!-- JS -->
+    
+    <script src="utils.js"></script>
+    <script src="hod-login.js"></script>
+
+</body>
+
+</html>

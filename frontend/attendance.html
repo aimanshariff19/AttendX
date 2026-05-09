@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>AttendX / Take Attendance</title>
+    <link rel="icon" href="assets/logo.png">
+
+    <style>
+        /* ===== RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ===== BODY ===== */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            color: white;
+        }
+
+        /* ===== DASHBOARD ===== */
+        .dashboard {
+            max-width: 950px;
+            margin: 40px auto;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin-bottom: 18px;
+            font-size: 30px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #c7d2fe, #a78bfa, #6366f1);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            text-shadow:
+                0 0 10px rgba(139, 92, 246, 0.3),
+                0 0 20px rgba(139, 92, 246, 0.15);
+            animation: titleGlow 3s linear infinite;
+        }
+
+        @keyframes titleGlow {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        /* ===== BUTTON ===== */
+        .btn {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(95, 92, 255, 0.5);
+        }
+
+        .btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .back-btn {
+            align-self: flex-start;
+        }
+
+        /* ===== ATTENDANCE BUTTON ===== */
+        .status-btn {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(6px);
+            transition: all 0.25s ease;
+        }
+
+        .status-btn:hover {
+            transform: translateY(-1px) scale(1.05);
+        }
+
+        .status-btn:active {
+            transform: scale(0.95);
+        }
+
+        .status-btn.present.active {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+        }
+
+        .status-btn.absent.active {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+        }
+
+        /* ===== CARD ===== */
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        /* 🔥 INFO CARD GRID (Requested Fix) */
+        .info-card {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px 20px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 18px;
+        }
+
+        /* ===== INPUT GRID ===== */
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            font-size: 13px;
+        }
+
+        .input-group label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .input-group input {
+            margin-top: 6px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(15, 23, 42, 0.8);
+            color: #e5e7eb;
+            outline: none;
+            transition: 0.3s;
+            max-width: 260px;
+        }
+
+        .input-group input:hover {
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .input-group input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+        }
+
+        /* ===== TABLE ===== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 12px;
+            text-align: left;
+        }
+
+        th { background: rgba(255, 255, 255, 0.08); }
+        tbody tr:hover { background: rgba(255, 255, 255, 0.05); }
+
+        .time-info {
+            margin-top: 12px;
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .bulk-actions button:first-child {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+
+        .bulk-actions button:last-child {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .quick-mark {
+            display: grid;
+            grid-template-columns: minmax(220px, 1fr) auto auto;
+            gap: 10px;
+            align-items: end;
+        }
+
+        .quick-mark input {
+            width: 100%;
+            max-width: none;
+            margin-top: 6px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(15, 23, 42, 0.8);
+            color: #e5e7eb;
+            outline: none;
+        }
+
+        .quick-mark input:focus {
+            border-color: #22c55e;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.45);
+        }
+
+        .quick-help {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #cbd5e1;
+            opacity: 0.85;
+        }
+
+        /* ===== SPINNER ===== */
+        .btn-spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: inline-block;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== SHAKE ===== */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-4px); }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+            border: 1px solid #ef4444 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <div class="header-top">
+                <h1>AttendX / Take Attendance</h1>
+                <button class="btn" onclick="editAttendance(this)">Edit Attendance</button>
+            </div>
+            <button class="btn back-btn" onclick="goBack(this)">← Back</button>
+        </div>
+
+        <!-- 🔥 INFO CARD (Grid Layout) -->
+        <div class="info-card">
+            <p><b>Course:</b> <span id="subject"></span></p>
+            <p><b>Department:</b> <span id="department"></span></p>
+            <p><b>Program:</b> <span id="program"></span></p>
+            <p><b>Semester:</b> <span id="sem"></span></p>
+            <p><b>Section:</b> <span id="section"></span></p>
+        </div>
+
+        <div class="card">
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>Date</label>
+                    <input type="date" id="date">
+                </div>
+                <div class="input-group">
+                    <label>Start Time</label>
+                    <input type="time" id="classTime">
+                </div>
+                <div class="input-group">
+                    <label>No. of Classes</label>
+                    <input type="number" id="numClasses" value="1">
+                </div>
+                <div class="input-group">
+                    <label>Current Time</label>
+                    <input type="text" id="currentTime" readonly>
+                </div>
+            </div>
+            <div class="time-info">
+                <p><b>Class Time :</b> <span id="timeRange">--</span></p>
+            </div>
+        </div>
+
+        <div class="bulk-actions">
+            <button class="btn" onclick="markAll(true, event)">Mark All Present</button>
+            <button class="btn" onclick="markAll(false, event)">Mark All Absent</button>
+        </div> <br>
+
+        <div class="card">
+            <div class="quick-mark">
+                <div class="input-group">
+                    <label>Quick Mark Absentees</label>
+                    <input type="text" id="quickSearch" placeholder="001, 002, Aiman">
+                </div>
+                <button class="btn" onclick="quickMark(false)">Mark Absent</button>
+                <button class="btn" onclick="quickMark(true)">Mark Present</button>
+            </div>
+            <p class="quick-help">Tip: mark all present first, then enter all absentees together. Separate with comma, space, or new line.</p>
+        </div>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>USN</th>
+                        <th>Name</th>
+                        <th>Attendance</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="studentRows"></tbody>
+            </table>
+        </div>
+
+        <button id="submitBtn" class="btn" onclick="submitAttendance(this)">
+            Submit Attendance
+        </button>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="attendance.js"></script>
+</body>
+</html>
