@@ -89,7 +89,7 @@ async function requireAuth(role) {
             window.location.href = role === 'hod'
                 ? 'hod-login.html'
                 : role === 'faculty'
-                    ? 'index.html'
+                    ? 'faculty-login.html'
                     : 'student-login.html';
             return null;
         }
@@ -102,7 +102,7 @@ async function requireAuth(role) {
         window.location.href = role === 'hod'
             ? 'hod-login.html'
             : role === 'faculty'
-                ? 'index.html'
+                ? 'faculty-login.html'
                 : 'student-login.html';
         return null;
     }
@@ -220,4 +220,8 @@ function showSuccess(message) {
 
 function redirectTo(url) {
     window.location.href = url;
+}
+
+function goHome() {
+    window.location.href = '/';
 }
