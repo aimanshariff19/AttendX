@@ -58,9 +58,9 @@ body::after {
 
 /* ===== LOGIN CONTAINER ===== */
 .login-container {
-    width: min(390px, calc(100vw - 32px));
-    padding: 35px 28px;
-    border-radius: 28px;
+    width: min(420px, calc(100vw - 32px));
+    padding: 44px 32px;
+    border-radius: 30px;
     background: rgba(15, 23, 42, 0.74);
     backdrop-filter: blur(22px);
     border: 1px solid rgba(255, 255, 255, 0.14);
