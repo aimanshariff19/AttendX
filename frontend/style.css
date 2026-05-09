@@ -253,18 +253,16 @@ body.login-page.student .input-group input:focus {
 
 
 .forgot {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: transparent;
+    border: none;
     color: rgba(255, 255, 255, 0.5);
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 4px;
     transition: 0.3s;
-    padding: 3px 5px;
-    border-radius: 8px;
+    padding: 0;
     text-decoration: none;
 }
 
