@@ -142,13 +142,5 @@ window.addEventListener("load", () => {
         }
     }
 
-    /* FORGOT PASSWORD */
-    if (forgotLink) {
-        forgotLink.onclick = (e) => {
-            e.preventDefault()
-            const email = idInput ? idInput.value : ''
-            alert('Password Reset\n\nPlease contact your administrator at admin@atria.edu to reset your password.\n\nStudent ID: ' + email)
-        }
-    }
-
+    /* FORGOT PASSWORD - Handled by HTML link now */
 })

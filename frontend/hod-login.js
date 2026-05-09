@@ -85,7 +85,6 @@ window.addEventListener("load", () => {
     const passwordInput = document.getElementById("password")
     const eyeIcon = document.getElementById("eyeIcon")
     const rememberCheckbox = document.querySelector('.remember input[type="checkbox"]')
-    const forgotLink = document.querySelector('.forgot')
     const form = document.getElementById("loginForm")
 
     // Password Toggle
@@ -114,12 +113,5 @@ window.addEventListener("load", () => {
         }
     }
 
-    // Forgot password handler
-    if (forgotLink) {
-        forgotLink.onclick = (e) => {
-            e.preventDefault()
-            const email = usernameInput ? usernameInput.value : ''
-            alert('Password Reset\n\nPlease contact your administrator at admin@atria.edu to reset your password.\n\nHOD ID: ' + email)
-        }
-    }
+    /* FORGOT PASSWORD - Handled by HTML link now */
 })

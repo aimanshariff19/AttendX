@@ -130,14 +130,7 @@
             })
         }
 
-        /* FORGOT PASSWORD */
-        if (forgotLink) {
-            forgotLink.onclick = (e) => {
-                e.preventDefault()
-                const email = username ? username.value : ''
-                alert('Password Reset\n\nPlease contact your administrator at admin@atria.edu to reset your password.\n\nFaculty ID: ' + email)
-            }
-        }
+        /* FORGOT PASSWORD - Handled by HTML link now */
 
         document.addEventListener("click", function (e) {
             const btn = e.target.closest("button")
