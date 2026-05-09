@@ -253,7 +253,8 @@ body.login-page.student .input-group input:focus {
     background: none;
     border: none;
     padding: 0;
-    color: rgba(167, 139, 250, 0.9);
+    color: #a78bfa;
+    font-weight: 500;
     cursor: pointer;
     font-size: 12px;
     transition: 0.25s;
@@ -269,10 +270,10 @@ body.login-page.student .input-group input:focus {
 }
 
 .forgot.loading .btn-loader {
-    display: inline-block;
-    width: 9px;
-    height: 9px;
-    border-width: 1.2px;
+    display: inline-block !important;
+    width: 12px;
+    height: 12px;
+    border-width: 2px;
 }
 
 /* Remember Me Label Size */
