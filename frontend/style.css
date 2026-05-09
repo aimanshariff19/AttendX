@@ -257,14 +257,14 @@ body.login-page.student .input-group input:focus {
     border: 1px solid rgba(255, 255, 255, 0.08);
     color: rgba(255, 255, 255, 0.5);
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 4px;
     transition: 0.3s;
-    padding: 4px 6px;
-    border-radius: 12px;
+    padding: 3px 10px;
+    border-radius: 8px;
     text-decoration: none;
 }
 
