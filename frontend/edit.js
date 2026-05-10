@@ -59,35 +59,6 @@ function showError(msg) {
     }, 2000)
 }
 
-/* -------- 🔥 TIME -------- */
-function normalizeTime(t) {
-    if (!t) return ""
-    let [h, m] = t.split(":")
-    return `${parseInt(h)}:${m}`
-}
-
-function formatTimeRange(time) {
-    if (!time) return ""
-
-    let [h, m] = time.split(":").map(Number)
-
-    let start = new Date()
-    start.setHours(h, m)
-
-    let end = new Date(start)
-    end.setHours(end.getHours() + 1)
-
-    const format = (d) => {
-        let hr = d.getHours()
-        const min = String(d.getMinutes()).padStart(2, "0")
-        const ampm = hr >= 12 ? "PM" : "AM"
-        hr = hr % 12 || 12
-        return `${hr}:${min} ${ampm}`
-    }
-
-    return `${format(start)} - ${format(end)}`
-}
-
 /* -------- 🔥 CONTEXT -------- */
 let subject = ''
 let department = ''
@@ -238,8 +209,7 @@ window.loadAttendance = async function () {
     const table = document.getElementById("studentRows")
 
     const date = dateInput?.value
-    const timeRaw = timeDropdown?.value
-    const time = normalizeTime(timeRaw)
+    const time = timeDropdown?.value
 
     if (!date) {
         triggerShake(dateInput)
@@ -247,7 +217,7 @@ window.loadAttendance = async function () {
         return
     }
 
-    if (!timeRaw) {
+    if (!time) {
         triggerShake(timeDropdown)
         showError("Select Time Slot")
         return
@@ -371,19 +341,19 @@ async function populateTimeDropdown() {
 
     try {
         const attendances = await apiFetch(`/faculty/attendance?${buildQuery({ subject, department, program, sem, section, date })}`)
-        const times = Array.isArray(attendances) ? attendances.map(a => a.time) : []
+        const rows = Array.isArray(attendances) ? attendances : []
 
         timeDropdown.innerHTML = `<option value="">Select Time Slot</option>`
 
-        if (times.length === 0) {
+        if (rows.length === 0) {
             timeDropdown.innerHTML = `<option value="">No records</option>`
             return
         }
 
-        times.forEach(t => {
+        rows.forEach((a) => {
             const opt = document.createElement("option")
-            opt.value = t
-            opt.innerText = formatTimeRange(t)
+            opt.value = a.time
+            opt.innerText = resolveAttendanceSlotLabel(a.time, a.numClasses)
             timeDropdown.appendChild(opt)
         })
     } catch (err) {

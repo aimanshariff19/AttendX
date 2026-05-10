@@ -96,27 +96,15 @@ function calculateTimeRange() {
     const start = document.getElementById("classTime")?.value
     const num = parseInt(document.getElementById("numClasses")?.value)
 
-    if (!start || !num) return
+    const el = document.getElementById("timeRange")
+    if (!el) return
 
-    let [h, m] = start.split(":").map(Number)
-
-    let startDate = new Date()
-    startDate.setHours(h, m)
-
-    let endDate = new Date(startDate)
-    endDate.setMinutes(endDate.getMinutes() + num * 60)
-
-    const format12 = (d) => {
-        let hr = d.getHours()
-        const min = String(d.getMinutes()).padStart(2, "0")
-        const ampm = hr >= 12 ? "PM" : "AM"
-        hr = hr % 12
-        hr = hr ? hr : 12
-        return `${hr}:${min} ${ampm}`
+    if (!start || !num) {
+        el.innerText = "--"
+        return
     }
 
-    const el = document.getElementById("timeRange")
-    if (el) el.innerText = `${format12(startDate)} - ${format12(endDate)}`
+    el.innerText = format12HourSlotRange(start, num)
 }
 
 /* -------- CLASS DETAILS -------- */
@@ -291,7 +279,8 @@ async function submitAttendance(btn) {
     if (!btn) btn = document.getElementById("submitBtn")
 
     const date = document.getElementById("date")?.value
-    const time = document.getElementById("classTime")?.value
+    const timeInput = document.getElementById("classTime")?.value
+    const numClassesVal = parseInt(document.getElementById("numClasses")?.value) || 1
 
     if (!date) {
         triggerShake(document.getElementById("date"))
@@ -299,11 +288,13 @@ async function submitAttendance(btn) {
         return
     }
 
-    if (!time) {
+    if (!timeInput) {
         triggerShake(document.getElementById("classTime"))
         showError("Select Time Slot")
         return
     }
+
+    const time = format12HourSlotRange(timeInput, numClassesVal)
 
     setBtnLoading(btn, "Submitting")
 
@@ -329,7 +320,7 @@ async function submitAttendance(btn) {
                     section,
                     date,
                     time,
-                    numClasses: parseInt(document.getElementById("numClasses")?.value) || 1,
+                    numClasses: numClassesVal,
                     records
                 })
             })
@@ -406,6 +397,7 @@ window.onload = async function () {
 
     document.getElementById("classTime")?.addEventListener("change", calculateTimeRange)
     document.getElementById("numClasses")?.addEventListener("change", calculateTimeRange)
+    document.getElementById("numClasses")?.addEventListener("input", calculateTimeRange)
     document.getElementById("quickSearch")?.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault()
@@ -446,5 +438,6 @@ window.onload = async function () {
     }
 
     loadStudents()
+    calculateTimeRange()
 
 }

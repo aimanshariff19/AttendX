@@ -68,6 +68,42 @@ async function apiFetch(endpoint, options = {}) {
     );
 }
 
+/** Human-readable slot from `<input type="time">` value (HH:MM) and class count — e.g. "9:00 AM - 11:00 AM" */
+function format12HourSlotRange(startHHMM, numClasses) {
+    const n = parseInt(numClasses, 10);
+    const hours = Number.isFinite(n) && n > 0 ? n : 1;
+    if (!startHHMM || typeof startHHMM !== 'string') return '';
+    const [hRaw, mRaw] = startHHMM.split(':');
+    const h = parseInt(hRaw, 10);
+    const m = parseInt(mRaw, 10);
+    if (Number.isNaN(h) || Number.isNaN(m)) return '';
+
+    const startDate = new Date();
+    startDate.setHours(h, m, 0, 0);
+    const endDate = new Date(startDate);
+    endDate.setMinutes(endDate.getMinutes() + hours * 60);
+
+    const fmt = (d) => {
+        let hr = d.getHours();
+        const min = String(d.getMinutes()).padStart(2, '0');
+        const ampm = hr >= 12 ? 'PM' : 'AM';
+        hr = hr % 12;
+        hr = hr ? hr : 12;
+        return `${hr}:${min} ${ampm}`;
+    };
+    return `${fmt(startDate)} - ${fmt(endDate)}`;
+}
+
+/** Label for a row in `attendance`: new range strings stay as-is; legacy `HH:MM` entries use numClasses */
+function resolveAttendanceSlotLabel(storedTime, numClasses) {
+    if (!storedTime) return '';
+    const s = String(storedTime).trim();
+    if (/\b(AM|PM)\s*-\s*.+\b(AM|PM)/i.test(s)) return s;
+    const m = s.match(/^(\d{1,2}):(\d{2})$/);
+    if (m) return format12HourSlotRange(s, numClasses || 1);
+    return s;
+}
+
 function buildQuery(params) {
     const search = new URLSearchParams();
     Object.entries(params || {}).forEach(([key, value]) => {
