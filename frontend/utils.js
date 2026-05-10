@@ -23,6 +23,9 @@ async function apiCall(endpoint, method = 'GET', body = null, timeoutMs = 5000) 
         const response = await fetch(`${API_BASE}${endpoint}`, options);
         clearTimeout(timeoutId);
 
+        // Read body once — never mix response.json() + response.text() (same stream throws "already read").
+        const raw = await response.text();
+
         // Handle 401 (token expired/invalid)
         if (response.status === 401) {
             localStorage.removeItem('token');
@@ -30,21 +33,32 @@ async function apiCall(endpoint, method = 'GET', body = null, timeoutMs = 5000) 
             return null;
         }
 
+        let parsed;
+        try {
+            parsed =
+                raw === undefined || raw === null || raw.trim() === ''
+                    ? undefined
+                    : JSON.parse(raw);
+        } catch {
+            parsed = '__NOT_JSON__';
+        }
+
         if (!response.ok) {
-            const raw = await response.text();
-            let errorBody = {};
-            try {
-                errorBody = raw ? JSON.parse(raw) : {};
-            } catch {
-                errorBody = { msg: raw || 'API Error' };
-            }
+            const errorBody =
+                parsed !== '__NOT_JSON__' && typeof parsed === 'object' && parsed !== null
+                    ? parsed
+                    : { msg: raw || response.statusText || 'API Error' };
             const error = new Error(errorBody.msg || errorBody.error || 'API Error');
             error.status = response.status;
             error.body = errorBody;
             throw error;
         }
 
-        return await response.json();
+        if (parsed === '__NOT_JSON__') {
+            throw new Error(raw ? raw.slice(0, 500) : 'Invalid JSON response');
+        }
+
+        return parsed === undefined ? null : parsed;
     } catch (error) {
         if (error.name === 'AbortError') {
             console.error('API Timeout:', endpoint);

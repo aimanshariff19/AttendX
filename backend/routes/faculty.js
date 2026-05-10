@@ -327,15 +327,33 @@ router.post('/attendance', auth('faculty'), async (req, res) => {
             }))
         };
 
-        const { data: attendance, error: insertError } = await supabase
+        let { data: attendance, error: insertError } = await supabase
             .from('attendance')
             .insert(attendancePayload)
             .select()
             .single();
 
+        const hint = `${insertError?.message || ''} ${insertError?.details || ''}`;
+        if (insertError && /time_slot/i.test(hint)) {
+            const legacyPayload = {
+                courseId: course.id,
+                date,
+                time: slotTime,
+                numClasses: numClasses || 1,
+                records: attendancePayload.records
+            };
+            ({
+                data: attendance,
+                error: insertError
+            } = await supabase.from('attendance').insert(legacyPayload).select().single());
+        }
+
         if (insertError) {
             console.error(insertError.message);
-            return res.status(500).send('Server Error');
+            return res.status(500).json({
+                msg: insertError.message || 'Server Error',
+                detail: insertError.details || insertError.hint || ''
+            });
         }
 
         const { data: allRows, error: attendanceError } = await supabase
