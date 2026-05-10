@@ -73,9 +73,10 @@ function format12HourSlotRange(startHHMM, numClasses) {
     const n = parseInt(numClasses, 10);
     const hours = Number.isFinite(n) && n > 0 ? n : 1;
     if (!startHHMM || typeof startHHMM !== 'string') return '';
-    const [hRaw, mRaw] = startHHMM.split(':');
-    const h = parseInt(hRaw, 10);
-    const m = parseInt(mRaw, 10);
+    const clock = startHHMM.trim().match(/^(\d{1,2}):(\d{2})(?::\d{2})?/);
+    if (!clock) return '';
+    const h = parseInt(clock[1], 10);
+    const m = parseInt(clock[2], 10);
     if (Number.isNaN(h) || Number.isNaN(m)) return '';
 
     const startDate = new Date();
@@ -99,7 +100,7 @@ function resolveAttendanceSlotLabel(storedTime, numClasses) {
     if (!storedTime) return '';
     const s = String(storedTime).trim();
     if (/\b(AM|PM)\s*-\s*.+\b(AM|PM)/i.test(s)) return s;
-    const m = s.match(/^(\d{1,2}):(\d{2})$/);
+    const m = s.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
     if (m) return format12HourSlotRange(s, numClasses || 1);
     return s;
 }

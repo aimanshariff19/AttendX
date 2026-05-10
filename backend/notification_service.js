@@ -2,33 +2,7 @@ const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
-
-function attendanceSlotDisplay(storedTime, numClasses) {
-    const hours = Number.isFinite(Number(numClasses)) && Number(numClasses) > 0 ? Number(numClasses) : 1;
-    const s = storedTime ? String(storedTime).trim() : '';
-    if (!s) return '';
-    if (/\b(AM|PM)\s*-\s*.+\b(AM|PM)/i.test(s)) return s;
-    const match = s.match(/^(\d{1,2}):(\d{2})$/);
-    if (!match) return s;
-
-    let h = parseInt(match[1], 10);
-    let min = parseInt(match[2], 10);
-    const start = new Date();
-    start.setHours(h, min, 0, 0);
-    const end = new Date(start);
-    end.setMinutes(end.getMinutes() + hours * 60);
-
-    const fmt = (d) => {
-        let hr = d.getHours();
-        const mn = String(d.getMinutes()).padStart(2, '0');
-        const ampm = hr >= 12 ? 'PM' : 'AM';
-        hr = hr % 12;
-        hr = hr || 12;
-        return `${hr}:${mn} ${ampm}`;
-    };
-
-    return `${fmt(start)} - ${fmt(end)}`;
-}
+const { attendanceSlotDisplay } = require('./attendance_time_format');
 
 const TRANSLATIONS = {
     "English": {
@@ -93,9 +67,10 @@ async function sendDailyNotifications(targetDate) {
 
                 if (rec.status === 'Absent') {
                     if (!studentAbsences[usn]) studentAbsences[usn] = [];
+                    const nc = record.numClasses ?? record.num_classes;
                     studentAbsences[usn].push({
                         subject,
-                        time: attendanceSlotDisplay(record.time, record.numClasses)
+                        time: attendanceSlotDisplay(record.time, nc)
                     });
                 }
             });
