@@ -2,6 +2,17 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const supabase = require('../supabase');
+const { attendanceSlotDisplay } = require('../attendance_time_format');
+
+/** Persist `attendance.time` as "9:00 AM - 11:00 AM" even if the client sends `09:00` only (cached/old UI). */
+function normalizeAttendanceSlotTime(rawTime, numClasses) {
+    const nc =
+        Number.isFinite(Number(numClasses)) && Number(numClasses) > 0
+            ? Number(numClasses)
+            : 1;
+    if (rawTime === undefined || rawTime === null) return rawTime;
+    return attendanceSlotDisplay(String(rawTime).trim(), nc);
+}
 
 function checkSupabase(res) {
     if (!supabase) {
@@ -238,16 +249,24 @@ router.post('/attendance', auth('faculty'), async (req, res) => {
             return res.status(403).json({ msg: 'Not authorized for this course' });
         }
 
-        const { data: existingAttendance, error: existingError } = await supabase
+        const slotTime = normalizeAttendanceSlotTime(time, numClasses);
+
+        const { data: dayRows, error: dayFetchError } = await supabase
             .from('attendance')
             .select('*')
-            .match({ courseId: course.id, date, time })
-            .single();
+            .eq('courseId', course.id)
+            .eq('date', date);
 
-        if (existingError && existingError.code !== 'PGRST116') {
-            console.error(existingError.message);
+        if (dayFetchError) {
+            console.error(dayFetchError.message);
             return res.status(500).send('Server Error');
         }
+
+        const existingAttendance = (dayRows || []).find(
+            (row) =>
+                normalizeAttendanceSlotTime(row.time, row.numClasses ?? row.num_classes) ===
+                slotTime
+        );
 
         if (existingAttendance) {
             return res.status(400).json({ msg: 'Attendance already marked for this slot' });
@@ -256,7 +275,7 @@ router.post('/attendance', auth('faculty'), async (req, res) => {
         const attendancePayload = {
             courseId: course.id,
             date,
-            time,
+            time: slotTime,
             numClasses: numClasses || 1,
             records: Object.keys(records).map(usn => ({
                 studentId: usn,

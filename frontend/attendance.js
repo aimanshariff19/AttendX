@@ -91,6 +91,33 @@ function convertTo24Hour(time12) {
     return `${String(hours).padStart(2, "0")}:${minutes}`
 }
 
+/* Stored slot shown in UI and saved to DB ("9:00 AM - 11:00 AM"). Local copy so submit does not rely on utils.js cache/load order. */
+function formatAttendanceSlotStored(startHHMM, numClasses) {
+    const n = parseInt(numClasses, 10)
+    const hours = Number.isFinite(n) && n > 0 ? n : 1
+    if (!startHHMM || typeof startHHMM !== "string") return ""
+    const clock = startHHMM.trim().match(/^(\d{1,2}):(\d{2})(?::\d{2})?/)
+    if (!clock) return ""
+    const h = parseInt(clock[1], 10)
+    const m = parseInt(clock[2], 10)
+    if (Number.isNaN(h) || Number.isNaN(m)) return ""
+
+    const startDate = new Date()
+    startDate.setHours(h, m, 0, 0)
+    const endDate = new Date(startDate)
+    endDate.setMinutes(endDate.getMinutes() + hours * 60)
+
+    const fmt = (d) => {
+        let hr = d.getHours()
+        const min = String(d.getMinutes()).padStart(2, "0")
+        const ampm = hr >= 12 ? "PM" : "AM"
+        hr = hr % 12
+        hr = hr ? hr : 12
+        return `${hr}:${min} ${ampm}`
+    }
+    return `${fmt(startDate)} - ${fmt(endDate)}`
+}
+
 /* -------- 🔥 TIME RANGE -------- */
 function calculateTimeRange() {
     const start = document.getElementById("classTime")?.value
@@ -104,7 +131,7 @@ function calculateTimeRange() {
         return
     }
 
-    el.innerText = format12HourSlotRange(start, num)
+    el.innerText = formatAttendanceSlotStored(start, num)
 }
 
 /* -------- CLASS DETAILS -------- */
@@ -294,7 +321,12 @@ async function submitAttendance(btn) {
         return
     }
 
-    const time = format12HourSlotRange(timeInput, numClassesVal)
+    const time = formatAttendanceSlotStored(timeInput, numClassesVal)
+    if (!time) {
+        triggerShake(document.getElementById("classTime"))
+        showError("Invalid start time")
+        return
+    }
 
     setBtnLoading(btn, "Submitting")
 
