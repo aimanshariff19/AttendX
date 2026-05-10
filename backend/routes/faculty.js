@@ -4,7 +4,7 @@ const auth = require('../middleware/auth');
 const supabase = require('../supabase');
 const { attendanceSlotDisplay } = require('../attendance_time_format');
 
-/** Persist `attendance.time` as "9:00 AM - 11:00 AM" even if the client sends `09:00` only (cached/old UI). */
+/** Persist `attendance.time_slot` as "9:00 AM - 11:00 AM" even if the client sends `09:00` only (cached/old UI). */
 function normalizeAttendanceSlotTime(rawTime, numClasses) {
     const nc =
         Number.isFinite(Number(numClasses)) && Number(numClasses) > 0
@@ -250,6 +250,13 @@ router.post('/attendance', auth('faculty'), async (req, res) => {
         }
 
         const slotTime = normalizeAttendanceSlotTime(time, numClasses);
+        if (
+            slotTime === undefined ||
+            slotTime === null ||
+            String(slotTime).trim() === ''
+        ) {
+            return res.status(400).json({ msg: 'Missing or invalid time slot' });
+        }
 
         const { data: dayRows, error: dayFetchError } = await supabase
             .from('attendance')
@@ -264,8 +271,10 @@ router.post('/attendance', auth('faculty'), async (req, res) => {
 
         const existingAttendance = (dayRows || []).find(
             (row) =>
-                normalizeAttendanceSlotTime(row.time, row.numClasses ?? row.num_classes) ===
-                slotTime
+                normalizeAttendanceSlotTime(
+                    row.time_slot ?? row.time,
+                    row.numClasses ?? row.num_classes
+                ) === slotTime
         );
 
         if (existingAttendance) {
@@ -275,7 +284,7 @@ router.post('/attendance', auth('faculty'), async (req, res) => {
         const attendancePayload = {
             courseId: course.id,
             date,
-            time: slotTime,
+            time_slot: slotTime,
             numClasses: numClasses || 1,
             records: Object.keys(records).map(usn => ({
                 studentId: usn,
@@ -300,7 +309,7 @@ router.post('/attendance', auth('faculty'), async (req, res) => {
             .select('*')
             .eq('courseId', course.id)
             .order('date', { ascending: true })
-            .order('time', { ascending: true });
+            .order('time_slot', { ascending: true });
 
         if (attendanceError) {
             console.error(attendanceError.message);
@@ -336,7 +345,7 @@ router.get('/attendance', auth('faculty'), async (req, res) => {
         let query = supabase.from('attendance').select('*').eq('courseId', course.id);
 
         if (date) query = query.eq('date', date);
-        if (time) query = query.eq('time', time);
+        if (time) query = query.eq('time_slot', time);
 
         const { data: attendances, error } = await query;
         if (error) {
@@ -371,7 +380,7 @@ router.put('/attendance', auth('faculty'), async (req, res) => {
         const { data: attendance, error: attendanceError } = await supabase
             .from('attendance')
             .select('*')
-            .match({ courseId: course.id, date, time })
+            .match({ courseId: course.id, date, time_slot: time })
             .single();
 
         if (attendanceError || !attendance) {
@@ -387,7 +396,7 @@ router.put('/attendance', auth('faculty'), async (req, res) => {
         const { data: updatedAttendance, error: updateError } = await supabase
             .from('attendance')
             .update({ records: updatedRecords })
-            .match({ courseId: course.id, date, time })
+            .match({ courseId: course.id, date, time_slot: time })
             .select()
             .single();
 
@@ -401,7 +410,7 @@ router.put('/attendance', auth('faculty'), async (req, res) => {
             .select('*')
             .eq('courseId', course.id)
             .order('date', { ascending: true })
-            .order('time', { ascending: true });
+            .order('time_slot', { ascending: true });
 
         if (attendanceListError) {
             console.error(attendanceListError.message);

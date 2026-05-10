@@ -50,7 +50,7 @@ async function sendDailyNotifications(targetDate) {
 
         attendanceRecords.forEach(record => {
             const subject = record.courses.subject;
-            const time = record.time;
+            const slotRaw = record.time_slot ?? record.time;
             const records = record.records; // This is a JSON object/array from our table
 
             // Normalize records to an array if it's an object, or just use it if it's an array
@@ -70,7 +70,7 @@ async function sendDailyNotifications(targetDate) {
                     const nc = record.numClasses ?? record.num_classes;
                     studentAbsences[usn].push({
                         subject,
-                        time: attendanceSlotDisplay(record.time, nc)
+                        time: attendanceSlotDisplay(slotRaw, nc)
                     });
                 }
             });

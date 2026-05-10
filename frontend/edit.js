@@ -352,8 +352,11 @@ async function populateTimeDropdown() {
 
         rows.forEach((a) => {
             const opt = document.createElement("option")
-            opt.value = a.time
-            opt.innerText = resolveAttendanceSlotLabel(a.time, a.numClasses)
+            opt.value = a.time_slot ?? a.time
+            opt.innerText = resolveAttendanceSlotLabel(
+                a.time_slot ?? a.time,
+                a.numClasses
+            )
             timeDropdown.appendChild(opt)
         })
     } catch (err) {

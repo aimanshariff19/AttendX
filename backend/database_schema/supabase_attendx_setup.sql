@@ -29,11 +29,11 @@ create table if not exists attendance (
     id uuid primary key default gen_random_uuid(),
     "courseId" uuid not null references courses(id) on delete cascade,
     date date not null,
-    time text not null,
+    time_slot text not null,
     "numClasses" int not null default 1,
     records jsonb not null default '[]'::jsonb,
     created_at timestamptz default now(),
-    unique ("courseId", date, time)
+    unique ("courseId", date, time_slot)
 );
 
 create table if not exists notifications (

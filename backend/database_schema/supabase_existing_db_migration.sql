@@ -82,3 +82,6 @@ insert into courses (name, code, faculty_id, department, semester, subject, "sub
     ('Thermodynamics', 'ME301', 'faculty_me_1', 'ME', '3', 'Thermodynamics', 'ME301', 'faculty_me_1', 'ME', '3', 'A'),
     ('Database Systems', 'IS301', 'faculty_ise_1', 'ISE', '3', 'Database Systems', 'IS301', 'faculty_ise_1', 'ISE', '3', 'A')
 on conflict do nothing;
+
+-- Recommended: PostgreSQL treats `time` as a keyword; Supabase/API may omit it. Rename:
+-- backend/database_schema/supabase_rename_attendance_time_to_time_slot.sql
