@@ -59,6 +59,19 @@ function showError(msg) {
     }, 2000)
 }
 
+function normalizeAttendanceRecords(raw) {
+    if (raw == null) return [];
+    if (Array.isArray(raw)) return raw;
+    if (typeof raw === 'object') {
+        return Object.entries(raw).map(([studentId, data]) =>
+            typeof data === 'object' && data !== null && !Array.isArray(data)
+                ? { studentId, ...data }
+                : { studentId, status: data }
+        );
+    }
+    return [];
+}
+
 /* -------- 🔥 CONTEXT -------- */
 let subject = ''
 let department = ''
@@ -238,7 +251,7 @@ window.loadAttendance = async function () {
 
         table.innerHTML = ""
 
-        if (!entry || !entry.records) {
+        if (!entry) {
             table.innerHTML = `
                 <tr>
                     <td colspan="5" style="text-align:center;padding:20px;">
@@ -249,8 +262,10 @@ window.loadAttendance = async function () {
             return
         }
 
+        const rowsOut = normalizeAttendanceRecords(entry.records)
+
         studentList.forEach(student => {
-            const rec = entry.records.find(r => r.studentId === (student.id || student.usn))
+            const rec = rowsOut.find(r => r.studentId === (student.id || student.usn))
             const status = rec?.status || "Absent"
             const percent = getStudentStats(student.id || student.usn)
             const reason = rec?.reason || ""

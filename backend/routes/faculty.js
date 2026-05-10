@@ -14,6 +14,40 @@ function normalizeAttendanceSlotTime(rawTime, numClasses) {
     return attendanceSlotDisplay(String(rawTime).trim(), nc);
 }
 
+/** Raw DB column (`time_slot` preferred, legacy `time`). */
+function storedSlotRaw(row) {
+    if (!row || typeof row !== 'object') return '';
+    const v = row.time_slot ?? row.time;
+    return v === undefined || v === null ? '' : String(v).trim();
+}
+
+function rowCanonicalSlotKey(row) {
+    const raw = storedSlotRaw(row);
+    const k = normalizeAttendanceSlotTime(raw, row.numClasses ?? row.num_classes);
+    return k === undefined || k === null ? '' : String(k);
+}
+
+/** Compare dropdown/query value to row (handles legacy `time`, canonical range strings). */
+function canonicalIncomingMatchesRow(incomingRaw, row) {
+    const want = normalizeAttendanceSlotTime(String(incomingRaw).trim(), undefined);
+    const w = want === undefined || want === null ? '' : String(want);
+    return w === rowCanonicalSlotKey(row);
+}
+
+function filterRowsByIncomingSlot(rows, incomingTime) {
+    if (!incomingTime || String(incomingTime).trim() === '') return rows ?? [];
+    return (rows ?? []).filter((r) => canonicalIncomingMatchesRow(incomingTime, r));
+}
+
+/** Sort without relying on `.order(time_slot)` (column may still be `time` on older DBs). */
+function sortAttendanceRowsForCourse(rows) {
+    return (rows ?? []).slice().sort((a, b) => {
+        const dc = String(a.date || '').localeCompare(String(b.date || ''));
+        if (dc !== 0) return dc;
+        return rowCanonicalSlotKey(a).localeCompare(rowCanonicalSlotKey(b));
+    });
+}
+
 function checkSupabase(res) {
     if (!supabase) {
         return res.status(500).json({ msg: 'Supabase is not configured' });
@@ -304,17 +338,18 @@ router.post('/attendance', auth('faculty'), async (req, res) => {
             return res.status(500).send('Server Error');
         }
 
-        const { data: allAttendance, error: attendanceError } = await supabase
+        const { data: allRows, error: attendanceError } = await supabase
             .from('attendance')
             .select('*')
             .eq('courseId', course.id)
-            .order('date', { ascending: true })
-            .order('time_slot', { ascending: true });
+            .order('date', { ascending: true });
 
         if (attendanceError) {
             console.error(attendanceError.message);
             return res.status(500).send('Server Error');
         }
+
+        const allAttendance = sortAttendanceRowsForCourse(allRows || []);
 
         await sendAbsenceAlerts(course, records, allAttendance);
 
@@ -342,16 +377,17 @@ router.get('/attendance', auth('faculty'), async (req, res) => {
 
         if (courseError || !course) return res.status(404).json({ msg: 'Course not found' });
 
-        let query = supabase.from('attendance').select('*').eq('courseId', course.id);
+        let qb = supabase.from('attendance').select('*').eq('courseId', course.id);
 
-        if (date) query = query.eq('date', date);
-        if (time) query = query.eq('time_slot', time);
+        if (date) qb = qb.eq('date', date);
 
-        const { data: attendances, error } = await query;
+        const { data: rows, error } = await qb;
         if (error) {
             console.error(error.message);
             return res.status(500).send('Server Error');
         }
+
+        const attendances = filterRowsByIncomingSlot(rows, time);
 
         res.json(attendances);
     } catch (err) {
@@ -377,13 +413,21 @@ router.put('/attendance', auth('faculty'), async (req, res) => {
 
         if (courseError || !course) return res.status(403).json({ msg: 'Not authorized for this course' });
 
-        const { data: attendance, error: attendanceError } = await supabase
+        const { data: dayRows, error: dayFetchError } = await supabase
             .from('attendance')
             .select('*')
-            .match({ courseId: course.id, date, time_slot: time })
-            .single();
+            .eq('courseId', course.id)
+            .eq('date', date);
 
-        if (attendanceError || !attendance) {
+        if (dayFetchError) {
+            console.error(dayFetchError.message);
+            return res.status(500).send('Server Error');
+        }
+
+        const matches = filterRowsByIncomingSlot(dayRows, time);
+        const attendance = matches[0];
+
+        if (!attendance) {
             return res.status(404).json({ msg: 'Attendance record not found' });
         }
 
@@ -396,7 +440,7 @@ router.put('/attendance', auth('faculty'), async (req, res) => {
         const { data: updatedAttendance, error: updateError } = await supabase
             .from('attendance')
             .update({ records: updatedRecords })
-            .match({ courseId: course.id, date, time_slot: time })
+            .eq('id', attendance.id)
             .select()
             .single();
 
@@ -405,17 +449,18 @@ router.put('/attendance', auth('faculty'), async (req, res) => {
             return res.status(500).send('Server Error');
         }
 
-        const { data: allAttendance, error: attendanceListError } = await supabase
+        const { data: allRows, error: attendanceListError } = await supabase
             .from('attendance')
             .select('*')
             .eq('courseId', course.id)
-            .order('date', { ascending: true })
-            .order('time_slot', { ascending: true });
+            .order('date', { ascending: true });
 
         if (attendanceListError) {
             console.error(attendanceListError.message);
             return res.status(500).send('Server Error');
         }
+
+        const allAttendance = sortAttendanceRowsForCourse(allRows || []);
 
         await sendAbsenceAlerts(course, records, allAttendance);
 
