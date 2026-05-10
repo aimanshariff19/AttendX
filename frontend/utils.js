@@ -31,11 +31,12 @@ async function apiCall(endpoint, method = 'GET', body = null, timeoutMs = 5000) 
         }
 
         if (!response.ok) {
+            const raw = await response.text();
             let errorBody = {};
             try {
-                errorBody = await response.json();
-            } catch (parseError) {
-                errorBody = { msg: await response.text() };
+                errorBody = raw ? JSON.parse(raw) : {};
+            } catch {
+                errorBody = { msg: raw || 'API Error' };
             }
             const error = new Error(errorBody.msg || errorBody.error || 'API Error');
             error.status = response.status;
