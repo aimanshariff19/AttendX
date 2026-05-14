@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AttendX / Take Attendance</title>
     <link rel="icon" href="assets/logo.png">
 
@@ -319,11 +320,60 @@
         }
 
         @media (max-width: 760px) {
+            body {
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+
+            .dashboard {
+                width: calc(100vw - 24px);
+                margin: 12px auto;
+                padding: 16px;
+                border-radius: 16px;
+            }
+
+            .header-top {
+                align-items: stretch;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+                line-height: 1.2;
+                margin-bottom: 4px;
+            }
+
+            .btn {
+                width: 100%;
+                min-height: 42px;
+            }
+
             .face-device,
             .quick-mark,
             .input-grid,
             .info-card {
                 grid-template-columns: 1fr;
+            }
+
+            .input-group input {
+                max-width: none;
+                width: 100%;
+            }
+
+            .card {
+                padding: 14px;
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 620px;
+                font-size: 13px;
+            }
+
+            th,
+            td {
+                padding: 10px;
             }
         }
     </style>
@@ -370,23 +420,6 @@
             <div class="time-info">
                 <p><b>Class Time :</b> <span id="timeRange">--</span></p>
             </div>
-        </div>
-
-        <div class="bulk-actions">
-            <button class="btn" onclick="markAll(true, event)">Mark All Present</button>
-            <button class="btn" onclick="markAll(false, event)">Mark All Absent</button>
-        </div> <br>
-
-        <div class="card">
-            <div class="quick-mark">
-                <div class="input-group">
-                    <label>Quick Mark Absentees</label>
-                    <input type="text" id="quickSearch" placeholder="001, 002, Aiman">
-                </div>
-                <button class="btn" onclick="quickMark(false)">Mark Absent</button>
-                <button class="btn" onclick="quickMark(true)">Mark Present</button>
-            </div>
-            <p class="quick-help">Tip: mark all present first, then enter all absentees together. Separate with comma, space, or new line.</p>
         </div>
 
         <div class="card">

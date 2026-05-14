@@ -259,6 +259,46 @@
                 transform: translateY(0);
             }
         }
+
+        @media (max-width: 760px) {
+            body {
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+
+            body::before,
+            body::after {
+                width: 260px;
+                height: 260px;
+                filter: blur(90px);
+            }
+
+            .dashboard {
+                width: calc(100vw - 24px);
+                margin: 12px auto;
+                padding: 16px;
+                border-radius: 16px;
+            }
+
+            h1 {
+                font-size: 24px;
+                line-height: 1.2;
+                margin-bottom: 14px;
+            }
+
+            .logout-btn {
+                width: 100%;
+                margin-bottom: 16px;
+            }
+
+            .cards {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .subjects {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 

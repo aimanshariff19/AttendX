@@ -295,6 +295,71 @@
         transform: rotate(360deg);
       }
     }
+
+    @media (max-width: 760px) {
+      body {
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      .dashboard {
+        width: calc(100vw - 24px);
+        margin: 12px auto;
+        padding: 16px;
+        border-radius: 16px;
+      }
+
+      h1 {
+        font-size: 24px;
+        line-height: 1.2;
+      }
+
+      .btn {
+        width: 100%;
+        min-height: 42px;
+      }
+
+      .card {
+        grid-template-columns: 1fr;
+        padding: 14px;
+      }
+
+      .attendance-controls {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .attendance-controls div,
+      .attendance-controls div:last-child {
+        width: 100%;
+      }
+
+      .attendance-controls button {
+        margin-top: 0;
+        height: 42px;
+      }
+
+      .bulk-actions,
+      .quick-mark {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .table-card {
+        overflow-x: auto;
+      }
+
+      table {
+        min-width: 760px;
+        font-size: 13px;
+      }
+
+      th,
+      td {
+        padding: 10px;
+      }
+    }
   </style>
 </head>
 

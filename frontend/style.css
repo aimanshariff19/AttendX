@@ -549,3 +549,48 @@ input:-webkit-autofill:focus {
     -webkit-box-shadow: 0 0 0px 1000px #1e293b inset !important;
     transition: background-color 5000s ease-in-out 0s;
 }
+
+@media (max-width: 760px) {
+    body {
+        align-items: flex-start;
+        min-height: 100vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: 16px 0;
+    }
+
+    body::before,
+    body::after {
+        width: 260px;
+        height: 260px;
+        filter: blur(90px);
+    }
+
+    .login-container {
+        width: calc(100vw - 24px);
+        padding: 28px 20px;
+        border-radius: 20px;
+        gap: 16px;
+    }
+
+    .login-container:hover {
+        transform: none;
+    }
+
+    .college-name {
+        font-size: 16px;
+        line-height: 1.25;
+    }
+
+    .system-title {
+        font-size: 15px;
+        line-height: 1.25;
+    }
+
+    .form-extra {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+}

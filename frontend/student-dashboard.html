@@ -256,6 +256,72 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        @media (max-width: 760px) {
+            body {
+                overflow-x: hidden;
+            }
+
+            body::before,
+            body::after {
+                width: 260px;
+                height: 260px;
+                filter: blur(90px);
+            }
+
+            .dashboard {
+                width: calc(100vw - 24px);
+                margin: 12px auto;
+                padding: 16px;
+                border-radius: 16px;
+            }
+
+            .header-actions {
+                align-items: stretch;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            h1 {
+                font-size: 24px;
+                line-height: 1.2;
+            }
+
+            .btn-group {
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+
+            .btn-group button {
+                width: 100%;
+                min-height: 42px;
+            }
+
+            .cards {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+            }
+
+            .profile-info {
+                display: grid;
+                grid-template-columns: 1fr;
+                padding: 14px;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 680px;
+                font-size: 13px;
+            }
+
+            th,
+            td {
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 

@@ -197,6 +197,59 @@
             font-weight: 600;
             border-radius: 6px;
         }
+
+        @media (max-width: 760px) {
+            body {
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+
+            body::before,
+            body::after {
+                width: 260px;
+                height: 260px;
+                filter: blur(90px);
+            }
+
+            .dashboard {
+                width: calc(100vw - 24px);
+                margin: 12px auto;
+                padding: 16px;
+                border-radius: 16px;
+            }
+
+            h1 {
+                font-size: 24px;
+                line-height: 1.2;
+            }
+
+            button {
+                width: 100%;
+                min-height: 42px;
+                margin-right: 0;
+            }
+
+            .card {
+                display: grid;
+                gap: 8px;
+            }
+
+            .table-wrapper {
+                max-height: none;
+                overflow-x: auto;
+                overflow-y: visible;
+            }
+
+            table {
+                min-width: 760px;
+                font-size: 13px;
+            }
+
+            th,
+            td {
+                padding: 10px;
+            }
+        }
     </style>
 
 </head>

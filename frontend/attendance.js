@@ -198,11 +198,12 @@ function loadStudents() {
     </div>
 </td>
 <td>
-    <button class="status-btn present active" onclick="toggleStatus(this)">
-        Present
+    <button class="status-btn absent active" onclick="toggleStatus(this)">
+        Absent
     </button>
 </td>
 `
+        row.style.background = "rgba(239,68,68,0.12)"
         table.appendChild(row)
     })
 }
