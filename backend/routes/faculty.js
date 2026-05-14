@@ -378,6 +378,156 @@ router.post('/attendance', auth('faculty'), async (req, res) => {
     }
 });
 
+// @route   POST api/faculty/face-scan-attendance
+// @desc    Mark one student present from the face recognition device flow
+router.post('/face-scan-attendance', auth('faculty'), async (req, res) => {
+    const err = checkSupabase(res);
+    if (err) return err;
+
+    const { subject, department, program, sem, section, date, time, numClasses, studentId } = req.body;
+
+    try {
+        if (!studentId) return res.status(400).json({ msg: 'Missing student ID from scan' });
+
+        const { data: course, error: courseError } = await supabase
+            .from('courses')
+            .select('*')
+            .match({ subject, department, program, sem, section, facultyId: req.user.id })
+            .single();
+
+        if (courseError || !course) {
+            return res.status(403).json({ msg: 'Not authorized for this course' });
+        }
+
+        const slotTime = normalizeAttendanceSlotTime(time, numClasses);
+        if (!date || !slotTime || String(slotTime).trim() === '') {
+            return res.status(400).json({ msg: 'Missing date or time slot' });
+        }
+
+        const { data: student, error: studentError } = await supabase
+            .from('users')
+            .select('id,name,department,program,sem,section,role')
+            .match({ id: studentId, role: 'student', department, program, sem, section })
+            .maybeSingle();
+
+        if (studentError) {
+            console.error(studentError.message);
+            return res.status(500).send('Server Error');
+        }
+
+        if (!student) {
+            return res.status(404).json({ msg: 'Scanned student is not in this class' });
+        }
+
+        const { data: dayRows, error: dayFetchError } = await supabase
+            .from('attendance')
+            .select('*')
+            .eq('courseId', course.id)
+            .eq('date', date);
+
+        if (dayFetchError) {
+            console.error(dayFetchError.message);
+            return res.status(500).send('Server Error');
+        }
+
+        const existingAttendance = (dayRows || []).find(
+            (row) =>
+                normalizeAttendanceSlotTime(
+                    row.time_slot ?? row.time,
+                    row.numClasses ?? row.num_classes
+                ) === slotTime
+        );
+
+        if (existingAttendance) {
+            const records = Array.isArray(existingAttendance.records) ? existingAttendance.records.slice() : [];
+            const idx = records.findIndex((r) => r.studentId === studentId);
+            const scannedRecord = {
+                studentId,
+                status: 'Present',
+                reason: '',
+                markedBy: 'face_device',
+                scannedAt: new Date().toISOString()
+            };
+
+            if (idx >= 0) records[idx] = { ...records[idx], ...scannedRecord };
+            else records.push(scannedRecord);
+
+            const { data: updatedAttendance, error: updateError } = await supabase
+                .from('attendance')
+                .update({ records })
+                .eq('id', existingAttendance.id)
+                .select()
+                .single();
+
+            if (updateError) {
+                console.error(updateError.message);
+                return res.status(500).send('Server Error');
+            }
+
+            return res.json({ attendance: updatedAttendance, student, created: false });
+        }
+
+        const { data: students, error: studentsError } = await supabase
+            .from('users')
+            .select('id')
+            .match({ role: 'student', department, program, sem, section });
+
+        if (studentsError) {
+            console.error(studentsError.message);
+            return res.status(500).send('Server Error');
+        }
+
+        const attendancePayload = {
+            courseId: course.id,
+            date,
+            time_slot: slotTime,
+            numClasses: numClasses || 1,
+            records: (students || []).map((s) => ({
+                studentId: s.id,
+                status: s.id === studentId ? 'Present' : 'Absent',
+                reason: '',
+                markedBy: s.id === studentId ? 'face_device' : 'auto_absent',
+                scannedAt: s.id === studentId ? new Date().toISOString() : null
+            }))
+        };
+
+        let { data: attendance, error: insertError } = await supabase
+            .from('attendance')
+            .insert(attendancePayload)
+            .select()
+            .single();
+
+        const hint = `${insertError?.message || ''} ${insertError?.details || ''}`;
+        if (insertError && /time_slot/i.test(hint)) {
+            const legacyPayload = {
+                courseId: course.id,
+                date,
+                time: slotTime,
+                numClasses: numClasses || 1,
+                records: attendancePayload.records
+            };
+            ({ data: attendance, error: insertError } = await supabase
+                .from('attendance')
+                .insert(legacyPayload)
+                .select()
+                .single());
+        }
+
+        if (insertError) {
+            console.error(insertError.message);
+            return res.status(500).json({
+                msg: insertError.message || 'Server Error',
+                detail: insertError.details || insertError.hint || ''
+            });
+        }
+
+        res.json({ attendance, student, created: true });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 // @route   GET api/faculty/attendance
 // @desc    Get attendance for edit
 router.get('/attendance', auth('faculty'), async (req, res) => {

@@ -143,6 +143,16 @@ let section = ''
 let studentList = []
 let attendanceRecords = []
 let table = null
+let faceStream = null
+
+function faceClassKey() {
+    return `attendx_faces_${department}_${program}_${sem}_${section}`.replace(/\s+/g, "_")
+}
+
+function setFaceStatus(message) {
+    const el = document.getElementById("faceStatus")
+    if (el) el.innerText = message
+}
 
 function setText(id, value) {
     const el = document.getElementById(id)
@@ -298,6 +308,191 @@ function quickMark(isPresent) {
     if (input) {
         input.value = ""
         input.focus()
+    }
+}
+
+function populateFaceStudentSelect() {
+    const select = document.getElementById("faceStudentSelect")
+    if (!select) return
+
+    select.innerHTML = `<option value="">Select student to enroll</option>`
+    studentList.forEach(student => {
+        const option = document.createElement("option")
+        option.value = student.id || student.usn
+        option.innerText = `${student.id || student.usn} - ${student.name}`
+        select.appendChild(option)
+    })
+}
+
+async function startFaceDevice(btn) {
+    const video = document.getElementById("faceVideo")
+    if (!video) return
+
+    try {
+        setBtnLoading(btn, "Starting")
+        if (!faceStream) {
+            faceStream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
+                audio: false
+            })
+        }
+        video.srcObject = faceStream
+        await video.play()
+        setFaceStatus("Camera started. Enroll each student once, then scan during class.")
+    } catch (err) {
+        console.error(err)
+        setFaceStatus("Camera permission is required for face recognition.")
+        showError("Allow camera access")
+    } finally {
+        resetBtn(btn)
+    }
+}
+
+function captureFaceSignature() {
+    const video = document.getElementById("faceVideo")
+    if (!video || !video.videoWidth || !video.videoHeight) {
+        throw new Error("Start the camera first")
+    }
+
+    const canvas = document.createElement("canvas")
+    const size = 16
+    canvas.width = size
+    canvas.height = size
+    const ctx = canvas.getContext("2d")
+    ctx.drawImage(video, 0, 0, size, size)
+    const data = ctx.getImageData(0, 0, size, size).data
+    const gray = []
+
+    for (let i = 0; i < data.length; i += 4) {
+        gray.push(Math.round((data[i] + data[i + 1] + data[i + 2]) / 3))
+    }
+
+    const average = gray.reduce((sum, value) => sum + value, 0) / gray.length
+    return gray.map(value => (value >= average ? "1" : "0")).join("")
+}
+
+function signatureDistance(a, b) {
+    if (!a || !b || a.length !== b.length) return Number.POSITIVE_INFINITY
+    let diff = 0
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) diff++
+    }
+    return diff
+}
+
+function getFaceRegistry() {
+    try {
+        return JSON.parse(localStorage.getItem(faceClassKey()) || "{}")
+    } catch {
+        return {}
+    }
+}
+
+function saveFaceRegistry(registry) {
+    localStorage.setItem(faceClassKey(), JSON.stringify(registry || {}))
+}
+
+async function enrollSelectedFace(btn) {
+    try {
+        setBtnLoading(btn, "Enrolling")
+        if (!faceStream) await startFaceDevice()
+
+        const select = document.getElementById("faceStudentSelect")
+        const studentId = select?.value
+        if (!studentId) {
+            triggerShake(select)
+            showError("Select student")
+            return
+        }
+
+        const registry = getFaceRegistry()
+        registry[studentId] = {
+            signature: captureFaceSignature(),
+            enrolledAt: new Date().toISOString()
+        }
+        saveFaceRegistry(registry)
+        setFaceStatus(`${studentId} face enrolled on this device.`)
+    } catch (err) {
+        console.error(err)
+        showError(err.message || "Could not enroll face")
+        setFaceStatus(err.message || "Enrollment failed.")
+    } finally {
+        resetBtn(btn)
+    }
+}
+
+function validateFaceAttendanceSlot() {
+    const date = document.getElementById("date")?.value
+    const timeInput = document.getElementById("classTime")?.value
+    const numClassesVal = parseInt(document.getElementById("numClasses")?.value) || 1
+    const time = formatAttendanceSlotStored(timeInput, numClassesVal)
+
+    if (!date) {
+        triggerShake(document.getElementById("date"))
+        throw new Error("Select Date")
+    }
+    if (!time) {
+        triggerShake(document.getElementById("classTime"))
+        throw new Error("Select Time Slot")
+    }
+
+    return { date, time, numClassesVal }
+}
+
+async function scanFaceAttendance(btn) {
+    try {
+        setBtnLoading(btn, "Scanning")
+        if (!faceStream) await startFaceDevice()
+
+        const registry = getFaceRegistry()
+        const enrolled = Object.entries(registry)
+        if (enrolled.length === 0) {
+            showError("Enroll faces first")
+            setFaceStatus("No enrolled faces found for this class on this device.")
+            return
+        }
+
+        const current = captureFaceSignature()
+        let best = { studentId: "", distance: Number.POSITIVE_INFINITY }
+        enrolled.forEach(([studentId, data]) => {
+            const distance = signatureDistance(current, data.signature)
+            if (distance < best.distance) best = { studentId, distance }
+        })
+
+        if (!best.studentId || best.distance > 88) {
+            showError("Face not recognized")
+            setFaceStatus("Face not recognized. Try better lighting or enroll again.")
+            return
+        }
+
+        const { date, time, numClassesVal } = validateFaceAttendanceSlot()
+        const result = await apiFetch('/faculty/face-scan-attendance', {
+            method: 'POST',
+            body: JSON.stringify({
+                subject,
+                department,
+                program,
+                sem,
+                section,
+                date,
+                time,
+                numClasses: numClassesVal,
+                studentId: best.studentId
+            })
+        })
+
+        const row = findStudentRow(best.studentId)
+        if (row) setRowStatus(row, true)
+
+        const name = result?.student?.name || best.studentId
+        setFaceStatus(`${name} recognized and marked Present for ${time}.`)
+        showError(`${name} marked present`)
+    } catch (err) {
+        console.error(err)
+        showError(err.body?.msg || err.message || "Could not scan attendance")
+        setFaceStatus(err.body?.msg || err.message || "Scan failed.")
+    } finally {
+        resetBtn(btn)
     }
 }
 
@@ -470,6 +665,7 @@ window.onload = async function () {
     }
 
     loadStudents()
+    populateFaceStudentSelect()
     calculateTimeRange()
 
 }
