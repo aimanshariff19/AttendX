@@ -5,6 +5,23 @@
 
 -- 1. Add missing 'phone' column to users
 alter table users add column if not exists phone text;
+alter table users add column if not exists photo text;
+alter table users add column if not exists "facePhoto" text;
+alter table users add column if not exists "faceSignature" text;
+
+-- 1b. Allow the new admin portal role
+alter table users drop constraint if exists users_role_check;
+alter table users add constraint users_role_check check (role in ('faculty', 'student', 'hod', 'admin'));
+
+-- 1c. Seed default admin login for the Admin portal.
+--     Change this password after first successful login.
+insert into users (id, password, name, email, role, department, program, sem, section, "parentPhone") values
+('admin', 'admin123', 'AttendX Admin', 'admin@atria.edu', 'admin', null, null, null, null, null)
+on conflict (id) do update set
+    role = 'admin',
+    name = excluded.name,
+    email = excluded.email,
+    password = excluded.password;
 
 -- 2. Fix notifications table:
 --    a) Make studentId nullable (alerts go to faculty & coordinators too)
