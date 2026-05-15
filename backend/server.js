@@ -40,6 +40,7 @@ console.log('Auth routes mounted');
 app.use('/api/faculty', require('./routes/faculty'));
 app.use('/api/student', require('./routes/student'));
 app.use('/api/hod', require('./routes/hod'));
+app.use('/api/admin', require('./routes/admin'));
 console.log('All routes mounted');
 
 // Catch-all route to serve index.html
@@ -57,6 +58,10 @@ app.get(['/student-dashboard', '/student-dashboard.html'], (req, res) => {
 
 app.get(['/hod-dashboard', '/hod-dashboard.html'], (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/hod-dashboard.html'));
+});
+
+app.get(['/admin-panel', '/admin-panel.html'], (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/admin-panel.html'));
 });
 
 const cron = require('node-cron');

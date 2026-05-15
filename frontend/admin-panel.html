@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AttendX / Admin Panel</title>
+    <link rel="icon" href="assets/logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Inter, sans-serif; min-height: 100vh; background: linear-gradient(135deg, #0f172a, #312e81); color: white; }
+        .dashboard { max-width: 1100px; margin: 32px auto; padding: 24px; background: rgba(255,255,255,0.06); border-radius: 18px; border: 1px solid rgba(255,255,255,0.14); box-shadow: 0 20px 50px rgba(0,0,0,0.55); }
+        .topbar { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 20px; }
+        h1 { font-size: 30px; font-weight: 700; background: linear-gradient(90deg, #bfdbfe, #a78bfa, #34d399); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .grid { display: grid; grid-template-columns: minmax(300px, 1fr) 360px; gap: 18px; align-items: start; }
+        .card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16); border-radius: 12px; padding: 16px; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+        label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: #cbd5e1; }
+        input, select { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(15,23,42,0.9); color: #e5e7eb; outline: none; }
+        input:focus, select:focus { border-color: #818cf8; box-shadow: 0 0 0 3px rgba(129,140,248,0.22); }
+        .full { grid-column: 1 / -1; }
+        .btn { padding: 10px 14px; border-radius: 8px; border: 0; cursor: pointer; color: white; font-weight: 700; background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+        .btn.secondary { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18); }
+        .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+        video, .preview { width: 100%; aspect-ratio: 4 / 3; border-radius: 10px; background: rgba(15,23,42,0.85); border: 1px solid rgba(255,255,255,0.16); object-fit: cover; }
+        .status { margin-top: 12px; min-height: 40px; padding: 10px; border-radius: 8px; background: rgba(15,23,42,0.7); color: #cbd5e1; font-size: 12px; line-height: 1.35; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+        th, td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.12); text-align: left; }
+        th { color: #c4b5fd; font-size: 12px; }
+        .avatar { width: 42px; height: 42px; border-radius: 8px; object-fit: cover; background: rgba(255,255,255,0.08); }
+        @media (max-width: 860px) { .dashboard { width: calc(100vw - 24px); margin: 12px auto; padding: 16px; } .grid, .form-grid { grid-template-columns: 1fr; } .topbar { flex-direction: column; align-items: stretch; } }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard">
+        <div class="topbar">
+            <h1>AttendX / Admin Panel</h1>
+            <button class="btn secondary" onclick="logoutAdmin()">Logout</button>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <form id="studentForm">
+                    <div class="form-grid">
+                        <label>Course
+                            <select id="courseSelect">
+                                <option value="">Select course or enter details below</option>
+                            </select>
+                        </label>
+                        <label>USN
+                            <input id="usn" required placeholder="1AT24CS001">
+                        </label>
+                        <label>Name
+                            <input id="name" required placeholder="Student name">
+                        </label>
+                        <label>Mobile No
+                            <input id="phone" placeholder="Student mobile">
+                        </label>
+                        <label>Parent Mobile
+                            <input id="parentPhone" placeholder="Parent mobile">
+                        </label>
+                        <label>Email
+                            <input id="email" type="email" placeholder="student@atria.edu">
+                        </label>
+                        <label>Department
+                            <input id="department" required placeholder="CSE">
+                        </label>
+                        <label>Program
+                            <input id="program" required placeholder="CSE">
+                        </label>
+                        <label>Semester
+                            <input id="sem" required placeholder="3">
+                        </label>
+                        <label>Section
+                            <input id="section" required placeholder="A">
+                        </label>
+                        <label>Password
+                            <input id="password" placeholder="Defaults to USN">
+                        </label>
+                        <label>Student Photo
+                            <input id="photoFile" type="file" accept="image/*">
+                        </label>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn" type="submit">Save Student</button>
+                        <button class="btn secondary" type="button" onclick="loadStudents()">Refresh List</button>
+                    </div>
+                </form>
+
+                <div class="status" id="status">Add a student and capture/save their face for the selected class.</div>
+
+                <table>
+                    <thead>
+                        <tr><th>Photo</th><th>USN</th><th>Name</th><th>Class</th><th>Mobile</th></tr>
+                    </thead>
+                    <tbody id="studentRows"></tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <video id="faceVideo" autoplay muted playsinline></video>
+                <div class="actions">
+                    <button class="btn" type="button" onclick="startCamera()">Start Camera</button>
+                    <button class="btn secondary" type="button" onclick="captureFace()">Capture Face</button>
+                </div>
+                <img id="photoPreview" class="preview" alt="Student preview">
+            </div>
+        </div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="admin-panel.js"></script>
+</body>
+
+</html>

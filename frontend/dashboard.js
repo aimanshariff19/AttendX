@@ -183,16 +183,10 @@ function loadCourseCards() {
             <button>
                 <span>Take Attendance</span>
             </button>
-            <button class="enroll-btn">
-                <span>Enroll Faces</span>
-            </button>
         `
 
         card.querySelector("button").onclick = function () {
             openCourse(course.subject, course.department, course.program, course.sem, course.section, this)
-        }
-        card.querySelector(".enroll-btn").onclick = function () {
-            openFaceEnrollment(course.subject, course.department, course.program, course.sem, course.section, this)
         }
 
         card.style.opacity = "0"
@@ -226,15 +220,6 @@ function openCourse(subject, department, program, sem, section, btn) {
     setTimeout(() => {
         window.location.href = `attendance.html?${query}`
     }, 400)
-}
-
-function openFaceEnrollment(subject, department, program, sem, section, btn) {
-    if (btn) setBtnLoading(btn, "Opening...")
-    subject = normalizeCourseSubject(subject)
-    const query = buildQuery({ subject, department, program, sem, section })
-    setTimeout(() => {
-        window.location.href = `face-enrollment.html?${query}`
-    }, 300)
 }
 
 /* -------- LOGOUT -------- */

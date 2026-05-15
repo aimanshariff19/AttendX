@@ -14,12 +14,16 @@ create table if not exists users (
     password text not null,
     name text not null,
     email text unique,
-    role text not null check (role in ('faculty', 'student', 'hod')),
+    role text not null check (role in ('faculty', 'student', 'hod', 'admin')),
     department text,
     program text,
     sem text,
     section text,
     "parentPhone" text,
+    phone text,
+    photo text,
+    "facePhoto" text,
+    "faceSignature" text,
     created_at timestamptz default now()
 );
 
@@ -103,6 +107,15 @@ where not exists (select 1 from courses where "subjectCode" = 'IS301');
 -- ============================================================
 
 alter table users add column if not exists phone text;
+alter table users add column if not exists photo text;
+alter table users add column if not exists "facePhoto" text;
+alter table users add column if not exists "faceSignature" text;
+alter table users drop constraint if exists users_role_check;
+alter table users add constraint users_role_check check (role in ('faculty', 'student', 'hod', 'admin'));
+
+insert into users (id, password, name, email, role, department, program, sem, section, "parentPhone") values
+('admin', 'admin123', 'AttendX Admin', 'admin@atria.edu', 'admin', null, null, null, null, null)
+on conflict (id) do nothing;
 
 alter table notifications alter column "studentId" drop not null;
 

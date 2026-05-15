@@ -142,7 +142,9 @@ async function requireAuth(role) {
                 ? 'hod-login.html'
                 : role === 'faculty'
                     ? 'faculty-login.html'
-                    : 'student-login.html';
+                    : role === 'admin'
+                        ? 'admin-login.html'
+                        : 'student-login.html';
             return null;
         }
 
@@ -155,7 +157,9 @@ async function requireAuth(role) {
             ? 'hod-login.html'
             : role === 'faculty'
                 ? 'faculty-login.html'
-                : 'student-login.html';
+                : role === 'admin'
+                    ? 'admin-login.html'
+                    : 'student-login.html';
         return null;
     }
 }

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AttendX Admin Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css?v=2.2">
+</head>
+
+<body class="login-page faculty">
+    <ul class="floating-tiles">
+        <li></li><li></li><li></li><li></li><li></li>
+        <li></li><li></li><li></li><li></li><li></li>
+    </ul>
+
+    <div class="login-container">
+        <img src="assets/logo.png" class="college-logo" alt="Atria Logo">
+        <div class="college-info">
+            <h2 class="college-name">Atria Institute of Technology</h2>
+            <p class="college-location">Hebbal, Bengaluru</p>
+            <p class="college-status">(Autonomous Institution)</p>
+        </div>
+
+        <h3 class="system-title">AttendX Admin Portal</h3>
+
+        <form id="loginForm" autocomplete="on">
+            <div class="input-group">
+                <label for="username">Admin ID</label>
+                <input type="text" id="username" required autocomplete="username">
+            </div>
+
+            <div class="input-group password-field">
+                <label for="password">Password</label>
+                <input type="password" id="password" required autocomplete="current-password">
+                <i id="eyeIcon" class="fa-solid fa-eye eye"></i>
+            </div>
+
+            <button id="loginBtn" type="submit">
+                <span class="btn-text">Login</span>
+                <span class="btn-loader"></span>
+            </button>
+        </form>
+
+        <button type="button" onclick="window.location.href='/'" style="width:fit-content; margin:8px auto 0 auto; background:transparent; border:none; color:rgba(255,255,255,0.4); padding:5px 10px; cursor:pointer; font-size:12px; display:flex; align-items:center;">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span style="margin-left:8px;">Back to Portal</span>
+        </button>
+
+        <p id="error" class="error-text" style="margin-top:10px; min-height:15px; text-align:center; color:#fb7185; font-size:13px;"></p>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="admin-login.js"></script>
+</body>
+
+</html>
