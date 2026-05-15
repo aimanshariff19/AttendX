@@ -63,7 +63,9 @@ function hodLogin() {
                 card.style.transform = "scale(0.95)"
             }
             setTimeout(() => {
-                window.location.href = "hod-dashboard.html"
+                window.location.href = userData.department === "CSE"
+                    ? "cse-hod-intro.html"
+                    : "hod-dashboard.html"
             }, 400)
         } else {
             errorBox.innerText = "❌ Invalid HOD Credentials"
