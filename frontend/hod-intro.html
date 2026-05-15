@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AttendX HOD Intro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        .grid {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 55px 55px;
+            opacity: 0.2;
+            z-index: 0;
+        }
+        .main {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            min-height: 100vh;
+            padding: 50px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 34px;
+        }
+        .logo {
+            text-align: center;
+            font-size: 2.4rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        .logo span { color: #a78bfa; }
+        .department {
+            position: relative;
+            width: min(1100px, calc(100vw - 40px));
+            margin: 0 auto;
+            border-radius: 28px;
+            padding: 45px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+        }
+        .department::before {
+            content: "";
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.35;
+            top: -120px;
+            right: -100px;
+        }
+        .content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+        }
+        .left { flex: 1; min-width: 300px; }
+        .right {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 250px;
+        }
+        .core {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .core::before {
+            content: "";
+            position: absolute;
+            inset: -18px;
+            border-radius: 50%;
+            border: 1px dashed rgba(255,255,255,0.16);
+            animation: rotate 15s linear infinite;
+        }
+        .short {
+            font-size: 3.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            letter-spacing: 4px;
+        }
+        .title {
+            font-size: 3.4rem;
+            line-height: 1.1;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+        .subtitle {
+            font-size: 0.9rem;
+            letter-spacing: 4px;
+            color: #cbd5e1;
+            margin-bottom: 30px;
+        }
+        .terminal {
+            width: 100%;
+            max-width: 520px;
+        }
+        .line {
+            font-family: monospace;
+            color: #dbeafe;
+            margin-bottom: 12px;
+            font-size: 0.92rem;
+            opacity: 0;
+            transform: translateY(8px);
+            animation: fadeLine 0.55s forwards;
+        }
+        .line:nth-child(1) { animation-delay: 0.2s; }
+        .line:nth-child(2) { animation-delay: 0.8s; }
+        .line:nth-child(3) { animation-delay: 1.4s; }
+        .loader {
+            margin-top: 28px;
+            width: 100%;
+            max-width: 520px;
+        }
+        .loader-text {
+            color: #94a3b8;
+            font-size: 0.78rem;
+            letter-spacing: 4px;
+            margin-bottom: 12px;
+        }
+        .bar {
+            width: 100%;
+            height: 10px;
+            border-radius: 50px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.08);
+        }
+        .progress {
+            width: 0%;
+            height: 100%;
+            border-radius: 50px;
+            animation: load 3s ease forwards;
+        }
+        .cse::before { background: #7c3aed55; }
+        .cse .core {
+            background: radial-gradient(circle, rgba(167,139,250,0.18), rgba(124,58,237,0.05));
+            box-shadow: 0 0 45px rgba(124,58,237,0.25);
+        }
+        .cse .short { color: #ddd6fe; }
+        .cse .title span { color: #a78bfa; }
+        .cse .progress { background: linear-gradient(90deg, #7c3aed, #5b21b6); }
+        .ise::before { background: #38bdf855; }
+        .ise .core {
+            background: radial-gradient(circle, rgba(56,189,248,0.18), rgba(37,99,235,0.05));
+            box-shadow: 0 0 45px rgba(56,189,248,0.25);
+        }
+        .ise .short { color: #bae6fd; }
+        .ise .title span { color: #38bdf8; }
+        .ise .progress { background: linear-gradient(90deg, #38bdf8, #2563eb); }
+        .ece::before { background: #ef444455; }
+        .ece .core {
+            background: radial-gradient(circle, rgba(239,68,68,0.18), rgba(249,115,22,0.05));
+            box-shadow: 0 0 45px rgba(239,68,68,0.25);
+        }
+        .ece .short { color: #fecaca; }
+        .ece .title span { color: #fb7185; }
+        .ece .progress { background: linear-gradient(90deg, #ef4444, #f97316); }
+        .me::before { background: #f59e0b55; }
+        .me .core {
+            background: radial-gradient(circle, rgba(245,158,11,0.18), rgba(234,88,12,0.05));
+            box-shadow: 0 0 45px rgba(245,158,11,0.25);
+        }
+        .me .short { color: #fde68a; }
+        .me .title span { color: #fbbf24; }
+        .me .progress { background: linear-gradient(90deg, #f59e0b, #ea580c); }
+        .civil::before { background: #eab30855; }
+        .civil .core {
+            background: radial-gradient(circle, rgba(234,179,8,0.18), rgba(202,138,4,0.05));
+            box-shadow: 0 0 45px rgba(234,179,8,0.25);
+        }
+        .civil .short { color: #fef08a; }
+        .civil .title span { color: #fde047; }
+        .civil .progress { background: linear-gradient(90deg, #eab308, #ca8a04); }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes load {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+        @keyframes fadeLine {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media(max-width: 768px) {
+            body { overflow-y: auto; }
+            .main { justify-content: flex-start; padding: 30px 20px; }
+            .department { padding: 30px 22px; }
+            .title { font-size: 2.2rem; }
+            .content { flex-direction: column-reverse; text-align: center; }
+            .left { display: flex; flex-direction: column; align-items: center; }
+            .subtitle { letter-spacing: 2px; }
+            .core { width: 140px; height: 140px; }
+            .short { font-size: 2.8rem; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="grid"></div>
+    <div class="main">
+        <div class="logo">Attend<span>X</span></div>
+        <div class="department cse" id="departmentCard">
+            <div class="content">
+                <div class="left">
+                    <div class="title" id="deptTitle">Computer Science <br><span>Engineering</span></div>
+                    <div class="subtitle" id="deptSubtitle">INTELLIGENCE &bull; AUTOMATION &bull; INNOVATION</div>
+                    <div class="terminal">
+                        <div class="line" id="lineOne">&gt; Initializing CSE systems...</div>
+                        <div class="line" id="lineTwo">&gt; Connecting AI modules...</div>
+                        <div class="line">&gt; Authentication successful.</div>
+                    </div>
+                    <div class="loader">
+                        <div class="loader-text" id="loaderText">LOADING CSE MODULES...</div>
+                        <div class="bar"><div class="progress"></div></div>
+                    </div>
+                </div>
+                <div class="right">
+                    <div class="core"><div class="short" id="deptShort">CSE</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script>
+        const departments = {
+            CSE: {
+                theme: "cse",
+                short: "CSE",
+                title: "Computer Science <br><span>Engineering</span>",
+                subtitle: "INTELLIGENCE &bull; AUTOMATION &bull; INNOVATION",
+                lineOne: "&gt; Initializing CSE systems...",
+                lineTwo: "&gt; Connecting AI modules...",
+                loader: "LOADING CSE MODULES..."
+            },
+            ISE: {
+                theme: "ise",
+                short: "ISE",
+                title: "Information Science <br><span>Engineering</span>",
+                subtitle: "DATA &bull; SYSTEMS &bull; CLOUD &bull; SECURITY",
+                lineOne: "&gt; Initializing ISE systems...",
+                lineTwo: "&gt; Connecting cloud services...",
+                loader: "LOADING ISE MODULES..."
+            },
+            ECE: {
+                theme: "ece",
+                short: "ECE",
+                title: "Electronics & Communication <br><span>Engineering</span>",
+                subtitle: "SIGNALS &bull; CIRCUITS &bull; NETWORKS &bull; EMBEDDED",
+                lineOne: "&gt; Initializing ECE systems...",
+                lineTwo: "&gt; Connecting embedded devices...",
+                loader: "LOADING ECE MODULES..."
+            },
+            ME: {
+                theme: "me",
+                short: "MECH",
+                title: "Mechanical <br><span>Engineering</span>",
+                subtitle: "DESIGN &bull; MOTION &bull; MACHINES &bull; POWER",
+                lineOne: "&gt; Initializing Mechanical systems...",
+                lineTwo: "&gt; Connecting automation modules...",
+                loader: "LOADING MECHANICAL MODULES..."
+            },
+            CIVIL: {
+                theme: "civil",
+                short: "CIVIL",
+                title: "Civil <br><span>Engineering</span>",
+                subtitle: "STRUCTURE &bull; DESIGN &bull; BUILD &bull; INNOVATE",
+                lineOne: "&gt; Initializing Civil systems...",
+                lineTwo: "&gt; Connecting infrastructure modules...",
+                loader: "LOADING CIVIL MODULES..."
+            }
+        };
+
+        function applyDepartment(department) {
+            const config = departments[department] || departments.CSE;
+            const card = document.getElementById("departmentCard");
+            card.className = `department ${config.theme}`;
+            document.getElementById("deptShort").innerText = config.short;
+            document.getElementById("deptTitle").innerHTML = config.title;
+            document.getElementById("deptSubtitle").innerHTML = config.subtitle;
+            document.getElementById("lineOne").innerHTML = config.lineOne;
+            document.getElementById("lineTwo").innerHTML = config.lineTwo;
+            document.getElementById("loaderText").innerText = config.loader;
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const user = await requireAuth("hod");
+            if (!user) return;
+            applyDepartment(user.department || "CSE");
+            setTimeout(() => {
+                window.location.href = "hod-dashboard.html";
+            }, 3000);
+        });
+    </script>
+</body>
+
+</html>
