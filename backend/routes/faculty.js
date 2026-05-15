@@ -264,6 +264,45 @@ router.get('/students', auth('faculty'), async (req, res) => {
     }
 });
 
+// @route   GET api/faculty/face-registry
+// @desc    Get saved face signatures for a class from Supabase
+router.get('/face-registry', auth('faculty'), async (req, res) => {
+    const err = checkSupabase(res);
+    if (err) return err;
+
+    const { department, program, sem, section } = req.query;
+    try {
+        if (!department || !program || !sem || !section) {
+            return res.status(400).json({ msg: 'Class filters are required' });
+        }
+
+        const { data: students, error } = await supabase
+            .from('users')
+            .select('id,name,department,program,sem,section,photo,facePhoto,faceSignature')
+            .match({ role: 'student', department, program, sem, section });
+
+        if (error) {
+            console.error(error.message);
+            return res.status(500).send('Server Error');
+        }
+
+        const registry = {};
+        (students || []).forEach(student => {
+            if (!student.faceSignature) return;
+            registry[student.id] = {
+                signature: student.faceSignature,
+                photo: student.photo || student.facePhoto || '',
+                name: student.name
+            };
+        });
+
+        res.json(registry);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 // @route   POST api/faculty/attendance
 // @desc    Submit attendance
 router.post('/attendance', auth('faculty'), async (req, res) => {

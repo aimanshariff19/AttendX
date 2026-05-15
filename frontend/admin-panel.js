@@ -22,10 +22,6 @@ function value(id) {
     return document.getElementById(id).value.trim();
 }
 
-function classKey(department, program, sem, section) {
-    return `attendx_faces_${department}_${program}_${sem}_${section}`.replace(/\s+/g, "_");
-}
-
 function captureSignatureFromVideo() {
     const video = document.getElementById("faceVideo");
     if (!video.videoWidth || !video.videoHeight) throw new Error("Start the camera first");
@@ -79,19 +75,6 @@ function captureFace() {
     } catch (err) {
         setStatus(err.message || "Could not capture face.");
     }
-}
-
-function saveLocalFace(student) {
-    if (!capturedSignature) return;
-    const key = classKey(student.department, student.program, student.sem, student.section);
-    const registry = JSON.parse(localStorage.getItem(key) || "{}");
-    registry[student.id] = {
-        signature: capturedSignature,
-        photo: capturedPhoto,
-        name: student.name,
-        enrolledAt: new Date().toISOString()
-    };
-    localStorage.setItem(key, JSON.stringify(registry));
 }
 
 async function loadCourses() {
@@ -154,14 +137,48 @@ async function saveStudent(event) {
         timeoutMs: 12000
     });
 
-    saveLocalFace(student);
     setStatus(`${student.id} saved for ${student.program} Sem ${student.sem} Sec ${student.section}.`);
-    document.getElementById("studentForm").reset();
-    populateProgramOptions("");
+    clearStudentInputs();
     capturedPhoto = "";
     capturedSignature = "";
     document.getElementById("photoPreview").removeAttribute("src");
     await loadStudents();
+}
+
+function clearStudentInputs() {
+    ["usn", "name", "phone", "parentPhone", "email", "password"].forEach(id => {
+        document.getElementById(id).value = "";
+    });
+    document.getElementById("courseSelect").value = "";
+}
+
+async function fetchStudentByUsn() {
+    const usn = value("usn").toUpperCase();
+    if (!usn) return;
+
+    try {
+        const student = await apiFetch(`/admin/students/${encodeURIComponent(usn)}`);
+        document.getElementById("usn").value = student.id || usn;
+        document.getElementById("name").value = student.name || "";
+        document.getElementById("phone").value = student.phone || "";
+        document.getElementById("parentPhone").value = student.parentPhone || "";
+        document.getElementById("email").value = student.email || "";
+        document.getElementById("department").value = student.department || "";
+        populateProgramOptions(student.department || "", student.program || "");
+        document.getElementById("sem").value = student.sem || "";
+        document.getElementById("section").value = student.section || "";
+        capturedPhoto = student.photo || student.facePhoto || "";
+        capturedSignature = student.faceSignature || "";
+        if (capturedPhoto) document.getElementById("photoPreview").src = capturedPhoto;
+        setStatus(`${student.id} found. Capture a new face or save to update details.`);
+        await loadStudents();
+    } catch (err) {
+        if (err.status === 404) {
+            setStatus(`${usn} is new. Fill the details and capture face.`);
+            return;
+        }
+        setStatus(err.message || "Could not fetch student.");
+    }
 }
 
 function populateProgramOptions(department, selectedProgram = "") {
@@ -263,6 +280,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     ["program", "sem", "section"].forEach(id => {
         document.getElementById(id).addEventListener("change", loadStudents);
     });
+    document.getElementById("usn").addEventListener("blur", fetchStudentByUsn);
     document.getElementById("studentForm").addEventListener("submit", saveStudent);
     await loadStudents();
 });

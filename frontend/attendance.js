@@ -145,10 +145,6 @@ let attendanceRecords = []
 let table = null
 let faceStream = null
 
-function faceClassKey() {
-    return `attendx_faces_${department}_${program}_${sem}_${section}`.replace(/\s+/g, "_")
-}
-
 function setFaceStatus(message) {
     const el = document.getElementById("faceStatus")
     if (el) el.innerText = message
@@ -335,7 +331,7 @@ async function startFaceDevice(btn) {
         }
         video.srcObject = faceStream
         await video.play()
-        setFaceStatus("Camera started. Scan students who are already enrolled on this device.")
+        setFaceStatus("Camera started. Scan students enrolled by admin.")
     } catch (err) {
         console.error(err)
         setFaceStatus("Camera permission is required for face recognition.")
@@ -377,16 +373,8 @@ function signatureDistance(a, b) {
     return diff
 }
 
-function getFaceRegistry() {
-    try {
-        return JSON.parse(localStorage.getItem(faceClassKey()) || "{}")
-    } catch {
-        return {}
-    }
-}
-
-function saveFaceRegistry(registry) {
-    localStorage.setItem(faceClassKey(), JSON.stringify(registry || {}))
+async function getFaceRegistry() {
+    return await apiFetch(`/faculty/face-registry?${buildQuery({ department, program, sem, section })}`)
 }
 
 function validateFaceAttendanceSlot() {
@@ -412,11 +400,11 @@ async function scanFaceAttendance(btn) {
         setBtnLoading(btn, "Scanning")
         if (!faceStream) await startFaceDevice()
 
-        const registry = getFaceRegistry()
+        const registry = await getFaceRegistry()
         const enrolled = Object.entries(registry)
         if (enrolled.length === 0) {
             showError("Enroll faces first")
-            setFaceStatus("No enrolled faces found for this class on this device.")
+            setFaceStatus("No admin-enrolled faces found for this class.")
             return
         }
 

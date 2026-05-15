@@ -38,6 +38,25 @@ router.get('/students', auth('admin'), async (req, res) => {
     res.json(data || []);
 });
 
+router.get('/students/:id', auth('admin'), async (req, res) => {
+    const err = checkSupabase(res);
+    if (err) return err;
+
+    const id = clean(req.params.id).toUpperCase();
+    if (!id) return res.status(400).json({ msg: 'Missing USN' });
+
+    const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('role', 'student')
+        .eq('id', id)
+        .maybeSingle();
+
+    if (error) return res.status(500).json({ msg: error.message });
+    if (!data) return res.status(404).json({ msg: 'Student not found' });
+    res.json(data);
+});
+
 router.post('/students', auth('admin'), async (req, res) => {
     const err = checkSupabase(res);
     if (err) return err;
@@ -51,16 +70,26 @@ router.post('/students', auth('admin'), async (req, res) => {
     const phone = clean(req.body.phone || req.body.mobile);
     const parentPhone = clean(req.body.parentPhone);
     const email = clean(req.body.email) || null;
-    const password = clean(req.body.password) || usn;
+    const password = clean(req.body.password);
 
     if (!usn || !name || !department || !program || !sem || !section) {
         return res.status(400).json({ msg: 'USN, name, department, program, semester and section are required' });
     }
 
     try {
+        const { data: existingStudent, error: existingError } = await supabase
+            .from('users')
+            .select('id,password')
+            .eq('id', usn)
+            .maybeSingle();
+
+        if (existingError) return res.status(500).json({ msg: existingError.message });
+
         const payload = {
             id: usn,
-            password: await bcrypt.hash(password, 12),
+            password: password
+                ? await bcrypt.hash(password, 12)
+                : (existingStudent?.password || await bcrypt.hash(usn, 12)),
             name,
             email,
             role: 'student',
