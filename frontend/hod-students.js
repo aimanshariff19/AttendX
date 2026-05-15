@@ -54,8 +54,10 @@ let cie2Date = ""
 let studentList = []
 let classSubjects = []
 
-const table = document.getElementById("studentRows")
-const tableHead = document.getElementById("tableHead")
+const cie1Table = document.getElementById("cie1StudentRows")
+const cie2Table = document.getElementById("cie2StudentRows")
+const cie1TableHead = document.getElementById("cie1TableHead")
+const cie2TableHead = document.getElementById("cie2TableHead")
 
 function cieStorageKey() {
     return `attendx_cie_${department}_${program}_${sem}_${section}`
@@ -86,15 +88,15 @@ async function initClassDetails() {
 }
 
 function loadSubjectHeaders() {
-    while (tableHead.children.length > 3) {
-        tableHead.removeChild(tableHead.lastChild)
-    }
+    ;[cie1TableHead, cie2TableHead].forEach(head => {
+        while (head.children.length > 3) {
+            head.removeChild(head.lastChild)
+        }
 
-    classSubjects.forEach(sub => {
-        ;["CIE 1", "CIE 2", "Overall"].forEach(label => {
+        classSubjects.forEach(sub => {
             const th = document.createElement("th")
-            th.innerText = `${sub.subject} ${label}`
-            tableHead.appendChild(th)
+            th.innerText = sub.subject
+            head.appendChild(th)
         })
     })
 }
@@ -115,17 +117,22 @@ function getColor(percent) {
     return "low"
 }
 
-function loadStudents() {
-    table.innerHTML = ""
+function emptyRowHtml() {
+    const colspan = Math.max(3 + classSubjects.length, 4)
+    return `
+        <tr>
+            <td colspan="${colspan}" style="padding:20px; opacity:0.6;">
+                No students found
+            </td>
+        </tr>
+    `
+}
+
+function renderCieRows(targetTable, cieKey) {
+    targetTable.innerHTML = ""
 
     if (studentList.length === 0) {
-        table.innerHTML = `
-            <tr>
-                <td colspan="10" style="padding:20px; opacity:0.6;">
-                    No students found
-                </td>
-            </tr>
-        `
+        targetTable.innerHTML = emptyRowHtml()
         return
     }
 
@@ -138,17 +145,20 @@ function loadStudents() {
 `
 
         classSubjects.forEach(sub => {
-            ;["cie1", "cie2", "overall"].forEach(key => {
-                const percent = calculateCiePercentage(student.usn, sub.subject, key)
-                const colorClass = getColor(percent)
-                const isDefaulter = percent < 75 ? "Low" : ""
-                row += `<td class="${colorClass}">${percent}% ${isDefaulter}</td>`
-            })
+            const percent = calculateCiePercentage(student.usn, sub.subject, cieKey)
+            const colorClass = getColor(percent)
+            const isDefaulter = percent < 75 ? "Low" : ""
+            row += `<td class="${colorClass}">${percent}% ${isDefaulter}</td>`
         })
 
         row += "</tr>"
-        table.innerHTML += row
+        targetTable.innerHTML += row
     })
+}
+
+function loadStudents() {
+    renderCieRows(cie1Table, "cie1")
+    renderCieRows(cie2Table, "cie2")
 }
 
 async function loadHodStudentData() {
@@ -170,13 +180,15 @@ window.onload = async function () {
         await loadHodStudentData()
     } catch (err) {
         console.error(err)
-        table.innerHTML = `
+        const errorRow = `
             <tr>
                 <td colspan="10" style="padding:20px;color:#ef4444;">
                     Error loading data: ${err.message}
                 </td>
             </tr>
         `
+        cie1Table.innerHTML = errorRow
+        cie2Table.innerHTML = errorRow
     }
 }
 

@@ -135,10 +135,11 @@
 
         .cie-controls {
             display: grid;
-            grid-template-columns: repeat(2, minmax(180px, 1fr)) auto;
+            grid-template-columns: 170px 170px auto;
             gap: 12px;
             align-items: end;
             margin-bottom: 20px;
+            max-width: 560px;
         }
 
         .cie-controls label {
@@ -159,16 +160,28 @@
         }
 
         /* ===== TABLE WRAPPER (🔥 NEW) ===== */
+        .cie-section {
+            margin-top: 20px;
+        }
+
+        .cie-section h2 {
+            margin: 0 0 10px;
+            color: #ddd6fe;
+            font-size: 18px;
+        }
+
         .table-wrapper {
-            max-height: 420px;
+            max-height: 520px;
             overflow-y: auto;
             border-radius: 12px;
+            margin-bottom: 24px;
         }
 
         /* ===== TABLE ===== */
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 860px;
         }
 
         /* ===== STICKY HEADER (🔥 NEW) ===== */
@@ -261,6 +274,7 @@
 
             .cie-controls {
                 grid-template-columns: 1fr;
+                max-width: none;
             }
 
             .table-wrapper {
@@ -312,19 +326,38 @@
             <button onclick="applyCieDates(this)">Apply CIE Dates</button>
         </div>
 
-        <!-- TABLE -->
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr id="tableHead">
-                        <th>USN</th>
-                        <th>Name</th>
-                        <th>Parent Phone No</th>
-                    </tr>
-                </thead>
+        <div class="cie-section">
+            <h2>CIE 1 Attendance</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr id="cie1TableHead">
+                            <th>USN</th>
+                            <th>Name</th>
+                            <th>Parent Phone No</th>
+                        </tr>
+                    </thead>
 
-                <tbody id="studentRows"></tbody>
-            </table>
+                    <tbody id="cie1StudentRows"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="cie-section">
+            <h2>CIE 2 Attendance</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr id="cie2TableHead">
+                            <th>USN</th>
+                            <th>Name</th>
+                            <th>Parent Phone No</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="cie2StudentRows"></tbody>
+                </table>
+            </div>
         </div>
 
     </div>
