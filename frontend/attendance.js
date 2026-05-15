@@ -159,6 +159,15 @@ function setText(id, value) {
     if (el) el.innerText = value || "-"
 }
 
+function normalizeCourseSubject(value) {
+    const subjectValue = String(value || '').trim()
+    const aliases = {
+        DS: 'Data Structures',
+        DBMS: 'Database Systems'
+    }
+    return aliases[subjectValue.toUpperCase()] || subjectValue
+}
+
 function getStudentStats(usn) {
     let total = 0
     let present = 0
@@ -634,7 +643,7 @@ window.onload = async function () {
     })
 
     const params = getQueryParams()
-    subject = params.subject || ''
+    subject = normalizeCourseSubject(params.subject || '')
     department = params.department || ''
     program = params.program || ''
     sem = params.sem || ''

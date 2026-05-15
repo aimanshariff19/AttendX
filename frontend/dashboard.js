@@ -8,6 +8,15 @@ let currentUser = null
 let facultyCourses = []
 let facultyStudentCount = 0
 
+function normalizeCourseSubject(value) {
+    const subjectValue = String(value || '').trim()
+    const aliases = {
+        DS: 'Data Structures',
+        DBMS: 'Database Systems'
+    }
+    return aliases[subjectValue.toUpperCase()] || subjectValue
+}
+
 /* -------- 💧 RIPPLE -------- */
 document.addEventListener("click", function (e) {
     const btn = e.target.closest("button")
@@ -206,6 +215,7 @@ function openCourse(subject, department, program, sem, section, btn) {
 
     document.querySelector(".dashboard").classList.add("page-exit")
 
+    subject = normalizeCourseSubject(subject)
     const query = buildQuery({ subject, department, program, sem, section })
     setTimeout(() => {
         window.location.href = `attendance.html?${query}`
