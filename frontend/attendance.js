@@ -638,7 +638,7 @@ window.onload = async function () {
     department = params.department || ''
     program = params.program || ''
     sem = params.sem || ''
-    section = params.section || ''
+    section = params.section || params.sec || ''
 
     if (!subject || !department || !program || !sem || !section) {
         window.location.href = 'dashboard.html'

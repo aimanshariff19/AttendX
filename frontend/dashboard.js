@@ -177,8 +177,7 @@ function loadCourseCards() {
         `
 
         card.querySelector("button").onclick = function () {
-            setBtnLoading(this, "Opening...")
-            openCourse(course.subject, course.department, course.program, course.sem, course.section)
+            openCourse(course.subject, course.department, course.program, course.sem, course.section, this)
         }
 
         card.style.opacity = "0"
@@ -195,7 +194,9 @@ function loadCourseCards() {
 }
 
 /* -------- OPEN COURSE -------- */
-function openCourse(subject, department, program, sem, section) {
+function openCourse(subject, department, program, sem, section, btn) {
+    if (btn) setBtnLoading(btn, "Opening...")
+
     document.querySelector(".dashboard").classList.add("page-exit")
 
     const query = buildQuery({ subject, department, program, sem, section })
