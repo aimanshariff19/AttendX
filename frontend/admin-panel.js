@@ -4,6 +4,16 @@ let faceStream = null;
 let capturedPhoto = "";
 let capturedSignature = "";
 
+const programsByDepartment = {
+    CSE: ["CSE", "CSD", "AIML"],
+    ECE: ["ECE"],
+    ME: ["ME"],
+    CIVIL: ["CIVIL"],
+    ISE: ["ISE", "CSDS"]
+};
+
+const departmentOrder = ["CSE", "ECE", "ME", "CIVIL", "ISE"];
+
 function setStatus(message) {
     document.getElementById("status").innerText = message;
 }
@@ -84,15 +94,6 @@ function saveLocalFace(student) {
     localStorage.setItem(key, JSON.stringify(registry));
 }
 
-async function fileToDataUrl(file) {
-    return await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
-}
-
 async function loadCourses() {
     courses = await apiFetch("/admin/courses");
     const select = document.getElementById("courseSelect");
@@ -108,38 +109,25 @@ function fillCourse(courseId) {
     const course = courses.find(item => String(item.id) === String(courseId));
     if (!course) return;
     document.getElementById("department").value = course.department || "";
-    document.getElementById("program").value = course.program || "";
+    populateProgramOptions(course.department || "", course.program || "");
     document.getElementById("sem").value = course.sem || "";
     document.getElementById("section").value = course.section || "";
+    loadStudents();
 }
 
 async function loadStudents() {
-    const query = buildQuery({
+    const selected = {
         department: value("department"),
         program: value("program"),
         sem: value("sem"),
         section: value("section")
-    });
-    const students = await apiFetch(`/admin/students?${query}`);
-    const rows = document.getElementById("studentRows");
-    rows.innerHTML = "";
-    students.forEach(student => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>${student.photo || student.facePhoto ? `<img class="avatar" src="${student.photo || student.facePhoto}" alt="">` : "-"}</td>
-            <td>${student.id}</td>
-            <td>${student.name}</td>
-            <td>${student.program || "-"} / ${student.sem || "-"} / ${student.section || "-"}</td>
-            <td>${student.phone || student.parentPhone || "-"}</td>
-        `;
-        rows.appendChild(tr);
-    });
+    };
+    const students = await apiFetch("/admin/students");
+    renderStudentTables(students, selected);
 }
 
 async function saveStudent(event) {
     event.preventDefault();
-    const file = document.getElementById("photoFile").files[0];
-    const photo = capturedPhoto || (file ? await fileToDataUrl(file) : "");
     const payload = {
         usn: value("usn"),
         name: value("name"),
@@ -151,9 +139,14 @@ async function saveStudent(event) {
         sem: value("sem"),
         section: value("section"),
         password: value("password"),
-        photo,
+        photo: capturedPhoto,
         faceSignature: capturedSignature
     };
+
+    if (!payload.department || !payload.program || !payload.sem || !payload.section) {
+        setStatus("Select branch, program, semester and section before saving.");
+        return;
+    }
 
     const student = await apiFetch("/admin/students", {
         method: "POST",
@@ -163,7 +156,94 @@ async function saveStudent(event) {
 
     saveLocalFace(student);
     setStatus(`${student.id} saved for ${student.program} Sem ${student.sem} Sec ${student.section}.`);
+    document.getElementById("studentForm").reset();
+    populateProgramOptions("");
+    capturedPhoto = "";
+    capturedSignature = "";
+    document.getElementById("photoPreview").removeAttribute("src");
     await loadStudents();
+}
+
+function populateProgramOptions(department, selectedProgram = "") {
+    const select = document.getElementById("program");
+    const programs = programsByDepartment[department] || [];
+    select.innerHTML = `<option value="">Select program</option>`;
+    programs.forEach(program => {
+        const option = document.createElement("option");
+        option.value = program;
+        option.innerText = program;
+        if (program === selectedProgram) option.selected = true;
+        select.appendChild(option);
+    });
+}
+
+function studentMatchesFilters(student, filters) {
+    return (!filters.department || student.department === filters.department) &&
+        (!filters.program || student.program === filters.program) &&
+        (!filters.sem || String(student.sem) === String(filters.sem)) &&
+        (!filters.section || student.section === filters.section);
+}
+
+function renderStudentTables(students, filters) {
+    const container = document.getElementById("studentTables");
+    const visibleStudents = (students || []).filter(student => studentMatchesFilters(student, filters));
+    container.innerHTML = "";
+
+    departmentOrder.forEach(department => {
+        const departmentStudents = visibleStudents.filter(student => student.department === department);
+        if (departmentStudents.length === 0 && filters.department && filters.department !== department) return;
+
+        const departmentTitle = document.createElement("h2");
+        departmentTitle.className = "department-title";
+        departmentTitle.innerText = department;
+        container.appendChild(departmentTitle);
+
+        const programs = programsByDepartment[department] || [...new Set(departmentStudents.map(student => student.program))];
+        programs.forEach(program => {
+            const programStudents = departmentStudents.filter(student => student.program === program);
+            if (programStudents.length === 0 && (filters.program || filters.department)) return;
+
+            const card = document.createElement("div");
+            card.className = "card program-table";
+            card.innerHTML = `
+                <div class="program-title">
+                    <strong>${program}</strong>
+                    <span>${programStudents.length} student(s)</span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Photo</th>
+                            <th>USN</th>
+                            <th>Name</th>
+                            <th>Sem</th>
+                            <th>Sec</th>
+                            <th>Mobile</th>
+                            <th>Parent Mobile</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${programStudents.map(student => `
+                            <tr>
+                                <td>${student.photo || student.facePhoto ? `<img class="avatar" src="${student.photo || student.facePhoto}" alt="">` : "-"}</td>
+                                <td>${student.id}</td>
+                                <td>${student.name}</td>
+                                <td>${student.sem || "-"}</td>
+                                <td>${student.section || "-"}</td>
+                                <td>${student.phone || "-"}</td>
+                                <td>${student.parentPhone || "-"}</td>
+                            </tr>
+                        `).join("") || `<tr><td colspan="7">No students added</td></tr>`}
+                    </tbody>
+                </table>
+            `;
+            container.appendChild(card);
+        });
+    });
+
+    if (!container.innerHTML.trim()) {
+        container.innerHTML = `<div class="card">No students found for the selected filters.</div>`;
+    }
 }
 
 async function logoutAdmin() {
@@ -176,12 +256,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!adminUser) return;
     await loadCourses();
     document.getElementById("courseSelect").addEventListener("change", event => fillCourse(event.target.value));
-    document.getElementById("studentForm").addEventListener("submit", saveStudent);
-    document.getElementById("photoFile").addEventListener("change", async event => {
-        const file = event.target.files[0];
-        if (!file) return;
-        capturedPhoto = await fileToDataUrl(file);
-        document.getElementById("photoPreview").src = capturedPhoto;
+    document.getElementById("department").addEventListener("change", event => {
+        populateProgramOptions(event.target.value);
+        loadStudents();
     });
+    ["program", "sem", "section"].forEach(id => {
+        document.getElementById(id).addEventListener("change", loadStudents);
+    });
+    document.getElementById("studentForm").addEventListener("submit", saveStudent);
     await loadStudents();
 });
