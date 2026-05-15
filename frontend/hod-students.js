@@ -1,4 +1,3 @@
-/* -------- 💧 RIPPLE -------- */
 document.addEventListener("click", function (e) {
     const btn = e.target.closest("button")
     if (!btn) return
@@ -14,29 +13,19 @@ document.addEventListener("click", function (e) {
     setTimeout(() => circle.remove(), 600)
 })
 
-/* -------- 🔥 BUTTON SPINNER -------- */
 function setBtnLoading(btn, text = "Loading...") {
     if (!btn) return
-
     btn.classList.add("loading")
     btn.dataset.originalText = btn.innerHTML
-
     btn.innerHTML = `${text} <span class="btn-spinner"></span>`
 }
 
 function resetBtn(btn) {
     if (!btn) return
-
     btn.classList.remove("loading")
     btn.innerHTML = btn.dataset.originalText || "Done"
 }
 
-/* -------- 🔥 NORMALIZE -------- */
-function normalize(str) {
-    return (str || "").toString().toLowerCase().replace(/\s+/g, "")
-}
-
-/* -------- MESSAGE -------- */
 function showMessage(text, type = "success") {
     let box = document.getElementById("messageBox")
 
@@ -56,17 +45,22 @@ function showMessage(text, type = "success") {
     }, 2500)
 }
 
-/* -------- STATE -------- */
 let department = ""
 let program = ""
 let sem = ""
 let section = ""
+let cie1Date = ""
+let cie2Date = ""
 let studentList = []
 let classSubjects = []
+
 const table = document.getElementById("studentRows")
 const tableHead = document.getElementById("tableHead")
 
-/* -------- CLASS DETAILS -------- */
+function cieStorageKey() {
+    return `attendx_cie_${department}_${program}_${sem}_${section}`
+}
+
 async function initClassDetails() {
     const params = getQueryParams()
     department = params.department || ""
@@ -83,39 +77,44 @@ async function initClassDetails() {
     document.getElementById("program").innerText = program
     document.getElementById("sem").innerText = sem
     document.getElementById("section").innerText = section
+
+    const saved = JSON.parse(localStorage.getItem(cieStorageKey()) || "{}")
+    cie1Date = saved.cie1Date || ""
+    cie2Date = saved.cie2Date || ""
+    document.getElementById("cie1Date").value = cie1Date
+    document.getElementById("cie2Date").value = cie2Date
 }
 
-/* -------- STUDENT MATCH -------- */
-
-/* -------- SUBJECT HEADERS -------- */
 function loadSubjectHeaders() {
-
-    // 🔥 prevent duplicate headers
     while (tableHead.children.length > 3) {
         tableHead.removeChild(tableHead.lastChild)
     }
 
     classSubjects.forEach(sub => {
-        let th = document.createElement("th")
-        th.innerText = sub.subject
-        tableHead.appendChild(th)
+        ;["CIE 1", "CIE 2", "Overall"].forEach(label => {
+            const th = document.createElement("th")
+            th.innerText = `${sub.subject} ${label}`
+            tableHead.appendChild(th)
+        })
     })
 }
 
-/* -------- CALCULATE % -------- */
 function calculatePercentage(usn, subject) {
     const subjectStats = studentList.find(s => s.usn === usn)?.subjects || {}
     return subjectStats[subject] || 0
 }
 
-/* -------- COLOR CLASS -------- */
+function calculateCiePercentage(usn, subject, key) {
+    const stats = studentList.find(s => s.usn === usn)?.cie?.[subject] || {}
+    return stats[key] ?? calculatePercentage(usn, subject)
+}
+
 function getColor(percent) {
     if (percent >= 85) return "high"
     if (percent >= 75) return "mid"
     return "low"
 }
 
-/* -------- LOAD STUDENTS -------- */
 function loadStudents() {
     table.innerHTML = ""
 
@@ -123,14 +122,14 @@ function loadStudents() {
         table.innerHTML = `
             <tr>
                 <td colspan="10" style="padding:20px; opacity:0.6;">
-                    No students found ⚠️
+                    No students found
                 </td>
             </tr>
         `
         return
     }
 
-    studentList.forEach((student, index) => {
+    studentList.forEach((student) => {
         let row = `
 <tr style="animation: fadeIn 0.4s ease">
 <td>${student.usn}</td>
@@ -139,11 +138,12 @@ function loadStudents() {
 `
 
         classSubjects.forEach(sub => {
-            let percent = calculatePercentage(student.usn, sub.subject)
-            let colorClass = getColor(percent)
-            let isDefaulter = percent < 75 ? "⚠️" : ""
-
-            row += `<td class="${colorClass}">${percent}% ${isDefaulter}</td>`
+            ;["cie1", "cie2", "overall"].forEach(key => {
+                const percent = calculateCiePercentage(student.usn, sub.subject, key)
+                const colorClass = getColor(percent)
+                const isDefaulter = percent < 75 ? "Low" : ""
+                row += `<td class="${colorClass}">${percent}% ${isDefaulter}</td>`
+            })
         })
 
         row += "</tr>"
@@ -151,58 +151,56 @@ function loadStudents() {
     })
 }
 
-/* -------- INIT -------- */
+async function loadHodStudentData() {
+    const studentsData = await apiFetch(`/hod/students?${buildQuery({ program, sem, section, cie1Date, cie2Date })}`)
+
+    classSubjects = studentsData.courses || []
+    studentList = studentsData.students || []
+
+    loadSubjectHeaders()
+    loadStudents()
+}
+
 window.onload = async function () {
     try {
-        const user = await requireAuth('hod')
+        const user = await requireAuth("hod")
         if (!user) return
 
         await initClassDetails()
-
-        // Fetch students with their stats
-        const studentsData = await apiFetch(`/hod/students?program=${program}&sem=${sem}&section=${section}`)
-        
-        if (studentsData.courses) {
-            classSubjects = studentsData.courses
-        }
-        
-        if (studentsData.students) {
-            studentList = studentsData.students
-        }
-
-        loadSubjectHeaders()
-        loadStudents()
+        await loadHodStudentData()
     } catch (err) {
         console.error(err)
         table.innerHTML = `
             <tr>
                 <td colspan="10" style="padding:20px;color:#ef4444;">
-                    ❌ Error loading data: ${err.message}
+                    Error loading data: ${err.message}
                 </td>
             </tr>
         `
     }
 }
 
-/* -------- BACK -------- */
+function applyCieDates(btn) {
+    setBtnLoading(btn, "Applying...")
+    cie1Date = document.getElementById("cie1Date").value
+    cie2Date = document.getElementById("cie2Date").value
+    localStorage.setItem(cieStorageKey(), JSON.stringify({ cie1Date, cie2Date }))
+    setTimeout(() => window.location.reload(), 250)
+}
+
 function goBack(btn) {
-
     setBtnLoading(btn, "Going...")
-
     setTimeout(() => {
         window.location.href = "hod-dashboard.html"
     }, 300)
 }
 
-/* -------- EXPORT -------- */
 function exportClassReport(btn) {
-
     setBtnLoading(btn, "Exporting...")
 
     setTimeout(() => {
-
         if (studentList.length === 0) {
-            showMessage("No data to export ❌", "error")
+            showMessage("No data to export", "error")
             resetBtn(btn)
             return
         }
@@ -210,18 +208,18 @@ function exportClassReport(btn) {
         let csv = "USN,Name,Parent Phone"
 
         classSubjects.forEach(sub => {
-            csv += `,${sub.subject}`
+            csv += `,${sub.subject} CIE 1,${sub.subject} CIE 2,${sub.subject} Overall`
         })
 
         csv += "\n"
 
         studentList.forEach(student => {
-
             let row = `${student.usn},${student.name},${student.parentPhone || "-"}`
 
             classSubjects.forEach(sub => {
-                let percent = calculatePercentage(student.usn, sub.subject)
-                row += `,${percent}%`
+                row += `,${calculateCiePercentage(student.usn, sub.subject, "cie1")}%`
+                row += `,${calculateCiePercentage(student.usn, sub.subject, "cie2")}%`
+                row += `,${calculateCiePercentage(student.usn, sub.subject, "overall")}%`
             })
 
             csv += row + "\n"
@@ -229,16 +227,13 @@ function exportClassReport(btn) {
 
         const blob = new Blob([csv], { type: "text/csv" })
         const url = URL.createObjectURL(blob)
-
         const a = document.createElement("a")
         a.href = url
         a.download = `attendance_${program}_${sem}_${section}.csv`
         a.click()
-
         URL.revokeObjectURL(url)
 
         resetBtn(btn)
-        showMessage("Export successful 📁", "success")
-
+        showMessage("Export successful", "success")
     }, 700)
 }

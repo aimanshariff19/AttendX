@@ -321,19 +321,6 @@ function quickMark(isPresent) {
     }
 }
 
-function populateFaceStudentSelect() {
-    const select = document.getElementById("faceStudentSelect")
-    if (!select) return
-
-    select.innerHTML = `<option value="">Select student to enroll</option>`
-    studentList.forEach(student => {
-        const option = document.createElement("option")
-        option.value = student.id || student.usn
-        option.innerText = `${student.id || student.usn} - ${student.name}`
-        select.appendChild(option)
-    })
-}
-
 async function startFaceDevice(btn) {
     const video = document.getElementById("faceVideo")
     if (!video) return
@@ -348,7 +335,7 @@ async function startFaceDevice(btn) {
         }
         video.srcObject = faceStream
         await video.play()
-        setFaceStatus("Camera started. Enroll each student once, then scan during class.")
+        setFaceStatus("Camera started. Scan students who are already enrolled on this device.")
     } catch (err) {
         console.error(err)
         setFaceStatus("Camera permission is required for face recognition.")
@@ -400,35 +387,6 @@ function getFaceRegistry() {
 
 function saveFaceRegistry(registry) {
     localStorage.setItem(faceClassKey(), JSON.stringify(registry || {}))
-}
-
-async function enrollSelectedFace(btn) {
-    try {
-        setBtnLoading(btn, "Enrolling")
-        if (!faceStream) await startFaceDevice()
-
-        const select = document.getElementById("faceStudentSelect")
-        const studentId = select?.value
-        if (!studentId) {
-            triggerShake(select)
-            showError("Select student")
-            return
-        }
-
-        const registry = getFaceRegistry()
-        registry[studentId] = {
-            signature: captureFaceSignature(),
-            enrolledAt: new Date().toISOString()
-        }
-        saveFaceRegistry(registry)
-        setFaceStatus(`${studentId} face enrolled on this device.`)
-    } catch (err) {
-        console.error(err)
-        showError(err.message || "Could not enroll face")
-        setFaceStatus(err.message || "Enrollment failed.")
-    } finally {
-        resetBtn(btn)
-    }
 }
 
 function validateFaceAttendanceSlot() {
@@ -675,7 +633,6 @@ window.onload = async function () {
     }
 
     loadStudents()
-    populateFaceStudentSelect()
     calculateTimeRange()
 
 }

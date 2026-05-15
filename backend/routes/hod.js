@@ -10,6 +10,25 @@ function checkSupabase(res) {
     return null;
 }
 
+function calculateAttendancePercent(attendances, studentId, beforeDate) {
+    let conducted = 0;
+    let present = 0;
+
+    (attendances || []).forEach(day => {
+        if (beforeDate && String(day.date || '') >= beforeDate) return;
+
+        const record = (day.records || []).find(r => r.studentId === studentId);
+        if (record) {
+            conducted += day.numClasses || 1;
+            if (record.status === 'Present') {
+                present += day.numClasses || 1;
+            }
+        }
+    });
+
+    return conducted === 0 ? 100 : Math.round((present / conducted) * 100);
+}
+
 // @route   GET api/hod/courses
 // @desc    Get all courses
 router.get('/courses', auth('hod'), async (req, res) => {
@@ -39,7 +58,7 @@ router.get('/students', auth('hod'), async (req, res) => {
     const err = checkSupabase(res);
     if (err) return err;
 
-    const { department: requestedDepartment, program, sem, section } = req.query;
+    const { department: requestedDepartment, program, sem, section, cie1Date, cie2Date } = req.query;
     const department = requestedDepartment || req.user.department;
 
     try {
@@ -81,7 +100,8 @@ router.get('/students', auth('hod'), async (req, res) => {
                 section: student.section,
                 parentPhone: student.parentPhone,
                 parent_language: student.parent_language,
-                subjects: {}
+                subjects: {},
+                cie: {}
             };
 
             for (const course of courses) {
@@ -95,21 +115,13 @@ router.get('/students', auth('hod'), async (req, res) => {
                     return res.status(500).send('Server Error');
                 }
 
-                let conducted = 0;
-                let present = 0;
-
-                attendances.forEach(day => {
-                    const record = (day.records || []).find(r => r.studentId === student.id);
-                    if (record) {
-                        conducted += day.numClasses || 1;
-                        if (record.status === 'Present') {
-                            present += day.numClasses || 1;
-                        }
-                    }
-                });
-
-                const percent = conducted === 0 ? 100 : Math.round((present / conducted) * 100);
+                const percent = calculateAttendancePercent(attendances, student.id);
                 studentStats.subjects[course.subject] = percent;
+                studentStats.cie[course.subject] = {
+                    cie1: calculateAttendancePercent(attendances, student.id, cie1Date || null),
+                    cie2: calculateAttendancePercent(attendances, student.id, cie2Date || null),
+                    overall: percent
+                };
             }
             result.push(studentStats);
         }

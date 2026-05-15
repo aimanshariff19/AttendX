@@ -133,6 +133,31 @@
             margin-bottom: 20px;
         }
 
+        .cie-controls {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(180px, 1fr)) auto;
+            gap: 12px;
+            align-items: end;
+            margin-bottom: 20px;
+        }
+
+        .cie-controls label {
+            display: block;
+            font-size: 12px;
+            color: #cbd5f5;
+            margin-bottom: 6px;
+        }
+
+        .cie-controls input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(15, 23, 42, 0.8);
+            color: #e5e7eb;
+            outline: none;
+        }
+
         /* ===== TABLE WRAPPER (🔥 NEW) ===== */
         .table-wrapper {
             max-height: 420px;
@@ -234,6 +259,10 @@
                 gap: 8px;
             }
 
+            .cie-controls {
+                grid-template-columns: 1fr;
+            }
+
             .table-wrapper {
                 max-height: none;
                 overflow-x: auto;
@@ -269,6 +298,18 @@
             <p><strong>Program:</strong> <span id="program"></span></p>
             <p><strong>Semester:</strong> <span id="sem"></span></p>
             <p><strong>Section:</strong> <span id="section"></span></p>
+        </div>
+
+        <div class="cie-controls">
+            <div>
+                <label>CIE 1 Start Date</label>
+                <input type="date" id="cie1Date">
+            </div>
+            <div>
+                <label>CIE 2 Start Date</label>
+                <input type="date" id="cie2Date">
+            </div>
+            <button onclick="applyCieDates(this)">Apply CIE Dates</button>
         </div>
 
         <!-- TABLE -->
