@@ -195,6 +195,13 @@ function loadCourseCards() {
 
 /* -------- OPEN COURSE -------- */
 function openCourse(subject, department, program, sem, section, btn) {
+    if (section && typeof section === "object" && section.tagName) {
+        btn = section
+        section = sem
+        sem = program
+        program = department
+    }
+
     if (btn) setBtnLoading(btn, "Opening...")
 
     document.querySelector(".dashboard").classList.add("page-exit")
