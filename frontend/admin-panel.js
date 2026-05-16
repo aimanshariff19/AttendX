@@ -241,6 +241,8 @@ async function fetchStudentByUsn() {
 
     document.getElementById("email").value = student.email || "";
 
+    document.getElementById("password").value = student.passwordText || "";
+
     document.getElementById("department").value = student.department || "";
 
     populateProgramOptions(student.department || "", student.program || "");
