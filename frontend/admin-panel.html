@@ -1,143 +1,349 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AttendX / Admin Panel</title>
-    <link rel="icon" href="assets/logo.png">
+    <link rel="icon" href="assets/logo.png" />
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Inter, sans-serif; min-height: 100vh; background: linear-gradient(135deg, #0f172a, #312e81); color: white; }
-        .dashboard { max-width: 1180px; margin: 32px auto; padding: 24px; background: rgba(255,255,255,0.06); border-radius: 18px; border: 1px solid rgba(255,255,255,0.14); box-shadow: 0 20px 50px rgba(0,0,0,0.55); }
-        .topbar { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 20px; }
-        h1 { font-size: 30px; font-weight: 700; background: linear-gradient(90deg, #bfdbfe, #a78bfa, #34d399); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-        .grid { display: grid; grid-template-columns: minmax(300px, 1fr) 360px; gap: 18px; align-items: start; }
-        .card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16); border-radius: 12px; padding: 16px; }
-        .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-        .filter-bar { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.12); }
-        label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: #cbd5e1; }
-        input, select { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(15,23,42,0.9); color: #e5e7eb; outline: none; }
-        input:focus, select:focus { border-color: #818cf8; box-shadow: 0 0 0 3px rgba(129,140,248,0.22); }
-        .full { grid-column: 1 / -1; }
-        .btn { padding: 10px 14px; border-radius: 8px; border: 0; cursor: pointer; color: white; font-weight: 700; background: linear-gradient(135deg, #4f46e5, #7c3aed); }
-        .btn.secondary { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18); }
-        .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
-        video, .preview { width: 100%; aspect-ratio: 4 / 3; border-radius: 10px; background: rgba(15,23,42,0.85); border: 1px solid rgba(255,255,255,0.16); object-fit: cover; }
-        .status { margin-top: 12px; min-height: 40px; padding: 10px; border-radius: 8px; background: rgba(15,23,42,0.7); color: #cbd5e1; font-size: 12px; line-height: 1.35; }
-        table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
-        th, td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.12); text-align: left; }
-        th { color: #c4b5fd; font-size: 12px; }
-        .avatar { width: 42px; height: 42px; border-radius: 8px; object-fit: cover; background: rgba(255,255,255,0.08); }
-        .tables { margin-top: 18px; display: grid; gap: 14px; }
-        .department-title { margin: 8px 0 0; color: #bfdbfe; font-size: 18px; }
-        .program-table { overflow-x: auto; }
-        .program-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; color: #e5e7eb; }
-        .program-title span { color: #cbd5e1; font-size: 12px; }
-        @media (max-width: 860px) { .dashboard { width: calc(100vw - 24px); margin: 12px auto; padding: 16px; } .grid, .form-grid, .filter-bar { grid-template-columns: 1fr; } .topbar { flex-direction: column; align-items: stretch; } }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Inter, sans-serif;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f172a, #312e81);
+        color: white;
+      }
+      .dashboard {
+        max-width: 1180px;
+        margin: 32px auto;
+        padding: 24px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+      }
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-size: 30px;
+        font-weight: 700;
+        background: linear-gradient(90deg, #bfdbfe, #a78bfa, #34d399);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(300px, 1fr) 360px;
+        gap: 18px;
+        align-items: start;
+      }
+      .card {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 12px;
+        padding: 16px;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .filter-bar {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 14px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      }
+      label {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 12px;
+        color: #cbd5e1;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(15, 23, 42, 0.9);
+        color: #e5e7eb;
+        outline: none;
+      }
+      input:focus,
+      select:focus {
+        border-color: #818cf8;
+        box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.22);
+      }
+      .full {
+        grid-column: 1 / -1;
+      }
+      .btn {
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 0;
+        cursor: pointer;
+        color: white;
+        font-weight: 700;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      }
+      .btn.secondary {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      video,
+      .preview {
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        border-radius: 10px;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        object-fit: cover;
+      }
+      .status {
+        margin-top: 12px;
+        min-height: 40px;
+        padding: 10px;
+        border-radius: 8px;
+        background: rgba(15, 23, 42, 0.7);
+        color: #cbd5e1;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+        font-size: 13px;
+      }
+      th,
+      td {
+        padding: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        text-align: left;
+      }
+      th {
+        color: #c4b5fd;
+        font-size: 12px;
+      }
+      .avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+        object-fit: cover;
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .tables {
+        margin-top: 18px;
+        display: grid;
+        gap: 14px;
+      }
+      .department-title {
+        margin: 8px 0 0;
+        color: #bfdbfe;
+        font-size: 18px;
+      }
+      .program-table {
+        overflow-x: auto;
+      }
+      .program-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+        color: #e5e7eb;
+      }
+      .program-title span {
+        color: #cbd5e1;
+        font-size: 12px;
+      }
+      @media (max-width: 860px) {
+        .dashboard {
+          width: calc(100vw - 24px);
+          margin: 12px auto;
+          padding: 16px;
+        }
+        .grid,
+        .form-grid,
+        .filter-bar {
+          grid-template-columns: 1fr;
+        }
+        .topbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+      }
+
+      .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.35);
+        border-top: 2px solid white;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .btn.loading {
+        opacity: 0.8;
+        pointer-events: none;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="dashboard">
-        <div class="topbar">
-            <h1>AttendX / Admin Panel</h1>
-            <button class="btn secondary" onclick="logoutAdmin()">Logout</button>
-        </div>
+      <div class="topbar">
+        <h1>AttendX / Admin Panel</h1>
+        <button class="btn secondary" onclick="logoutAdmin()">Logout</button>
+      </div>
 
-        <div class="grid">
-            <div class="card">
-                <form id="studentForm">
-                    <div class="filter-bar">
-                        <label>Branch
-                            <select id="department">
-                                <option value="">Select branch</option>
-                                <option value="CSE">CSE</option>
-                                <option value="ECE">ECE</option>
-                                <option value="ME">ME</option>
-                                <option value="CIVIL">CIVIL</option>
-                                <option value="ISE">ISE</option>
-                            </select>
-                        </label>
-                        <label>Program
-                            <select id="program">
-                                <option value="">Select program</option>
-                            </select>
-                        </label>
-                        <label>Semester
-                            <select id="sem">
-                                <option value="">Select sem</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                                <option value="6">6</option>
-                                <option value="7">7</option>
-                                <option value="8">8</option>
-                            </select>
-                        </label>
-                        <label>Section
-                            <select id="section">
-                                <option value="">Select section</option>
-                                <option value="A">A</option>
-                                <option value="B">B</option>
-                                <option value="C">C</option>
-                                <option value="D">D</option>
-                            </select>
-                        </label>
-                    </div>
-
-                    <div class="form-grid">
-                        <label>Course
-                            <select id="courseSelect">
-                                <option value="">Optional: select course</option>
-                            </select>
-                        </label>
-                        <label>USN
-                            <input id="usn" required placeholder="1AT24CS001">
-                        </label>
-                        <label>Name
-                            <input id="name" required placeholder="Student name">
-                        </label>
-                        <label>Mobile No
-                            <input id="phone" placeholder="Student mobile">
-                        </label>
-                        <label>Parent Mobile
-                            <input id="parentPhone" placeholder="Parent mobile">
-                        </label>
-                        <label>Email
-                            <input id="email" type="email" placeholder="student@atria.edu">
-                        </label>
-                        <label>Password
-                            <input id="password" placeholder="Defaults to USN">
-                        </label>
-                    </div>
-
-                    <div class="actions">
-                        <button class="btn" type="submit">Save Student</button>
-                        <button class="btn secondary" type="button" onclick="loadStudents()">Refresh List</button>
-                    </div>
-                </form>
-
-                <div class="status" id="status">Add a student and capture/save their face for the selected class.</div>
+      <div class="grid">
+        <div class="card">
+          <form id="studentForm">
+            <div class="filter-bar">
+              <label
+                >Branch
+                <select id="department">
+                  <option value="">Select branch</option>
+                  <option value="CSE">CSE</option>
+                  <option value="ECE">ECE</option>
+                  <option value="ME">ME</option>
+                  <option value="CIVIL">CIVIL</option>
+                  <option value="ISE">ISE</option>
+                </select>
+              </label>
+              <label
+                >Program
+                <select id="program">
+                  <option value="">Select program</option>
+                </select>
+              </label>
+              <label
+                >Semester
+                <select id="sem">
+                  <option value="">Select sem</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                </select>
+              </label>
+              <label
+                >Section
+                <select id="section">
+                  <option value="">Select section</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                </select>
+              </label>
             </div>
 
-            <div class="card">
-                <video id="faceVideo" autoplay muted playsinline></video>
-                <div class="actions">
-                    <button class="btn" type="button" onclick="startCamera()">Start Camera</button>
-                    <button class="btn secondary" type="button" onclick="captureFace()">Capture Face</button>
-                </div>
-                <img id="photoPreview" class="preview" alt="Student preview">
+            <div class="form-grid">
+              <label
+                >Course
+                <select id="courseSelect">
+                  <option value="">Optional: select course</option>
+                </select>
+              </label>
+              <label
+                >USN
+                <input id="usn" required placeholder="1AT24CS001" />
+              </label>
+              <label
+                >Name
+                <input id="name" required placeholder="Student name" />
+              </label>
+              <label
+                >Mobile No
+                <input id="phone" placeholder="Student mobile" />
+              </label>
+              <label
+                >Parent Mobile
+                <input id="parentPhone" placeholder="Parent mobile" />
+              </label>
+              <label
+                >Email
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="student@atria.edu"
+                />
+              </label>
+              <label
+                >Password
+                <input id="password" placeholder="Defaults to USN" />
+              </label>
             </div>
+
+            <div class="actions">
+              <button class="btn" type="submit">Save Student</button>
+              <button
+                class="btn secondary"
+                type="button"
+                onclick="loadStudents()"
+              >
+                Refresh List
+              </button>
+            </div>
+          </form>
+
+          <div class="status" id="status">
+            Add a student and capture/save their face for the selected class.
+          </div>
         </div>
 
-        <div class="tables" id="studentTables"></div>
+        <div class="card">
+          <video id="faceVideo" autoplay muted playsinline></video>
+          <div class="actions">
+            <button class="btn" type="button" onclick="startCamera()">
+              Start Camera
+            </button>
+            <button class="btn secondary" type="button" onclick="captureFace()">
+              Capture Face
+            </button>
+          </div>
+          <img id="photoPreview" class="preview" alt="Student preview" />
+        </div>
+      </div>
+
+      <div class="tables" id="studentTables"></div>
     </div>
 
     <script src="utils.js"></script>
     <script src="admin-panel.js"></script>
-</body>
-
+  </body>
 </html>
