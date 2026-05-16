@@ -222,7 +222,9 @@
     <div class="dashboard">
       <div class="topbar">
         <h1>AttendX / Admin Panel</h1>
-        <button class="btn secondary" onclick="logoutAdmin()">Logout</button>
+        <button class="btn secondary" onclick="logoutAdmin(event)">
+          Logout
+        </button>
       </div>
 
       <div class="grid">
@@ -314,7 +316,7 @@
               <button
                 class="btn secondary"
                 type="button"
-                onclick="loadStudents()"
+                onclick="loadStudents(this)"
               >
                 Refresh List
               </button>
@@ -329,10 +331,14 @@
         <div class="card">
           <video id="faceVideo" autoplay muted playsinline></video>
           <div class="actions">
-            <button class="btn" type="button" onclick="startCamera()">
+            <button class="btn" type="button" onclick="startCamera(event)">
               Start Camera
             </button>
-            <button class="btn secondary" type="button" onclick="captureFace()">
+            <button
+              class="btn secondary"
+              type="button"
+              onclick="captureFace(event)"
+            >
               Capture Face
             </button>
           </div>
