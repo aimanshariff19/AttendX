@@ -1,5 +1,4 @@
 let adminUser = null;
-let courses = [];
 let faceStream = null;
 let capturedPhoto = "";
 let capturedSignature = "";
@@ -134,38 +133,6 @@ async function captureFace(event) {
   setButtonLoading(button, false);
 }
 
-async function loadCourses() {
-  courses = await apiFetch("/admin/courses");
-
-  const select = document.getElementById("courseSelect");
-
-  courses.forEach((course) => {
-    const option = document.createElement("option");
-
-    option.value = course.id;
-
-    option.innerText = `${course.subject} - ${course.program} Sem ${course.sem} Sec ${course.section}`;
-
-    select.appendChild(option);
-  });
-}
-
-function fillCourse(courseId) {
-  const course = courses.find((item) => String(item.id) === String(courseId));
-
-  if (!course) return;
-
-  document.getElementById("department").value = course.department || "";
-
-  populateProgramOptions(course.department || "", course.program || "");
-
-  document.getElementById("sem").value = course.sem || "";
-
-  document.getElementById("section").value = course.section || "";
-
-  loadStudents();
-}
-
 async function loadStudents(buttonElement = null) {
   if (buttonElement) {
     setButtonLoading(buttonElement, true, "Refreshing...");
@@ -252,8 +219,6 @@ function clearStudentInputs() {
   ["usn", "name", "phone", "parentPhone", "email", "password"].forEach((id) => {
     document.getElementById(id).value = "";
   });
-
-  document.getElementById("courseSelect").value = "";
 }
 
 async function fetchStudentByUsn() {
@@ -536,12 +501,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   adminUser = await requireAuth("admin");
 
   if (!adminUser) return;
-
-  await loadCourses();
-
-  document
-    .getElementById("courseSelect")
-    .addEventListener("change", (event) => fillCourse(event.target.value));
 
   document.getElementById("department").addEventListener("change", (event) => {
     populateProgramOptions(event.target.value);
