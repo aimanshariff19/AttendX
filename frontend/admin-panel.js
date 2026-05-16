@@ -81,7 +81,11 @@ function photoFromVideo() {
   return canvas.toDataURL("image/jpeg", 0.82);
 }
 
-async function startCamera() {
+async function startCamera(event) {
+  const button = event.target;
+
+  setButtonLoading(button, true, "Starting...");
+
   try {
     const video = document.getElementById("faceVideo");
 
@@ -104,10 +108,18 @@ async function startCamera() {
   } catch (err) {
     setStatus("Camera permission is required.");
   }
+
+  setButtonLoading(button, false);
 }
 
-function captureFace() {
+async function captureFace(event) {
+  const button = event.target;
+
+  setButtonLoading(button, true, "Capturing...");
+
   try {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
     capturedSignature = captureSignatureFromVideo();
 
     capturedPhoto = photoFromVideo();
@@ -118,6 +130,8 @@ function captureFace() {
   } catch (err) {
     setStatus(err.message || "Could not capture face.");
   }
+
+  setButtonLoading(button, false);
 }
 
 async function loadCourses() {
@@ -152,7 +166,11 @@ function fillCourse(courseId) {
   loadStudents();
 }
 
-async function loadStudents() {
+async function loadStudents(buttonElement = null) {
+  if (buttonElement) {
+    setButtonLoading(buttonElement, true, "Refreshing...");
+  }
+
   const selected = {
     department: value("department"),
     program: value("program"),
@@ -163,6 +181,10 @@ async function loadStudents() {
   const students = await apiFetch("/admin/students");
 
   renderStudentTables(students, selected);
+
+  if (buttonElement) {
+    setButtonLoading(buttonElement, false);
+  }
 }
 
 async function saveStudent(event) {
@@ -464,12 +486,12 @@ function renderStudentTables(students, filters) {
   }
 }
 
-async function logoutAdmin() {
+async function logoutAdmin(event) {
+  const button = event.target;
+  setButtonLoading(button, true, "Logging out...");
   await logoutBackend();
-
   window.location.href = "admin-login.html";
 }
-
 async function deleteFaceData(usn, event) {
   const confirmDelete = confirm(
     `Delete face data for ${usn}? Student details will remain safe.`,
