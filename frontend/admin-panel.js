@@ -39,32 +39,14 @@ function value(id) {
   return document.getElementById(id).value.trim();
 }
 
-function captureSignatureFromVideo() {
+async function captureSignatureFromVideo() {
   const video = document.getElementById("faceVideo");
 
   if (!video.videoWidth || !video.videoHeight) {
     throw new Error("Start the camera first");
   }
 
-  const canvas = document.createElement("canvas");
-  canvas.width = 16;
-  canvas.height = 16;
-
-  const ctx = canvas.getContext("2d");
-
-  ctx.drawImage(video, 0, 0, 16, 16);
-
-  const data = ctx.getImageData(0, 0, 16, 16).data;
-
-  const gray = [];
-
-  for (let i = 0; i < data.length; i += 4) {
-    gray.push(Math.round((data[i] + data[i + 1] + data[i + 2]) / 3));
-  }
-
-  const average = gray.reduce((sum, item) => sum + item, 0) / gray.length;
-
-  return gray.map((item) => (item >= average ? "1" : "0")).join("");
+  return await AttendXFaceRecognition.captureSignatureFromVideo(video, setStatus);
 }
 
 function photoFromVideo() {
@@ -119,7 +101,7 @@ async function captureFace(event) {
   try {
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    capturedSignature = captureSignatureFromVideo();
+    capturedSignature = await captureSignatureFromVideo();
 
     capturedPhoto = photoFromVideo();
 

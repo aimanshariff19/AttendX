@@ -341,36 +341,17 @@ async function startFaceDevice(btn) {
     }
 }
 
-function captureFaceSignature() {
+async function captureFaceSignature() {
     const video = document.getElementById("faceVideo")
     if (!video || !video.videoWidth || !video.videoHeight) {
         throw new Error("Start the camera first")
     }
 
-    const canvas = document.createElement("canvas")
-    const size = 16
-    canvas.width = size
-    canvas.height = size
-    const ctx = canvas.getContext("2d")
-    ctx.drawImage(video, 0, 0, size, size)
-    const data = ctx.getImageData(0, 0, size, size).data
-    const gray = []
-
-    for (let i = 0; i < data.length; i += 4) {
-        gray.push(Math.round((data[i] + data[i + 1] + data[i + 2]) / 3))
-    }
-
-    const average = gray.reduce((sum, value) => sum + value, 0) / gray.length
-    return gray.map(value => (value >= average ? "1" : "0")).join("")
+    return await AttendXFaceRecognition.captureSignatureFromVideo(video, setFaceStatus)
 }
 
 function signatureDistance(a, b) {
-    if (!a || !b || a.length !== b.length) return Number.POSITIVE_INFINITY
-    let diff = 0
-    for (let i = 0; i < a.length; i++) {
-        if (a[i] !== b[i]) diff++
-    }
-    return diff
+    return AttendXFaceRecognition.signatureDistance(a, b)
 }
 
 async function getFaceRegistry() {
@@ -408,14 +389,22 @@ async function scanFaceAttendance(btn) {
             return
         }
 
-        const current = captureFaceSignature()
-        let best = { studentId: "", distance: Number.POSITIVE_INFINITY }
+        const current = await captureFaceSignature()
+        const legacyCurrent = AttendXFaceRecognition.legacySignatureFromVideo(document.getElementById("faceVideo"))
+        let best = { studentId: "", distance: Number.POSITIVE_INFINITY, signature: current }
         enrolled.forEach(([studentId, data]) => {
-            const distance = signatureDistance(current, data.signature)
-            if (distance < best.distance) best = { studentId, distance }
+            let distance = signatureDistance(current, data.signature)
+            let matchSignature = current
+
+            if (!Number.isFinite(distance)) {
+                distance = signatureDistance(legacyCurrent, data.signature)
+                matchSignature = legacyCurrent
+            }
+
+            if (distance < best.distance) best = { studentId, distance, signature: matchSignature }
         })
 
-        if (!best.studentId || best.distance > 88) {
+        if (!best.studentId || !AttendXFaceRecognition.isMatch(best.signature, best.distance)) {
             showError("Face not recognized")
             setFaceStatus("Face not recognized. Try better lighting or enroll again.")
             return
