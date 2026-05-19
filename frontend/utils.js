@@ -44,10 +44,16 @@ async function apiCall(endpoint, method = 'GET', body = null, timeoutMs = 5000) 
         }
 
         if (!response.ok) {
+            const fallbackMsg =
+                response.status === 502
+                    ? 'Server unavailable. Please wait a minute and try again.'
+                    : response.status >= 500
+                        ? 'Server error. Please try again shortly.'
+                        : raw || response.statusText || 'API Error';
             const errorBody =
                 parsed !== '__NOT_JSON__' && typeof parsed === 'object' && parsed !== null
                     ? parsed
-                    : { msg: raw || response.statusText || 'API Error' };
+                    : { msg: fallbackMsg };
             const error = new Error(errorBody.msg || errorBody.error || 'API Error');
             error.status = response.status;
             error.body = errorBody;

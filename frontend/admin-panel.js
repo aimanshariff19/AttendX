@@ -453,27 +453,28 @@ async function deleteFaceData(usn, event) {
   setButtonLoading(button, true, "Resetting...");
 
   try {
-    const student = await apiFetch(
-      `/admin/students/${encodeURIComponent(usn)}`,
-    );
-
-    const updatedPayload = {
-      ...student,
-      photo: "",
-      facePhoto: "",
-      faceSignature: "",
-    };
-
     await apiFetch(`/admin/students/${encodeURIComponent(usn)}`, {
       method: "PUT",
-      body: JSON.stringify(updatedPayload),
+      body: JSON.stringify({
+        photo: "",
+        facePhoto: "",
+        faceSignature: "",
+      }),
+      timeoutMs: 12000,
     });
 
     setStatus(
       `Face data reset successfully for ${usn}. You can now re-register the face.`,
     );
 
-    await loadStudents();
+    try {
+      await loadStudents();
+    } catch (refreshError) {
+      console.error(refreshError);
+      setStatus(
+        `Face data reset successfully for ${usn}. Refresh the table if the old photo is still visible.`,
+      );
+    }
   } catch (err) {
     setStatus(err.message || "Failed to reset face data.");
   }
