@@ -177,6 +177,15 @@ function normalizeCourseSubject(value) {
     return aliases[subjectValue.toUpperCase()] || subjectValue
 }
 
+function sortStudentsByUsn(students) {
+    return (students || []).slice().sort((a, b) =>
+        String(a.id || a.usn || '').localeCompare(String(b.id || b.usn || ''), undefined, {
+            numeric: true,
+            sensitivity: "base"
+        })
+    )
+}
+
 function getStudentStats(usn) {
     let total = 0
     let present = 0
@@ -616,7 +625,7 @@ window.onload = async function () {
             apiFetch(`/faculty/students?${buildQuery({ department, program, sem, section })}`),
             apiFetch(`/faculty/attendance?${buildQuery({ subject, department, program, sem, section })}`)
         ])
-        studentList = studentsData
+        studentList = sortStudentsByUsn(studentsData)
         attendanceRecords = Array.isArray(attendanceData) ? attendanceData : []
     } catch (err) {
         console.error(err)

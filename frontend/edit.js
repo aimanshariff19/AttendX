@@ -72,6 +72,15 @@ function normalizeAttendanceRecords(raw) {
     return [];
 }
 
+function sortStudentsByUsn(students) {
+    return (students || []).slice().sort((a, b) =>
+        String(a.id || a.usn || '').localeCompare(String(b.id || b.usn || ''), undefined, {
+            numeric: true,
+            sensitivity: "base"
+        })
+    )
+}
+
 /* -------- 🔥 CONTEXT -------- */
 let subject = ''
 let department = ''
@@ -415,7 +424,7 @@ window.onload = async function () {
             apiFetch(`/faculty/students?${buildQuery({ department, program, sem, section })}`),
             apiFetch(`/faculty/attendance?${buildQuery({ subject, department, program, sem, section })}`)
         ])
-        studentList = studentsData
+        studentList = sortStudentsByUsn(studentsData)
         attendanceRecords = Array.isArray(attendanceData) ? attendanceData : []
     } catch (err) {
         console.error(err)

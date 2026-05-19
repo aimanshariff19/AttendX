@@ -55,6 +55,36 @@ function checkSupabase(res) {
     return null;
 }
 
+function studentIdOf(value) {
+    return String(value?.id || value?.usn || value?.studentId || '').trim();
+}
+
+function compareStudentIds(a, b) {
+    return studentIdOf(a).localeCompare(studentIdOf(b), undefined, {
+        numeric: true,
+        sensitivity: 'base'
+    });
+}
+
+function sortRecordsByStudentOrder(records, students) {
+    const order = new Map(
+        (students || [])
+            .slice()
+            .sort(compareStudentIds)
+            .map((student, index) => [studentIdOf(student), index])
+    );
+
+    return (records || []).slice().sort((a, b) => {
+        const aId = studentIdOf(a);
+        const bId = studentIdOf(b);
+        const aOrder = order.has(aId) ? order.get(aId) : Number.MAX_SAFE_INTEGER;
+        const bOrder = order.has(bId) ? order.get(bId) : Number.MAX_SAFE_INTEGER;
+
+        if (aOrder !== bOrder) return aOrder - bOrder;
+        return compareStudentIds(a, b);
+    });
+}
+
 function buildAbsenceMessages(student, course, consecutiveDays) {
     const name = student?.name || student?.id || 'Student';
     const className = `${course.department} ${course.program} Sem ${course.sem} Sec ${course.section}`;
@@ -458,6 +488,17 @@ router.post('/face-scan-attendance', auth('faculty'), async (req, res) => {
             return res.status(404).json({ msg: 'Scanned student is not in this class' });
         }
 
+        const { data: students, error: studentsError } = await supabase
+            .from('users')
+            .select('id')
+            .match({ role: 'student', department, program, sem, section })
+            .order('id', { ascending: true });
+
+        if (studentsError) {
+            console.error(studentsError.message);
+            return res.status(500).send('Server Error');
+        }
+
         const { data: dayRows, error: dayFetchError } = await supabase
             .from('attendance')
             .select('*')
@@ -491,9 +532,11 @@ router.post('/face-scan-attendance', auth('faculty'), async (req, res) => {
             if (idx >= 0) records[idx] = { ...records[idx], ...scannedRecord };
             else records.push(scannedRecord);
 
+            const orderedRecords = sortRecordsByStudentOrder(records, students);
+
             const { data: updatedAttendance, error: updateError } = await supabase
                 .from('attendance')
-                .update({ records })
+                .update({ records: orderedRecords })
                 .eq('id', existingAttendance.id)
                 .select()
                 .single();
@@ -506,22 +549,12 @@ router.post('/face-scan-attendance', auth('faculty'), async (req, res) => {
             return res.json({ attendance: updatedAttendance, student, created: false });
         }
 
-        const { data: students, error: studentsError } = await supabase
-            .from('users')
-            .select('id')
-            .match({ role: 'student', department, program, sem, section });
-
-        if (studentsError) {
-            console.error(studentsError.message);
-            return res.status(500).send('Server Error');
-        }
-
         const attendancePayload = {
             courseId: course.id,
             date,
             time_slot: slotTime,
             numClasses: numClasses || 1,
-            records: (students || []).map((s) => ({
+            records: (students || []).slice().sort(compareStudentIds).map((s) => ({
                 studentId: s.id,
                 status: s.id === studentId ? 'Present' : 'Absent',
                 reason: '',
