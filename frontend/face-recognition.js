@@ -1,9 +1,16 @@
 (function () {
     const MODEL_URL = "https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights"
-    const DESCRIPTOR_MATCH_THRESHOLD = 0.6
+    const DESCRIPTOR_MATCH_THRESHOLD = 0.64
     const LEGACY_MATCH_THRESHOLD = 88
+    const CAPTURE_SAMPLE_COUNT = 5
+    const CAPTURE_MAX_ATTEMPTS = 9
+    const CAPTURE_SAMPLE_DELAY_MS = 170
 
     let modelLoadPromise = null
+
+    function wait(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms))
+    }
 
     function legacySignatureFromVideo(video) {
         if (!video || !video.videoWidth || !video.videoHeight) {
@@ -45,7 +52,34 @@
         if (onStatus) onStatus("Face recognition models ready.")
     }
 
-    async function captureSignatureFromVideo(video, onStatus) {
+    async function detectFaceDescriptor(video) {
+        const options = new faceapi.TinyFaceDetectorOptions({
+            inputSize: 320,
+            scoreThreshold: 0.35
+        })
+
+        const result = await faceapi
+            .detectSingleFace(video, options)
+            .withFaceLandmarks()
+            .withFaceDescriptor()
+
+        return result ? Array.from(result.descriptor) : null
+    }
+
+    function averageDescriptors(descriptors) {
+        if (!Array.isArray(descriptors) || descriptors.length === 0) return null
+
+        const average = new Array(128).fill(0)
+        descriptors.forEach(descriptor => {
+            descriptor.forEach((value, index) => {
+                average[index] += Number(value) || 0
+            })
+        })
+
+        return average.map(value => value / descriptors.length)
+    }
+
+    async function captureSignatureFromVideo(video, onStatus, options = {}) {
         if (!video || !video.videoWidth || !video.videoHeight) {
             throw new Error("Start the camera first")
         }
@@ -58,24 +92,72 @@
             return legacySignatureFromVideo(video)
         }
 
-        const options = new faceapi.TinyFaceDetectorOptions({
-            inputSize: 224,
-            scoreThreshold: 0.5
-        })
-        const result = await faceapi
-            .detectSingleFace(video, options)
-            .withFaceLandmarks()
-            .withFaceDescriptor()
+        const sampleTarget = Math.max(1, options.sampleCount || CAPTURE_SAMPLE_COUNT)
+        const descriptors = []
 
-        if (!result) {
+        if (onStatus && sampleTarget > 1) {
+            onStatus("Scanning face... slowly turn left, center, and right.")
+        }
+
+        for (let attempt = 0; attempt < CAPTURE_MAX_ATTEMPTS && descriptors.length < sampleTarget; attempt++) {
+            const descriptor = await detectFaceDescriptor(video)
+            if (descriptor) {
+                descriptors.push(descriptor)
+                if (onStatus && sampleTarget > 1) {
+                    onStatus(`Captured face sample ${descriptors.length}/${sampleTarget}.`)
+                }
+            }
+
+            if (descriptors.length < sampleTarget) {
+                await wait(CAPTURE_SAMPLE_DELAY_MS)
+            }
+        }
+
+        if (descriptors.length === 0) {
             throw new Error("No clear face detected. Face the camera and try better lighting.")
         }
 
+        const averaged = averageDescriptors(descriptors)
+
         return JSON.stringify({
-            version: "face-api-v1",
+            version: "face-api-v2",
             model: "tiny-face-detector-face-recognition-net",
-            descriptor: Array.from(result.descriptor)
+            descriptor: averaged,
+            descriptors
         })
+    }
+
+    function normalizeDescriptor(descriptor) {
+        if (!Array.isArray(descriptor) || descriptor.length !== 128) return null
+
+        const normalized = descriptor.map(Number)
+        return normalized.every(Number.isFinite) ? normalized : null
+    }
+
+    function extractDescriptors(parsed) {
+        if (Array.isArray(parsed) && parsed.length === 128) {
+            const descriptor = normalizeDescriptor(parsed)
+            return descriptor ? [descriptor] : []
+        }
+
+        if (Array.isArray(parsed) && Array.isArray(parsed[0])) {
+            return parsed.map(normalizeDescriptor).filter(Boolean)
+        }
+
+        const descriptors = []
+        if (Array.isArray(parsed?.descriptor)) {
+            const descriptor = normalizeDescriptor(parsed.descriptor)
+            if (descriptor) descriptors.push(descriptor)
+        }
+
+        if (Array.isArray(parsed?.descriptors)) {
+            parsed.descriptors.forEach(value => {
+                const descriptor = normalizeDescriptor(value)
+                if (descriptor) descriptors.push(descriptor)
+            })
+        }
+
+        return descriptors
     }
 
     function parseSignature(signature) {
@@ -88,18 +170,11 @@
 
         try {
             const parsed = JSON.parse(trimmed)
-            const descriptor = Array.isArray(parsed)
-                ? parsed
-                : Array.isArray(parsed?.descriptor)
-                    ? parsed.descriptor
-                    : null
+            const descriptors = extractDescriptors(parsed)
 
-            if (!descriptor || descriptor.length !== 128) return null
+            if (descriptors.length === 0) return null
 
-            return {
-                type: "descriptor",
-                descriptor: descriptor.map(Number)
-            }
+            return { type: "descriptor", descriptors }
         } catch {
             return null
         }
@@ -135,7 +210,15 @@
         }
 
         if (currentParsed.type === "descriptor") {
-            return euclideanDistance(currentParsed.descriptor, savedParsed.descriptor)
+            let best = Number.POSITIVE_INFINITY
+
+            currentParsed.descriptors.forEach(currentDescriptor => {
+                savedParsed.descriptors.forEach(savedDescriptor => {
+                    best = Math.min(best, euclideanDistance(currentDescriptor, savedDescriptor))
+                })
+            })
+
+            return best
         }
 
         return hammingDistance(currentParsed.bits, savedParsed.bits)

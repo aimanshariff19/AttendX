@@ -85,7 +85,7 @@ async function startCamera(event) {
 
     await video.play();
 
-    setStatus("Camera ready. Capture the student face before saving.");
+    setStatus("Camera ready. During capture, ask the student to slowly face left, center and right.");
   } catch (err) {
     setStatus("Camera permission is required.");
   }
@@ -107,7 +107,7 @@ async function captureFace(event) {
 
     document.getElementById("photoPreview").src = capturedPhoto;
 
-    setStatus("Face captured. Save the student to store details.");
+    setStatus("Face captured from multiple angles. Save the student to store details.");
   } catch (err) {
     setStatus(err.message || "Could not capture face.");
   }

@@ -150,6 +150,19 @@ function setFaceStatus(message) {
     if (el) el.innerText = message
 }
 
+function faceScanErrorMessage(err) {
+    const message = err?.body?.msg || err?.message || "Could not scan attendance"
+
+    if (
+        err?.status === 401 ||
+        (err?.status === 403 && /access denied|authorization|insufficient privileges/i.test(message))
+    ) {
+        return "Faculty access required. Please log out and sign in through the faculty portal again."
+    }
+
+    return message
+}
+
 function setText(id, value) {
     const el = document.getElementById(id)
     if (el) el.innerText = value || "-"
@@ -434,8 +447,9 @@ async function scanFaceAttendance(btn) {
         showError(`${name} marked present`)
     } catch (err) {
         console.error(err)
-        showError(err.body?.msg || err.message || "Could not scan attendance")
-        setFaceStatus(err.body?.msg || err.message || "Scan failed.")
+        const message = faceScanErrorMessage(err)
+        showError(message)
+        setFaceStatus(message || "Scan failed.")
     } finally {
         resetBtn(btn)
     }
@@ -553,6 +567,8 @@ function markAll(isPresent, event) {
 
 /* -------- INIT -------- */
 window.onload = async function () {
+    const facultyUser = await requireAuth("faculty")
+    if (!facultyUser) return
 
     table = document.getElementById("studentRows")
 
