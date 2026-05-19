@@ -178,9 +178,9 @@ async function captureFace(event) {
     setStatus("Face captured from the live left-center-right scan. Save the student to store details.");
   } catch (err) {
     setStatus(err.message || "Could not capture face.");
+  } finally {
+    setButtonLoading(button, false);
   }
-
-  setButtonLoading(button, false);
 }
 
 async function loadStudents(buttonElement = null) {
