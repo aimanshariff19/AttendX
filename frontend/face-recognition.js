@@ -52,16 +52,41 @@
         if (onStatus) onStatus("Face recognition models ready.")
     }
 
+    function faceScore(detection, video) {
+        const box = detection?.detection?.box
+        if (!box || !video?.videoWidth || !video?.videoHeight) return 0
+
+        const area = box.width * box.height
+        const faceCenterX = box.x + box.width / 2
+        const faceCenterY = box.y + box.height / 2
+        const videoCenterX = video.videoWidth / 2
+        const videoCenterY = video.videoHeight / 2
+        const distanceFromCenter = Math.hypot(faceCenterX - videoCenterX, faceCenterY - videoCenterY)
+        const maxDistance = Math.hypot(videoCenterX, videoCenterY) || 1
+        const centerScore = 1 - Math.min(distanceFromCenter / maxDistance, 1)
+
+        return area * (1 + centerScore)
+    }
+
+    function pickPrimaryFace(detections, video) {
+        if (!Array.isArray(detections) || detections.length === 0) return null
+
+        return detections
+            .slice()
+            .sort((a, b) => faceScore(b, video) - faceScore(a, video))[0]
+    }
+
     async function detectFaceDescriptor(video) {
         const options = new faceapi.TinyFaceDetectorOptions({
             inputSize: 320,
             scoreThreshold: 0.35
         })
 
-        const result = await faceapi
-            .detectSingleFace(video, options)
+        const results = await faceapi
+            .detectAllFaces(video, options)
             .withFaceLandmarks()
-            .withFaceDescriptor()
+            .withFaceDescriptors()
+        const result = pickPrimaryFace(results, video)
 
         return result ? Array.from(result.descriptor) : null
     }
@@ -77,8 +102,8 @@
             inputSize: 320,
             scoreThreshold: 0.35
         })
-        const result = await faceapi.detectSingleFace(video, options)
-        return Boolean(result)
+        const results = await faceapi.detectAllFaces(video, options)
+        return results.length > 0
     }
 
     function averageDescriptors(descriptors) {
