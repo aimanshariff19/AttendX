@@ -66,6 +66,21 @@
         return result ? Array.from(result.descriptor) : null
     }
 
+    async function detectFaceInVideo(video, onStatus) {
+        if (!video || !video.videoWidth || !video.videoHeight) {
+            throw new Error("Start the camera first")
+        }
+
+        await ensureModels(onStatus)
+
+        const options = new faceapi.TinyFaceDetectorOptions({
+            inputSize: 320,
+            scoreThreshold: 0.35
+        })
+        const result = await faceapi.detectSingleFace(video, options)
+        return Boolean(result)
+    }
+
     function averageDescriptors(descriptors) {
         if (!Array.isArray(descriptors) || descriptors.length === 0) return null
 
@@ -235,6 +250,7 @@
 
     window.AttendXFaceRecognition = {
         captureSignatureFromVideo,
+        detectFaceInVideo,
         legacySignatureFromVideo,
         signatureDistance,
         isMatch
