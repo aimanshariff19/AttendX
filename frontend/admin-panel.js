@@ -76,6 +76,20 @@ async function waitForGuidedFace(video, pose, token) {
   return false;
 }
 
+async function runTimedFaceCaptureGuide(poses, token) {
+  for (const pose of poses) {
+    if (token !== faceGuideToken) return;
+
+    setStatus(`Step ${pose.step}/3: Turn ${pose.label} and hold.`);
+    await wait(1800);
+  }
+
+  if (token !== faceGuideToken) return;
+
+  faceGuideComplete = true;
+  setStatus("Left, center and right guide complete. Now click Capture Face.");
+}
+
 async function runFaceCaptureGuide(video) {
   const token = ++faceGuideToken;
   faceGuideComplete = false;
@@ -107,8 +121,7 @@ async function runFaceCaptureGuide(video) {
     setStatus("Left, center and right detected. Now click Capture Face.");
   } catch (err) {
     console.error(err);
-    faceGuideComplete = true;
-    setStatus("Camera ready. Auto-guide unavailable, so manually turn LEFT, CENTER, RIGHT, then click Capture Face.");
+    await runTimedFaceCaptureGuide(poses, token);
   }
 }
 
