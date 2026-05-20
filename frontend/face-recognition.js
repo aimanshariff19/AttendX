@@ -170,6 +170,90 @@
         })
     }
 
+    async function guidedCaptureSignature(video, onStatus, options = {}) {
+        if (!video || !video.videoWidth || !video.videoHeight) {
+            throw new Error("Start the camera first")
+        }
+
+        await ensureModels(onStatus)
+
+        const poses = [
+            { step: 1, label: "LEFT" },
+            { step: 2, label: "CENTER" },
+            { step: 3, label: "RIGHT" }
+        ]
+
+        const accumulatedDescriptors = []
+        let capturedPhoto = ""
+
+        for (const pose of poses) {
+            if (options.shouldCancel && options.shouldCancel()) return null
+            if (onStatus) onStatus(`Step ${pose.step}/3: Turn ${pose.label} and hold.`)
+            
+            const poseDescriptors = []
+            for (let i = 0; i < 30; i++) {
+                if (options.shouldCancel && options.shouldCancel()) return null
+                const descriptor = await detectFaceDescriptor(video)
+                if (descriptor) {
+                    poseDescriptors.push(descriptor)
+                    accumulatedDescriptors.push(descriptor)
+                    
+                    if (onStatus) {
+                        onStatus(`Step ${pose.step}/3: Turn ${pose.label} and hold. [Captured: ${poseDescriptors.length}/3]`)
+                    }
+                    
+                    // Capture photo on CENTER step
+                    if (pose.label === "CENTER" && poseDescriptors.length === 1) {
+                        const canvas = document.createElement("canvas")
+                        canvas.width = 320
+                        canvas.height = 240
+                        canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height)
+                        capturedPhoto = canvas.toDataURL("image/jpeg", 0.82)
+                        
+                        const preview = document.getElementById("photoPreview")
+                        if (preview) preview.src = capturedPhoto
+                    }
+
+                    if (poseDescriptors.length >= 3) {
+                        break
+                    }
+                }
+                await wait(350)
+            }
+
+            if (poseDescriptors.length === 0) {
+                throw new Error(`Failed to capture ${pose.label} angle. Face the camera and try again.`)
+            }
+
+            if (options.shouldCancel && options.shouldCancel()) return null
+            if (onStatus) onStatus(`Captured ${pose.label} angle. Get ready for next pose...`)
+            await wait(1000)
+        }
+
+        if (options.shouldCancel && options.shouldCancel()) return null
+        if (onStatus) onStatus("All angles captured! Averaging descriptors...")
+
+        const average = new Array(128).fill(0)
+        accumulatedDescriptors.forEach(descriptor => {
+            descriptor.forEach((value, index) => {
+                average[index] += Number(value) || 0
+            })
+        })
+        const averagedDescriptor = average.map(value => value / accumulatedDescriptors.length)
+
+        if (onStatus) onStatus("Face scan complete!")
+
+        return {
+            signature: JSON.stringify({
+                version: "face-api-v2",
+                model: "tiny-face-detector-face-recognition-net",
+                descriptor: averagedDescriptor,
+                descriptors: accumulatedDescriptors
+            }),
+            photo: capturedPhoto
+        }
+    }
+
     function normalizeDescriptor(descriptor) {
         if (!Array.isArray(descriptor) || descriptor.length !== 128) return null
 
@@ -278,7 +362,10 @@
 
     window.AttendXFaceRecognition = {
         captureSignatureFromVideo,
+        guidedCaptureSignature,
         detectFaceInVideo,
+        detectFaceDescriptor,
+        ensureModels,
         legacySignatureFromVideo,
         signatureDistance,
         isMatch

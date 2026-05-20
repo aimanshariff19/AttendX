@@ -369,7 +369,7 @@ async function captureFaceSignature() {
         throw new Error("Start the camera first")
     }
 
-    return await AttendXFaceRecognition.captureSignatureFromVideo(video, setFaceStatus)
+    return await AttendXFaceRecognition.captureSignatureFromVideo(video, setFaceStatus, { sampleCount: 1 })
 }
 
 function signatureDistance(a, b) {

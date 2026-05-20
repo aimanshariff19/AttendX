@@ -55,23 +55,13 @@ async function startCamera(btn) {
     }
 }
 
-async function captureFaceSignature() {
+async function captureFaceSignatureAndPhoto() {
     const video = document.getElementById("faceVideo")
     if (!video || !video.videoWidth || !video.videoHeight) {
         throw new Error("Start the camera first")
     }
 
-    return await AttendXFaceRecognition.captureSignatureFromVideo(video, setStatus)
-}
-
-function photoFromVideo() {
-    const video = document.getElementById("faceVideo")
-    if (!video) return ""
-    const canvas = document.createElement("canvas")
-    canvas.width = 320;
-    canvas.height = 240;
-    canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height)
-    return canvas.toDataURL("image/jpeg", 0.82)
+    return await AttendXFaceRecognition.guidedCaptureSignature(video, setStatus)
 }
 
 function getRegistry() {
@@ -88,8 +78,8 @@ function saveRegistry(registry) {
 
 async function enrollFace(btn) {
     try {
-        setBtnLoading(btn, "Saving")
-        if (!faceStream) await startCamera()
+        setBtnLoading(btn, "Scanning")
+        if (!faceStream) await startCamera(btn)
 
         const select = document.getElementById("studentSelect")
         const studentId = select?.value
@@ -99,8 +89,9 @@ async function enrollFace(btn) {
         }
 
         setStatus("Initializing scan...")
-        const signature = await captureFaceSignature()
-        const photo = photoFromVideo()
+        const result = await captureFaceSignatureAndPhoto()
+        const signature = result.signature
+        const photo = result.photo
 
         setStatus("Uploading face signature to database...")
         // Save to database

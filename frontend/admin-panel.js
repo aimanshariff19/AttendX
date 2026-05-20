@@ -55,73 +55,35 @@ function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function waitForGuidedFace(video, pose, token) {
-  const maxAttempts = 24;
-
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    if (token !== faceGuideToken) return false;
-
-    try {
-      if (await AttendXFaceRecognition.detectFaceInVideo(video)) {
-        return true;
-      }
-    } catch (err) {
-      throw err;
-    }
-
-    setStatus(`Step ${pose.step}/3: Turn ${pose.label} and hold. Waiting for face...`);
-    await wait(500);
-  }
-
-  return false;
-}
-
-async function runTimedFaceCaptureGuide(poses, token) {
-  for (const pose of poses) {
-    if (token !== faceGuideToken) return;
-
-    setStatus(`Step ${pose.step}/3: Turn ${pose.label} and hold.`);
-    await wait(1800);
-  }
-
-  if (token !== faceGuideToken) return;
-
-  faceGuideComplete = true;
-  setStatus("Left, center and right guide complete. Now click Capture Face.");
-}
-
 async function runFaceCaptureGuide(video) {
   const token = ++faceGuideToken;
   faceGuideComplete = false;
-
-  const poses = [
-    { step: 1, label: "LEFT" },
-    { step: 2, label: "CENTER" },
-    { step: 3, label: "RIGHT" },
-  ];
+  capturedSignature = "";
+  capturedPhoto = "";
 
   try {
-    for (const pose of poses) {
-      setStatus(`Step ${pose.step}/3: Turn ${pose.label} and hold until the camera detects the face.`);
-      const detected = await waitForGuidedFace(video, pose, token);
-
-      if (token !== faceGuideToken) return;
-
-      if (!detected) {
-        setStatus(`Could not confirm ${pose.label}. Keep the face clear and click Start Camera to retry the guide.`);
-        return;
-      }
-
-      setStatus(`${pose.label} detected. ${pose.step < 3 ? "Get ready for the next angle." : "All angles detected."}`);
-      await wait(700);
-    }
+    const result = await AttendXFaceRecognition.guidedCaptureSignature(video, setStatus, {
+      shouldCancel: () => token !== faceGuideToken
+    });
 
     if (token !== faceGuideToken) return;
+
+    if (!result) {
+      setStatus("Capture was cancelled.");
+      return;
+    }
+
+    capturedSignature = result.signature;
+    capturedPhoto = result.photo;
     faceGuideComplete = true;
-    setStatus("Left, center and right detected. Now click Capture Face.");
+
+    document.getElementById("photoPreview").src = capturedPhoto;
+    setStatus("Left, center, and right angles registered! Click Save Student to store details.");
   } catch (err) {
     console.error(err);
-    await runTimedFaceCaptureGuide(poses, token);
+    if (token === faceGuideToken) {
+      setStatus(err.message || "Guided capture failed. Click Start Camera to retry.");
+    }
   }
 }
 
@@ -172,23 +134,22 @@ async function startCamera(event) {
 async function captureFace(event) {
   const button = event.target;
 
+  if (faceGuideComplete && capturedSignature) {
+    setStatus("Face is already captured from the LEFT-CENTER-RIGHT guide! Click Save Student to save.");
+    return;
+  }
+
   setButtonLoading(button, true, "Capturing...");
 
   try {
-    if (!faceGuideComplete) {
-      setStatus("Complete the LEFT, CENTER and RIGHT guide first. Capture Face will work after all three are detected.");
-      return;
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
     capturedSignature = await captureSignatureFromVideo();
 
     capturedPhoto = photoFromVideo();
 
     document.getElementById("photoPreview").src = capturedPhoto;
+    faceGuideComplete = true;
 
-    setStatus("Face captured from the live left-center-right scan. Save the student to store details.");
+    setStatus("Face captured from the video scan. Click Save Student to store details.");
   } catch (err) {
     setStatus(err.message || "Could not capture face.");
   } finally {

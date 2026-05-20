@@ -405,6 +405,9 @@ router.post('/attendance', auth('faculty'), async (req, res) => {
             .single();
 
         if (courseError || !course) {
+            console.error('POST /attendance course auth check failed:', {
+                subject, department, program, sem, section, facultyId: req.user.id
+            }, 'Error:', courseError?.message);
             return res.status(403).json({ msg: 'Not authorized for this course' });
         }
 
@@ -521,6 +524,9 @@ router.post('/face-scan-attendance', auth('faculty'), async (req, res) => {
             .single();
 
         if (courseError || !course) {
+            console.error('POST /face-scan-attendance course auth check failed:', {
+                subject, department, program, sem, section, facultyId: req.user.id
+            }, 'Error:', courseError?.message);
             return res.status(403).json({ msg: 'Not authorized for this course' });
         }
 
@@ -671,7 +677,12 @@ router.get('/attendance', auth('faculty'), async (req, res) => {
             .match({ subject, department, program, sem, section, facultyId: req.user.id })
             .single();
 
-        if (courseError || !course) return res.status(404).json({ msg: 'Course not found' });
+        if (courseError || !course) {
+            console.error('GET /attendance course query failed:', {
+                subject, department, program, sem, section, facultyId: req.user.id
+            }, 'Error:', courseError?.message);
+            return res.status(404).json({ msg: 'Course not found' });
+        }
 
         let qb = supabase.from('attendance').select('*').eq('courseId', course.id);
 
@@ -707,7 +718,12 @@ router.put('/attendance', auth('faculty'), async (req, res) => {
             .match({ subject, department, program, sem, section, facultyId: req.user.id })
             .single();
 
-        if (courseError || !course) return res.status(403).json({ msg: 'Not authorized for this course' });
+        if (courseError || !course) {
+            console.error('PUT /attendance course auth check failed:', {
+                subject, department, program, sem, section, facultyId: req.user.id
+            }, 'Error:', courseError?.message);
+            return res.status(403).json({ msg: 'Not authorized for this course' });
+        }
 
         const { data: dayRows, error: dayFetchError } = await supabase
             .from('attendance')
