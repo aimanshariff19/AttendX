@@ -215,6 +215,13 @@
         opacity: 0.8;
         pointer-events: none;
       }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        color: rgba(255, 255, 255, 0.4) !important;
+      }
     </style>
   </head>
 
@@ -331,8 +338,10 @@
             </button>
             <button
               class="btn secondary"
+              id="captureBtn"
               type="button"
               onclick="captureFace(event)"
+              disabled
             >
               Capture Face
             </button>

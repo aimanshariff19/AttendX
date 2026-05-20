@@ -60,6 +60,7 @@ async function runFaceCaptureGuide(video) {
   faceGuideComplete = false;
   capturedSignature = "";
   capturedPhoto = "";
+  document.getElementById("captureBtn").disabled = true;
 
   try {
     const result = await AttendXFaceRecognition.guidedCaptureSignature(video, setStatus, {
@@ -74,11 +75,10 @@ async function runFaceCaptureGuide(video) {
     }
 
     capturedSignature = result.signature;
-    capturedPhoto = result.photo;
     faceGuideComplete = true;
 
-    document.getElementById("photoPreview").src = capturedPhoto;
-    setStatus("Left, center, and right angles registered! Click Save Student to store details.");
+    document.getElementById("captureBtn").disabled = false;
+    setStatus("Left, center, and right angles registered! Now click 'Capture Face' to snap the profile picture.");
   } catch (err) {
     console.error(err);
     if (token === faceGuideToken) {
@@ -134,24 +134,21 @@ async function startCamera(event) {
 async function captureFace(event) {
   const button = event.target;
 
-  if (faceGuideComplete && capturedSignature) {
-    setStatus("Face is already captured from the LEFT-CENTER-RIGHT guide! Click Save Student to save.");
+  if (!faceGuideComplete || !capturedSignature) {
+    setStatus("Please follow the LEFT, CENTER, and RIGHT guide to register all angles first.");
     return;
   }
 
   setButtonLoading(button, true, "Capturing...");
 
   try {
-    capturedSignature = await captureSignatureFromVideo();
-
     capturedPhoto = photoFromVideo();
 
     document.getElementById("photoPreview").src = capturedPhoto;
-    faceGuideComplete = true;
 
-    setStatus("Face captured from the video scan. Click Save Student to store details.");
+    setStatus("Face signature and profile photo captured! Ready to Save Student.");
   } catch (err) {
-    setStatus(err.message || "Could not capture face.");
+    setStatus(err.message || "Could not capture photo.");
   } finally {
     setButtonLoading(button, false);
   }
@@ -230,6 +227,7 @@ async function saveStudent(event) {
     capturedSignature = "";
 
     document.getElementById("photoPreview").removeAttribute("src");
+    document.getElementById("captureBtn").disabled = true;
 
     await loadStudents();
   } catch (err) {
