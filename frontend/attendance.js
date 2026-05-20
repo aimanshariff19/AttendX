@@ -376,8 +376,12 @@ function signatureDistance(a, b) {
     return AttendXFaceRecognition.signatureDistance(a, b)
 }
 
+let cachedFaceRegistry = null;
+
 async function getFaceRegistry() {
-    return await apiFetch(`/faculty/face-registry?${buildQuery({ department, program, sem, section })}`)
+    if (cachedFaceRegistry) return cachedFaceRegistry;
+    cachedFaceRegistry = await apiFetch(`/faculty/face-registry?${buildQuery({ department, program, sem, section })}`);
+    return cachedFaceRegistry;
 }
 
 function validateFaceAttendanceSlot() {
@@ -621,12 +625,17 @@ window.onload = async function () {
     setText("section", section)
 
     try {
-        const [studentsData, attendanceData] = await Promise.all([
+        const [studentsData, attendanceData, faceRegistryData] = await Promise.all([
             apiFetch(`/faculty/students?${buildQuery({ department, program, sem, section })}`),
-            apiFetch(`/faculty/attendance?${buildQuery({ subject, department, program, sem, section })}`)
+            apiFetch(`/faculty/attendance?${buildQuery({ subject, department, program, sem, section })}`),
+            apiFetch(`/faculty/face-registry?${buildQuery({ department, program, sem, section })}`).catch(err => {
+                console.error("Failed to prefetch face registry:", err);
+                return {};
+            })
         ])
         studentList = sortStudentsByUsn(studentsData)
         attendanceRecords = Array.isArray(attendanceData) ? attendanceData : []
+        cachedFaceRegistry = faceRegistryData || {};
     } catch (err) {
         console.error(err)
         showError("Unable to load class or attendance data")
