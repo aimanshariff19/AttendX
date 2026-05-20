@@ -33,7 +33,7 @@ function setLoadingButton(button, loading, text = "") {
 function goBackPortal(event) {
   const button = event.currentTarget;
 
-  setLoadingButton(button, true, " back to portal");
+  setLoadingButton(button, true, " Back to portal");
 
   setTimeout(() => {
     window.location.href = "/";

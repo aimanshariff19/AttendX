@@ -1,5 +1,5 @@
 (function () {
-    const MODEL_URL = "https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights"
+    const MODEL_URL = "/models"
     const DESCRIPTOR_MATCH_THRESHOLD = 0.64
     const LEGACY_MATCH_THRESHOLD = 88
     const CAPTURE_SAMPLE_COUNT = 5
@@ -46,6 +46,9 @@
                 faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
                 faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
             ])
+            modelLoadPromise.then(() => {
+                console.log("FaceAPI models loaded")
+            })
         }
 
         await modelLoadPromise

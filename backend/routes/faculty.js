@@ -333,6 +333,62 @@ router.get('/face-registry', auth('faculty'), async (req, res) => {
     }
 });
 
+// @route   POST api/faculty/enroll-face
+// @desc    Enroll/update a student's face signature
+router.post('/enroll-face', auth('faculty'), async (req, res) => {
+    const err = checkSupabase(res);
+    if (err) return err;
+
+    const { studentId, faceSignature, facePhoto } = req.body;
+    try {
+        if (!studentId || !faceSignature) {
+            return res.status(400).json({ msg: 'studentId and faceSignature are required' });
+        }
+
+        const { data: student, error: fetchError } = await supabase
+            .from('users')
+            .select('id,role')
+            .eq('id', studentId)
+            .eq('role', 'student')
+            .maybeSingle();
+
+        if (fetchError) {
+            console.error(fetchError.message);
+            return res.status(500).send('Server Error');
+        }
+
+        if (!student) {
+            return res.status(404).json({ msg: 'Student not found' });
+        }
+
+        const updatePayload = {
+            faceSignature: faceSignature
+        };
+        if (facePhoto) {
+            updatePayload.facePhoto = facePhoto;
+            updatePayload.photo = facePhoto;
+        }
+
+        const { data, error: updateError } = await supabase
+            .from('users')
+            .update(updatePayload)
+            .eq('id', studentId)
+            .select()
+            .single();
+
+        if (updateError) {
+            console.error(updateError.message);
+            return res.status(500).send('Server Error');
+        }
+
+        res.json({ msg: 'Face enrolled successfully', student: data });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+
 // @route   POST api/faculty/attendance
 // @desc    Submit attendance
 router.post('/attendance', auth('faculty'), async (req, res) => {

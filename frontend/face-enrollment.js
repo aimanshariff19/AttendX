@@ -55,27 +55,23 @@ async function startCamera(btn) {
     }
 }
 
-function captureFaceSignature() {
+async function captureFaceSignature() {
     const video = document.getElementById("faceVideo")
     if (!video || !video.videoWidth || !video.videoHeight) {
         throw new Error("Start the camera first")
     }
 
+    return await AttendXFaceRecognition.captureSignatureFromVideo(video, setStatus)
+}
+
+function photoFromVideo() {
+    const video = document.getElementById("faceVideo")
+    if (!video) return ""
     const canvas = document.createElement("canvas")
-    const size = 16
-    canvas.width = size
-    canvas.height = size
-    const ctx = canvas.getContext("2d")
-    ctx.drawImage(video, 0, 0, size, size)
-    const data = ctx.getImageData(0, 0, size, size).data
-    const gray = []
-
-    for (let i = 0; i < data.length; i += 4) {
-        gray.push(Math.round((data[i] + data[i + 1] + data[i + 2]) / 3))
-    }
-
-    const average = gray.reduce((sum, value) => sum + value, 0) / gray.length
-    return gray.map(value => (value >= average ? "1" : "0")).join("")
+    canvas.width = 320;
+    canvas.height = 240;
+    canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height)
+    return canvas.toDataURL("image/jpeg", 0.82)
 }
 
 function getRegistry() {
@@ -102,17 +98,34 @@ async function enrollFace(btn) {
             return
         }
 
+        setStatus("Initializing scan...")
+        const signature = await captureFaceSignature()
+        const photo = photoFromVideo()
+
+        setStatus("Uploading face signature to database...")
+        // Save to database
+        await apiFetch('/faculty/enroll-face', {
+            method: 'POST',
+            body: JSON.stringify({
+                studentId,
+                faceSignature: signature,
+                facePhoto: photo
+            })
+        })
+
+        // Also update local storage registry as a fallback
         const registry = getRegistry()
         registry[studentId] = {
-            signature: captureFaceSignature(),
+            signature: signature,
             enrolledAt: new Date().toISOString()
         }
         saveRegistry(registry)
-        setStatus(`${studentId} face saved on this device.`)
+
+        setStatus(`${studentId} face enrolled successfully in database.`)
     } catch (err) {
         console.error(err)
-        setStatus(err.message || "Enrollment failed.")
-        alert(err.message || "Could not save face")
+        setStatus(err.body?.msg || err.message || "Enrollment failed.")
+        alert(err.body?.msg || err.message || "Could not save face")
     } finally {
         resetBtn(btn)
     }
