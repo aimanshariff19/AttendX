@@ -188,8 +188,16 @@
 
         for (const pose of poses) {
             if (options.shouldCancel && options.shouldCancel()) return null
-            if (onStatus) onStatus(`Step ${pose.step}/3: Turn ${pose.label} and hold.`)
             
+            for (let count = 3; count > 0; count--) {
+                if (options.shouldCancel && options.shouldCancel()) return null
+                if (onStatus) onStatus(`Step ${pose.step}/3: Turn ${pose.label} and hold. Scan in ${count}...`)
+                await wait(1000)
+            }
+
+            if (options.shouldCancel && options.shouldCancel()) return null
+            if (onStatus) onStatus(`Scanning ${pose.label} angle...`)
+
             const poseDescriptors = []
             for (let i = 0; i < 30; i++) {
                 if (options.shouldCancel && options.shouldCancel()) return null
@@ -199,7 +207,7 @@
                     accumulatedDescriptors.push(descriptor)
                     
                     if (onStatus) {
-                        onStatus(`Step ${pose.step}/3: Turn ${pose.label} and hold. [Captured: ${poseDescriptors.length}/3]`)
+                        onStatus(`Step ${pose.step}/3: Scanning ${pose.label}... [Captured: ${poseDescriptors.length}/3]`)
                     }
                     
                     // Capture photo on CENTER step
@@ -226,8 +234,8 @@
             }
 
             if (options.shouldCancel && options.shouldCancel()) return null
-            if (onStatus) onStatus(`Captured ${pose.label} angle. Get ready for next pose...`)
-            await wait(1000)
+            if (onStatus) onStatus(`Captured ${pose.label} angle successfully!`)
+            await wait(1500)
         }
 
         if (options.shouldCancel && options.shouldCancel()) return null
