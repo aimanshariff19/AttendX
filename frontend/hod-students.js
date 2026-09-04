@@ -162,7 +162,7 @@ function loadStudents() {
 }
 
 async function loadHodStudentData() {
-    const studentsData = await apiFetch(`/hod/students?${buildQuery({ program, sem, section, cie1Date, cie2Date })}`)
+    const studentsData = await apiFetch(`/hod/students?${buildQuery({ department, program, sem, section, cie1Date, cie2Date })}`)
 
     classSubjects = studentsData.courses || []
     studentList = studentsData.students || []
