@@ -367,9 +367,15 @@ function renderStudentTables(students, filters) {
     ];
 
     programs.forEach((program) => {
-      const programStudents = departmentStudents.filter(
-        (student) => student.program === program,
-      );
+      const programStudents = departmentStudents
+        .filter((student) => student.program === program)
+        .sort((a, b) =>
+          String(a.id || a.usn || '').localeCompare(
+            String(b.id || b.usn || ''),
+            undefined,
+            { numeric: true, sensitivity: 'base' }
+          )
+        );
 
       if (
         programStudents.length === 0 &&

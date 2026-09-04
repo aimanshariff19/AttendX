@@ -161,11 +161,20 @@ function loadStudents() {
     renderCieRows(cie2Table, "cie2")
 }
 
+function sortStudentsByUsn(students) {
+    return (students || []).slice().sort((a, b) =>
+        String(a.id || a.usn || '').localeCompare(String(b.id || b.usn || ''), undefined, {
+            numeric: true,
+            sensitivity: "base"
+        })
+    )
+}
+
 async function loadHodStudentData() {
     const studentsData = await apiFetch(`/hod/students?${buildQuery({ department, program, sem, section, cie1Date, cie2Date })}`)
 
     classSubjects = studentsData.courses || []
-    studentList = studentsData.students || []
+    studentList = sortStudentsByUsn(studentsData.students || [])
 
     loadSubjectHeaders()
     loadStudents()

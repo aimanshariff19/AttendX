@@ -125,7 +125,14 @@ async function enrollFace(btn) {
 function populateStudents() {
     const select = document.getElementById("studentSelect")
     select.innerHTML = `<option value="">Select student</option>`
-    studentList.forEach(student => {
+    const sortedStudents = (studentList || []).slice().sort((a, b) =>
+        String(a.id || a.usn || '').localeCompare(
+            String(b.id || b.usn || ''),
+            undefined,
+            { numeric: true, sensitivity: 'base' }
+        )
+    )
+    sortedStudents.forEach(student => {
         const option = document.createElement("option")
         option.value = student.id || student.usn
         option.innerText = `${student.id || student.usn} - ${student.name}`
