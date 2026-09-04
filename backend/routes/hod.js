@@ -55,6 +55,7 @@ router.get('/courses', auth('hod'), async (req, res) => {
 // @route   GET api/hod/students
 // @desc    Get students with their stats for a class
 router.get('/students', auth('hod'), async (req, res) => {
+    console.log('[HOD STUDENTS] START', req.query);
     const err = checkSupabase(res);
     if (err) return err;
 
@@ -62,7 +63,10 @@ router.get('/students', auth('hod'), async (req, res) => {
     const department = requestedDepartment || req.user.department;
 
     try {
+        console.log('[HOD STUDENTS] BEFORE USERS QUERY');
         let studentQuery = supabase.from('users').select('*').eq('role', 'student').eq('department', department);
+        
+        console.log('[HOD STUDENTS] BEFORE COURSES QUERY');
         let courseQuery = supabase.from('courses').select('*').eq('department', department);
 
         if (program) {
@@ -83,11 +87,17 @@ router.get('/students', auth('hod'), async (req, res) => {
             courseQuery
         ]);
 
+        console.log('[HOD STUDENTS] AFTER INITIAL QUERIES', {
+            studentCount: students?.length,
+            courseCount: courses?.length
+        });
+
         if (studentsError || coursesError) {
             console.error(studentsError?.message || coursesError?.message);
             return res.status(500).send('Server Error');
         }
 
+        console.log('[HOD STUDENTS] BEFORE PROCESSING');
         const result = [];
 
         for (const student of students) {
@@ -105,6 +115,7 @@ router.get('/students', auth('hod'), async (req, res) => {
             };
 
             for (const course of courses) {
+                console.log(`[HOD STUDENTS] Fetching attendance for student ${student.id}, course ${course.id}`);
                 const { data: attendances, error: attendanceError } = await supabase
                     .from('attendance')
                     .select('*')
@@ -126,7 +137,9 @@ router.get('/students', auth('hod'), async (req, res) => {
             result.push(studentStats);
         }
 
+        console.log('[HOD STUDENTS] BEFORE RESPONSE');
         res.json({ courses, students: result });
+        console.log('[HOD STUDENTS] RESPONSE SENT');
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
